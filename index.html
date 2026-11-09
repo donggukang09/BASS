@@ -101,8 +101,8 @@ footer{text-align:center;color:#4f6459;font-size:11px;letter-spacing:.12em;margi
 /* 배스 조행기 — 현장 입력
    DEVELOPED BY DONGGU KANG */
 
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbwno2F5-wiQ8jQIwexBaFTpfY61xvZPqqHS40FzQfE3DuNnCNUtoeq_hhwOkKc5l-3v/exec';
-const LS = { cfg:'bl_cfg', data:'bl_data', queue:'bl_queue', trip:'bl_trip', last:'bl_last' };
+const API_URL = 'https://script.google.com/macros/s/AKfycbwno2F5-wiQ8jQIwexBaFTpfY61xvZPqqHS40FzQfE3DuNnCNUtoeq_hhwOkKc5l-3v/exec';
+const LS = { data:'bl_data', queue:'bl_queue', trip:'bl_trip', last:'bl_last' };
 const KEY = { Trips:'trip_id', Catches:'catch_id', Spots:'spot_id', Lures:'lure_id', Photos:'photo_id',
               Tackle:'tackle_id', Setups:'setup_id', Options:'option_id' };
 const MAX_TRIES = 5;
@@ -121,12 +121,11 @@ let toastT;
 function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
 
 /* ───────── 상태 ───────── */
-let cfg   = load(LS.cfg, { url: DEFAULT_URL, key: '', me: '본인' });
 let DB    = load(LS.data, null);
 let queue = load(LS.queue, []);
 let trip  = load(LS.trip, null);        // { trip_id }
 let last  = load(LS.last, {});          // 직전 선택값
-let view  = (!cfg.key || !DB) ? 'settings' : (trip ? 'trip' : 'home');
+let view  = !DB ? 'loading' : (trip ? 'trip' : 'home');
 let sf = null, cf = null, ef = null;     // 출조 시작 / 조과 / 종료 폼
 let pos = null, watchId = null;
 let photoCount = 0, photoCatchIds = new Set();
@@ -159,7 +158,7 @@ function nextId(s, prefix, len){
 
 /* ───────── 서버 통신 ───────── */
 async function apiGet(params){
-  const u = cfg.url + '?' + new URLSearchParams({ key: cfg.key, ...params });
+  const u = API_URL + '?' + new URLSearchParams(params);
   try { const r = await fetch(u); return await r.json(); }
   catch (e) { return jsonp(u); }
 }
@@ -174,7 +173,7 @@ function jsonp(u){
   });
 }
 async function apiPost(body){
-  const r = await fetch(cfg.url, { method:'POST', body: JSON.stringify({ ...body, key: cfg.key }) });
+  const r = await fetch(API_URL, { method:'POST', body: JSON.stringify(body) });
   return r.json();
 }
 
@@ -184,7 +183,7 @@ function enqueue(op){
 }
 
 async function flush(){
-  if (flushing || !navigator.onLine || !cfg.key) return;
+  if (flushing || !navigator.onLine || !DB) return;
   const ops = queue.filter(o => (o.tries || 0) < MAX_TRIES).slice(0, 40);
   if (!ops.length) return;
   flushing = true; updateSync();
@@ -342,43 +341,37 @@ function spotName(id){ const s = byId('Spots', id); return s ? s.name : '포인�
 function tripCatches(id){ return rows('Catches').filter(c => c.trip_id === id).sort((a, b) => (a.time || '').localeCompare(b.time || '')); }
 function usage(field){ const m = {}; rows('Catches').forEach(c => { if (c[field]) m[c[field]] = (m[c[field]] || 0) + 1; }); return m; }
 
-/* ───────── 화면: 설정 ───────── */
+/* ───────── 화면: 처음 불러오기 / 관리 ───────── */
+function vLoading(){
+  return `
+  <div class="top"><h1>배스 조행기</h1></div>
+  <div class="empty" id="bootMsg">${navigator.onLine ? '데이터 불러오는 중…' : '처음 한 번은 인터넷 연결이 필요해요'}</div>
+  <button class="wide primary" data-act="boot">다시 시도</button>
+  <footer>DEVELOPED BY DONGGU KANG</footer>`;
+}
+async function boot(){
+  const msg = $('#bootMsg'); if (msg) msg.textContent = '데이터 불러오는 중…';
+  try {
+    await refresh(); await refreshPhotos();
+    view = trip ? 'trip' : 'home'; render(); flush();
+  } catch (e) {
+    if (msg) { msg.className = 'msg err'; msg.textContent = '❌ 불러오기 실패: ' + (e.message || e) + '\n웹 앱 배포의 액세스가 "모든 사용자"인지 확인해 주세요.'; }
+  }
+}
+
 function vSettings(){
   const failed = queue.filter(o => (o.tries || 0) >= MAX_TRIES);
   return `
-  <div class="top"><h1>설정</h1>${DB ? '<button class="icon" data-act="home">✕</button>' : ''}</div>
-  <p class="muted">입력한 값은 이 기기 브라우저에만 저장돼요. 코드나 GitHub에는 들어가지 않아요.</p>
-  <label class="f">웹 앱 URL</label><input class="t" id="s_url" value="${esc(cfg.url)}">
-  <label class="f">API 키 (setup 실행 로그에 나온 값)</label><input class="t" id="s_key" value="${esc(cfg.key)}" autocomplete="off" autocapitalize="off">
-  <label class="f">잡은 사람 기본 이름</label><input class="t" id="s_me" value="${esc(cfg.me)}">
-  <button class="wide primary" data-act="connect">연결 확인 · 데이터 불러오기</button>
-  <div class="msg" id="connMsg"></div>
+  <div class="top"><h1>관리</h1><button class="icon" data-act="home">✕</button></div>
+  ${syncBar()}
+  <button class="wide" data-act="refresh">서버에서 데이터 새로고침</button>
+  <p class="muted">세팅·루어·선택지를 시트에서 직접 고쳤다면 새로고침하면 반영돼요.</p>
+  ${lastErr ? `<div class="msg err">최근 오류: ${esc(lastErr)}</div>` : ''}
   ${failed.length ? `<h2>전송 실패 ${failed.length}건</h2>
     <div class="list">${failed.map(o => `<div class="row"><div class="meta"><b>${esc(o.action)} ${esc(o.sheet || '')}</b><br>${esc(o.error || '')}</div></div>`).join('')}</div>
     <button class="wide" data-act="retryFailed">다시 시도</button>
     <button class="wide danger" data-act="dropFailed">실패 항목 버리기</button>` : ''}
   <footer>DEVELOPED BY DONGGU KANG</footer>`;
-}
-
-async function connect(){
-  cfg = { url: $('#s_url').value.trim(), key: $('#s_key').value.trim(), me: $('#s_me').value.trim() || '본인' };
-  save(LS.cfg, cfg);
-  const msg = $('#connMsg'); msg.className = 'msg'; msg.textContent = '연결 확인 중…';
-  try {
-    const g = await apiGet({ action:'ping' });
-    if (!g.ok) throw new Error(g.error);
-    const p = await apiPost({ action:'batch', ops: [] });
-    if (!p.ok) throw new Error(p.error || '쓰기 확인 실패');
-    msg.textContent = '연결됨. 데이터 불러오는 중…';
-    await refresh();
-    msg.className = 'msg ok';
-    msg.textContent = `✅ 완료 — 세팅 ${active('Setups').length}개 · 루어 ${active('Lures').length}개 · 포인트 ${active('Spots').length}개`;
-    lastErr = ''; flush();
-    setTimeout(() => { view = trip ? 'trip' : 'home'; render(); }, 900);
-  } catch (e) {
-    msg.className = 'msg err';
-    msg.textContent = '❌ ' + (e.message || e) + '\n키와 URL, 웹 앱 배포 권한(모든 사용자)을 확인해 주세요.';
-  }
 }
 
 /* ───────── 화면: 홈 ───────── */
@@ -391,15 +384,14 @@ function vHome(){
   ${photoCount ? `<button class="wide" data-act="upPhotos">📤 사진 업로드 ${photoCount}장 <span class="muted">(와이파이에서)</span></button>` : ''}
   <h2>최근 출조</h2>
   <div class="list">${trips.length ? trips.map(t => {
-    const cs = tripCatches(t.trip_id).filter(c => !c.angler || c.angler === cfg.me);
+    const cs = tripCatches(t.trip_id);
     const max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
     const need = t.status !== '정리완료';
     return `<div class="row"><div class="len">${cs.length}<span class="muted">수</span></div>
       <div class="meta"><b>${esc(t.date)} · ${esc(spotName(t.spot_id))}</b><br>${max ? '최대 ' + max + 'cm · ' : ''}${esc(t.summary || t.weather || '')}</div>
       <span class="badge ${need ? 'warn' : ''}">${esc(t.status || '')}</span></div>`;
   }).join('') : '<div class="empty">아직 출조 기록이 없어요</div>'}</div>
-  <button class="ghost" data-act="refresh">서버에서 새로고침</button>
-  <footer>DEVELOPED BY DONGGU KANG</footer>`;
+    <footer>DEVELOPED BY DONGGU KANG</footer>`;
 }
 
 /* ───────── 화면: 출조 시작 ───────── */
@@ -480,20 +472,20 @@ function elapsed(t){
 function vTrip(){
   const t = curTrip();
   if (!t) { trip = null; save(LS.trip, null); return vHome(); }
-  const cs = tripCatches(t.trip_id), mine = cs.filter(c => !c.angler || c.angler === cfg.me);
-  const max = mine.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
+  const cs = tripCatches(t.trip_id);
+  const max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
   return `
   <div class="top"><div><div class="sub">${esc(t.date)} · ${esc(spotName(t.spot_id))}</div><h1>${esc(t.start)} ~ 진행 중</h1></div>
     <button class="icon" data-act="settings">⚙</button></div>
   ${syncBar()}
-  <div class="stats"><div><b>${mine.length}</b>수${cs.length > mine.length ? ` (+동행 ${cs.length - mine.length})` : ''}</div>
+  <div class="stats"><div><b>${cs.length}</b>수</div>
     <div><b>${max || '-'}</b>최대 cm</div><div><b id="elapsed">${elapsed(t)}</b>경과</div></div>
   <button class="hero catch" data-act="catch">잡았다!</button>
   <div class="list">${cs.length ? cs.slice().reverse().map(c => `
     <div class="row" data-act="editCatch" data-id="${esc(c.catch_id)}">
       <div class="len">${esc(c.length_cm)}<span class="muted">cm</span></div>
       <div class="meta"><b>${esc(c.time)}</b> · ${esc(lureName(c.lure_id) || '루어 미정')} · ${esc(c.rig || '')}${c.action ? ' · ' + esc(c.action) : ''}
-        ${c.angler && c.angler !== cfg.me ? `<br>🧑 ${esc(c.angler)}` : ''}</div>
+        ${c.memo ? `<br>📝 ${esc(c.memo)}` : ''}</div>
       ${photoCatchIds.has(c.catch_id) ? '📷' : ''}</div>`).join('') : '<div class="empty">첫 수를 기다리는 중…</div>'}</div>
   <button class="wide danger" style="margin-top:22px" data-act="end">출조 종료</button>`;
 }
@@ -509,7 +501,7 @@ function openCatch(id){
     const setup_id = today.includes(last.setup_id) ? last.setup_id : today[0] || '';
     const st = byId('Setups', setup_id);
     cf = { catch_id: '', setup_id, lure_id: last.lure_id || '', rig: last.rig || (st && st.default_rig) || '', action: last.action || '',
-      structure: '', depth: last.depth || '', weight_g: '', color: '', memo: '', released: 'Y', angler: cfg.me,
+      structure: '', depth: last.depth || '', weight_g: '', color: '', memo: '', released: 'Y',
       length: '', photo: null, more: false, allLures: false, newLure: false, edit: false };
     if (cf.lure_id && !byId('Lures', cf.lure_id)) cf.lure_id = '';
   }
@@ -533,8 +525,6 @@ function vCatch(){
   const t = curTrip();
   const setupIds = [...new Set([...cf.todaySetups, cf.setup_id].filter(Boolean))];
   const lo = lureOptions();
-  const anglers = [cfg.me, ...(t.companions || '').split(',').map(s => s.trim()).filter(Boolean)];
-  if (cf.angler && !anglers.includes(cf.angler)) anglers.push(cf.angler);
   return `
   <div class="sheetHead"><h1>${cf.edit ? '조과 수정' : '잡았다!'}</h1><button class="icon" data-act="closeSheet">✕</button></div>
   <div class="lenBox ${cf.length ? '' : 'empty'}">${esc(cf.length || '0')}<span>cm</span></div>
@@ -562,15 +552,14 @@ function vCatch(){
   </div>
 
   ${cf.more ? `<div class="more">
-    ${anglers.length > 1 ? `<label class="f">잡은 사람</label>${chips('cf', 'angler', simple(anglers))}` : ''}
+    <label class="f">메모</label><input class="t" value="${esc(cf.memo)}" placeholder="예: 아내가 잡음, 수초 끝자락" data-in="cf.memo">
     <label class="f">구조물</label>${chips('cf', 'structure', simple(opts('구조물')))}
     <label class="f">수심층</label>${chips('cf', 'depth', simple(opts('수심층')))}
     <label class="f">무게 (g)</label><input class="t" inputmode="numeric" value="${esc(cf.weight_g)}" data-in="cf.weight_g">
     <label class="f">컬러</label><input class="t" value="${esc(cf.color)}" placeholder="루어 기본 컬러" data-in="cf.color">
-    <label class="f">메모</label><input class="t" value="${esc(cf.memo)}" data-in="cf.memo">
     <label class="f">방생</label>${chips('cf', 'released', [{ v:'Y', label:'방생' }, { v:'N', label:'킵' }])}
     ${cf.edit ? '<button class="wide danger" style="margin-top:18px" data-act="delCatch">이 조과 삭제</button>' : ''}
-  </div>` : `<button class="ghost" data-act="moreCatch">${anglers.length > 1 ? '잡은 사람 · ' : ''}구조물 · 수심 · 무게 · 메모</button>`}
+  </div>` : '<button class="ghost" data-act="moreCatch">메모 · 구조물 · 수심 · 무게 · 컬러</button>'}
 
   <div class="saveBar"><button class="wide primary" data-act="saveCatch">저장</button></div>`;
 }
@@ -588,7 +577,7 @@ async function saveCatch(){
   const lure = byId('Lures', cf.lure_id);
   const row = { catch_id: id, trip_id: t.trip_id, length_cm: String(len), setup_id: cf.setup_id, lure_id: cf.lure_id,
     rig: cf.rig, action: cf.action, structure: cf.structure, depth: cf.depth, weight_g: cf.weight_g,
-    color: cf.color || (lure && lure.color) || '', memo: cf.memo, released: cf.released, angler: cf.angler || cfg.me };
+    color: cf.color || (lure && lure.color) || '', memo: cf.memo, released: cf.released };
   if (!cf.edit) { row.time = hm(); if (pos) { row.lat = pos.lat.toFixed(6); row.lng = pos.lng.toFixed(6); } }
   write('Catches', row);
 
@@ -648,7 +637,7 @@ function rerenderSheet(){
 /* ───────── 렌더 ───────── */
 function render(){
   const top = window.scrollY;
-  $('#app').innerHTML = view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : vHome();
+  $('#app').innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : vHome();
   if (view === 'start' || view === 'trip') window.scrollTo(0, top);
 }
 
@@ -661,7 +650,7 @@ document.addEventListener('click', async e => {
   if (el.dataset.f) {
     const f = el.dataset.f, k = el.dataset.k, v = el.dataset.v, form = { sf, cf, ef }[f];
     if (el.dataset.multi) form[k] = form[k].includes(v) ? form[k].filter(x => x !== v) : [...form[k], v];
-    else form[k] = form[k] === v && k !== 'setup_id' && k !== 'angler' && k !== 'released' ? '' : v;
+    else form[k] = form[k] === v && k !== 'setup_id' && k !== 'released' ? '' : v;
     if (f === 'cf' && k === 'setup_id') { const st = byId('Setups', v); if (st && st.default_rig) cf.rig = st.default_rig; }
     if (f === 'cf' && k === 'lure_id') { const l = byId('Lures', cf.lure_id); if (l && l.default_rig) cf.rig = l.default_rig; }
     if (f === 'sf' && k === 'spot_id') loadWeather();
@@ -680,7 +669,7 @@ document.addEventListener('click', async e => {
   switch (el.dataset.act) {
     case 'settings': view = 'settings'; render(); break;
     case 'home': view = trip ? 'trip' : 'home'; stopGPSIfIdle(); render(); break;
-    case 'connect': connect(); break;
+    case 'boot': boot(); break;
     case 'flush': lastErr = ''; queue.forEach(o => { if ((o.tries || 0) >= MAX_TRIES) o.tries = MAX_TRIES - 1; }); flush(); toast('전송 시도'); break;
     case 'retryFailed': queue.forEach(o => { o.tries = 0; }); save(LS.queue, queue); flush(); render(); break;
     case 'dropFailed': if (confirmTap('drop')) { queue = queue.filter(o => (o.tries || 0) < MAX_TRIES); save(LS.queue, queue); render(); } break;
@@ -746,8 +735,7 @@ setInterval(() => { const el = $('#elapsed'); if (el) el.textContent = elapsed(c
 /* ───────── 시작 ───────── */
 if (trip) startGPS();
 render();
-refreshPhotos();
-flush();
+if (view === 'loading') boot(); else { refreshPhotos(); flush(); }
 </script>
 </body>
 </html>
