@@ -1,6 +1,6 @@
 /* BASS LOG 서비스 워커 — 신호 없는 저수지에서도 앱이 열리게
    DEVELOPED BY DONGGU KANG */
-const CACHE = 'bass-log-v1';
+const CACHE = 'bass-log-v2';
 const TILES = 'bass-log-tiles';
 const MAX_TILES = 1500;
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
@@ -26,7 +26,8 @@ self.addEventListener('fetch', e => {
   const u = new URL(req.url);
 
   // 데이터·날씨는 항상 네트워크 (앱이 직접 오프라인 처리)
-  if (/script\.google|googleusercontent|open-meteo/.test(u.hostname)) return;
+  // 네이버 지도는 약관상 저장 금지 → 캐시하지 않음
+  if (/script\.google|googleusercontent|open-meteo|naver\.com|naver\.net|pstatic\.net/.test(u.hostname)) return;
 
   // 앱 파일: 네트워크 우선 → 새 버전 바로 반영, 안 되면 캐시
   if (u.origin === location.origin) {

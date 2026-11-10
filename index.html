@@ -237,9 +237,11 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 #map .leaflet-popup-content-wrapper{background:var(--bg2);color:var(--text);border:2px solid var(--gold);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
 #map .leaflet-popup-tip{background:var(--gold)}
 #map .leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.6}
-#map .leaflet-popup-content .pl{font-family:'Press Start 2P',monospace;font-size:15px;margin-bottom:6px}
-#map .leaflet-popup-content .pm{color:var(--sub);font-size:12px}
+#map .popc .pl{font-family:'Press Start 2P',monospace;font-size:15px;margin-bottom:6px}
+#map .popc .pm{color:var(--sub);font-size:12px}
 #map a.leaflet-popup-close-button{color:var(--sub)}
+#map .nPop{background:var(--bg2);color:var(--text);border:2px solid var(--gold);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.6);padding:12px 14px;font-size:13px;line-height:1.6;max-width:260px;font-family:'Galmuri11',sans-serif;position:relative;margin-bottom:8px}
+#map .nPop::after{content:'';position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--gold)}
 #map .leaflet-bar a{background:var(--bg2)!important;color:var(--gold)!important;border-color:var(--line)!important;font-family:'Press Start 2P',monospace;font-size:14px}
 #map .leaflet-control-attribution{background:rgba(22,33,62,.8)!important;color:var(--sub)!important;font-size:9px}
 #map .leaflet-control-attribution a{color:var(--sub)!important}
@@ -264,6 +266,7 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbwno2F5-wiQ8jQIwexBaFTpfY61xvZPqqHS40FzQfE3DuNnCNUtoeq_hhwOkKc5l-3v/exec';
 const LEAFLET = 'https://unpkg.com/leaflet@1.9.4/dist/';
+const NAVER_KEY = 'j82bqa2fnv';   // 네이버 클라우드 Maps Client ID (등록 도메인에서만 동작)
 const LS = { data:'bl_data', queue:'bl_queue', trip:'bl_trip', last:'bl_last', map:'bl_map' };
 const KEY = { Trips:'trip_id', Catches:'catch_id', Spots:'spot_id', Lures:'lure_id', Photos:'photo_id',
               Tackle:'tackle_id', Setups:'setup_id', Options:'option_id' };
@@ -433,7 +436,7 @@ let sf = null, cf = null, ef = null, sheetFn = null;
 let pos = null, watchId = null;
 let photoCount = 0, photoCatchIds = new Set();
 let flushing = false, lastErr = '';
-let map = null, mapLayers = null, baseLayers = null, curBase = load('bl_base', 'sat'), meMarker = null;
+let M = null, naverFailed = false;
 
 /* ═════════ 데이터 ═════════ */
 const rows = s => (DB && DB[s]) || [];
@@ -944,7 +947,7 @@ function vMap(){
   <div class="mapTop">
     <div class="mapBar">
       <button class="mb ${filterCount() ? 'on' : ''}" data-act="mapFilter">🔎 필터${filterCount() ? ' ' + filterCount() : ''}</button>
-      <button class="mb" data-act="mapBase">${curBase === 'sat' ? '🛰 위성' : '🌙 다크'}</button>
+      <button class="mb" data-act="mapBase">🗺 지도</button>
       <button class="mb" data-act="mapMe">📍</button>
       <span class="cnt" id="mapCnt">0</span>
     </div>
@@ -952,38 +955,117 @@ function vMap(){
   </div>
   <div class="mapEmpty" id="mapEmpty" style="display:none"></div></div>`;
 }
-function loadLeaflet(){
-  if (window.L) return Promise.resolve();
+function loadScript(src, timeout = 15000){
   return new Promise((res, rej) => {
-    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = LEAFLET + 'leaflet.css'; document.head.appendChild(l);
-    const s = document.createElement('script'); s.src = LEAFLET + 'leaflet.js'; s.onload = res; s.onerror = () => rej(new Error('지도 라이브러리를 못 불러왔어'));
-    document.head.appendChild(s);
+    const s = document.createElement('script'); let done = false;
+    s.src = src; s.onload = () => { done = true; res(); }; s.onerror = () => { done = true; rej(new Error('로드 실패')); };
+    document.head.appendChild(s); setTimeout(() => { if (!done) rej(new Error('시간 초과')); }, timeout);
   });
 }
+function loadLeaflet(){
+  if (window.L) return Promise.resolve();
+  const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = LEAFLET + 'leaflet.css'; document.head.appendChild(l);
+  return loadScript(LEAFLET + 'leaflet.js');
+}
+function loadNaver(){
+  if (window.naver && naver.maps && naver.maps.Map) return Promise.resolve();
+  return loadScript(`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${NAVER_KEY}`);
+}
+// 네이버 인증 실패 시 (도메인 미등록 등) 기본 지도로 자동 전환
+window.navermap_authFailure = () => {
+  naverFailed = true;
+  if (M && M.kind === 'naver' && view === 'map') { say('네이버 지도 인증이 안 돼서 기본 지도로 바꿨어', 'dende'); render(); }
+};
+
 async function initMap(){
-  try { await loadLeaflet(); } catch (e) { mapMsg(`${img('cat:boo:sleep', 4)}${esc(e.message)}<br>인터넷 연결을 확인해 줘!`); return; }
-  if (view !== 'map' || !$('#map') || map) return;
-  map = L.map('map', { zoomControl: false }).setView([36.5, 127.8], 7);
+  let A = null;
+  if (!naverFailed) {
+    try { await loadNaver(); if (view !== 'map' || !$('#map') || M) return; A = naverAdapter(); }
+    catch (e) { naverFailed = true; }
+  }
+  if (!A) {
+    try { await loadLeaflet(); } catch (e) { mapMsg(`${img('cat:boo:sleep', 4)}지도를 못 불러왔어…<br>인터넷 연결을 확인해 줘!`); return; }
+    if (view !== 'map' || !$('#map') || M) return;
+    A = leafletAdapter();
+  }
+  M = A;
+  const bb = $('[data-act=mapBase]'); if (bb) bb.textContent = M.baseLabel();
+  drawMap(true); if (pos) placeMe(); startGPS();
+}
+
+/* 지도 엔진 어댑터: 같은 함수로 네이버 / Leaflet 둘 다 그림 */
+function naverAdapter(){
+  const N = naver.maps, LL = (a, b) => new N.LatLng(a, b);
+  const types = ['HYBRID', 'SATELLITE', 'NORMAL'], labels = { HYBRID:'🛰 위성+지명', SATELLITE:'🛰 위성', NORMAL:'🗺 일반' };
+  let base = load('bl_base_n', 'HYBRID'); if (!labels[base]) base = 'HYBRID';
+  const map = new N.Map('map', {
+    center: LL(36.5, 127.8), zoom: 7, mapTypeId: N.MapTypeId[base],
+    zoomControl: true, zoomControlOptions: { position: N.Position.RIGHT_BOTTOM, style: N.ZoomControlStyle.SMALL },
+    mapDataControl: false, scaleControl: false, logoControlOptions: { position: N.Position.BOTTOM_LEFT },
+  });
+  const info = new N.InfoWindow({ content: '', backgroundColor: 'transparent', borderWidth: 0, disableAnchor: true, pixelOffset: new N.Point(0, -10) });
+  const g = { catch: [], spot: [], line: [] };
+  let me = null, showCatch = true;
+  N.Event.addListener(map, 'zoom_changed', zoomVis);
+  N.Event.addListener(map, 'click', () => info.close());
+  return {
+    kind: 'naver',
+    clear(){ info.close(); Object.values(g).forEach(arr => { arr.forEach(o => o.setMap(null)); arr.length = 0; }); },
+    marker(k, lat, lng, html, size, anchor, z, popup){
+      const m = new N.Marker({ position: LL(lat, lng), map: (k === 'catch' && !showCatch) ? null : map, zIndex: 100 + z,
+        icon: { content: html, size: new N.Size(size[0], size[1]), anchor: new N.Point(anchor[0], anchor[1]) } });
+      N.Event.addListener(m, 'click', () => { info.setContent(`<div class="popc nPop">${popup}</div>`); info.open(map, m); });
+      g[k].push(m);
+    },
+    line(pts){ g.line.push(new N.Polyline({ map, path: pts.map(p => LL(p[0], p[1])), strokeColor: '#f7b731', strokeWeight: 3, strokeOpacity: .9, strokeStyle: 'shortdash' })); },
+    fit(pts){
+      const b = new N.LatLngBounds(LL(pts[0][0], pts[0][1]), LL(pts[0][0], pts[0][1]));
+      pts.forEach(p => b.extend(LL(p[0], p[1])));
+      map.fitBounds(b, { top: 100, right: 50, bottom: 60, left: 50 });
+      if (map.getZoom() > 17) map.setZoom(17);
+    },
+    view(pt, z){ map.setCenter(LL(pt[0], pt[1])); map.setZoom(z); },
+    zoom(){ return map.getZoom(); },
+    catchesVisible(v){ if (v === showCatch) return; showCatch = v; g.catch.forEach(m => m.setMap(v ? map : null)); },
+    me(lat, lng, html){ if (me) me.setPosition(LL(lat, lng)); else me = new N.Marker({ position: LL(lat, lng), map, zIndex: 2000, icon: { content: html, anchor: new N.Point(14, 10) } }); },
+    baseLabel(){ return labels[base]; },
+    nextBase(){ base = types[(types.indexOf(base) + 1) % types.length]; save('bl_base_n', base); map.setMapTypeId(N.MapTypeId[base]); },
+    destroy(){ info.close(); map.destroy(); },
+  };
+}
+function leafletAdapter(){
+  const map = L.map('map', { zoomControl: false }).setView([36.5, 127.8], 7);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  baseLayers = {
+  const bases = {
     sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 18, attribution: 'Tiles © Esri' }),
     dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, subdomains: 'abcd', attribution: '© OpenStreetMap © CARTO' }),
   };
-  baseLayers[curBase].addTo(map);
-  mapLayers = { spots: L.layerGroup().addTo(map), route: L.layerGroup().addTo(map), catches: L.layerGroup().addTo(map) };
+  let base = load('bl_base', 'sat'); if (!bases[base]) base = 'sat'; bases[base].addTo(map);
+  const g = { spot: L.layerGroup().addTo(map), line: L.layerGroup().addTo(map), catch: L.layerGroup().addTo(map) };
+  let me = null;
   map.on('zoomend', zoomVis);
-  drawMap(true); if (pos) placeMe(); startGPS();
+  return {
+    kind: 'leaflet',
+    clear(){ Object.values(g).forEach(l => l.clearLayers()); },
+    marker(k, lat, lng, html, size, anchor, z, popup){
+      L.marker([lat, lng], { icon: L.divIcon({ className: '', html, iconSize: size, iconAnchor: anchor, popupAnchor: [0, 4 - anchor[1]] }), zIndexOffset: z })
+        .bindPopup(`<div class="popc">${popup}</div>`).addTo(g[k]);
+    },
+    line(pts){ L.polyline(pts, { color: '#f7b731', weight: 3, dashArray: '6 6', opacity: .9 }).addTo(g.line); },
+    fit(pts){ map.fitBounds(pts, { padding: [50, 50], maxZoom: 17 }); },
+    view(pt, z){ map.setView(pt, z); },
+    zoom(){ return map.getZoom(); },
+    catchesVisible(v){ if (v && !map.hasLayer(g.catch)) map.addLayer(g.catch); if (!v && map.hasLayer(g.catch)) map.removeLayer(g.catch); },
+    me(lat, lng, html){ if (me) me.setLatLng([lat, lng]); else me = L.marker([lat, lng], { icon: L.divIcon({ className: '', html, iconSize: [28, 20], iconAnchor: [14, 10] }), zIndexOffset: 1000 }).addTo(map); },
+    baseLabel(){ return base === 'sat' ? '🛰 위성' : '🌙 다크'; },
+    nextBase(){ map.removeLayer(bases[base]); base = base === 'sat' ? 'dark' : 'sat'; save('bl_base', base); bases[base].addTo(map); },
+    destroy(){ map.remove(); },
+  };
 }
+
 function mapMsg(html){ const e = $('#mapEmpty'); if (!e) return; e.style.display = html ? 'block' : 'none'; e.innerHTML = html || ''; }
-function pinIcon(c, n){
-  const t = tier(c.length_cm);
-  return L.divIcon({ className: '', iconSize: [44, 34], iconAnchor: [22, 17], popupAnchor: [0, -14],
-    html: `<div class="pin p${t}">${n ? `<i>#${n}</i>` : ''}<img class="px" src="${spr('bass', 2)}"><b>${esc(Math.round(+c.length_cm))}</b></div>` });
-}
-function spotIcon(s){
-  return L.divIcon({ className: '', iconSize: [90, 44], iconAnchor: [45, 22], popupAnchor: [0, -18],
-    html: `<div class="spin"><img class="px" src="${spr('tent', 2)}"><b>${esc(s.name)}</b></div>` });
-}
+const pinHtml = (c, n) => `<div class="pin p${tier(c.length_cm)}">${n ? `<i>#${n}</i>` : ''}<img class="px" src="${spr('bass', 2)}"><b>${esc(Math.round(+c.length_cm))}</b></div>`;
+const spotHtml = s => `<div class="spin"><img class="px" src="${spr('tent', 2)}"><b>${esc(s.name)}</b></div>`;
 function catchPopup(c){
   const t = tier(c.length_cm), su = byId('Setups', c.setup_id);
   return `<div class="pl t${t}">${esc(c.length_cm)}<span style="font-size:9px">cm</span></div>
@@ -1004,14 +1086,14 @@ function spotPopup(s){
     ${s.notes ? `<div class="pm">${esc(s.notes)}</div>` : ''}`;
 }
 function drawMap(fit){
-  if (!map) return;
-  Object.values(mapLayers).forEach(l => l.clearLayers());
+  if (!M) return;
+  M.clear();
   const list = filtered();
   const ordered = mf.trip ? list.slice().sort((a, b) => (a.time || '').localeCompare(b.time || '')) : list;
-  ordered.forEach((c, i) => L.marker([+c.lat, +c.lng], { icon: pinIcon(c, mf.trip ? i + 1 : 0), zIndexOffset: tier(c.length_cm) * 100 }).bindPopup(catchPopup(c)).addTo(mapLayers.catches));
-  if (mf.trip && ordered.length > 1) L.polyline(ordered.map(c => [+c.lat, +c.lng]), { color: '#f7b731', weight: 3, dashArray: '6 6', opacity: .9 }).addTo(mapLayers.route);
+  ordered.forEach((c, i) => M.marker('catch', +c.lat, +c.lng, pinHtml(c, mf.trip ? i + 1 : 0), [44, 34], [22, 17], tier(c.length_cm) * 100, catchPopup(c)));
+  if (mf.trip && ordered.length > 1) M.line(ordered.map(c => [+c.lat, +c.lng]));
   const spots = active('Spots').filter(s => +s.lat && +s.lng);
-  spots.forEach(s => L.marker([+s.lat, +s.lng], { icon: spotIcon(s) }).bindPopup(spotPopup(s)).addTo(mapLayers.spots));
+  spots.forEach(s => M.marker('spot', +s.lat, +s.lng, spotHtml(s), [90, 44], [45, 22], 0, spotPopup(s)));
   const cnt = $('#mapCnt'); if (cnt) cnt.textContent = list.length + '수';
   if (!list.length) {
     const any = rows('Catches').some(c => +c.lat);
@@ -1021,22 +1103,16 @@ function drawMap(fit){
   if (fit) {
     let pts = list.map(c => [+c.lat, +c.lng]);
     if (!pts.length) pts = spots.map(s => [+s.lat, +s.lng]);
-    if (pts.length === 1) map.setView(pts[0], 16); else if (pts.length) map.fitBounds(pts, { padding: [50, 50], maxZoom: 17 });
+    if (pts.length === 1) M.view(pts[0], 16); else if (pts.length) M.fit(pts);
   }
   zoomVis();
 }
-function zoomVis(){
-  if (!map) return;
-  const show = map.getZoom() >= 11 || mf.trip;
-  if (show && !map.hasLayer(mapLayers.catches)) map.addLayer(mapLayers.catches);
-  if (!show && map.hasLayer(mapLayers.catches)) map.removeLayer(mapLayers.catches);
-}
+function zoomVis(){ if (M) M.catchesVisible(M.zoom() >= 11 || !!mf.trip); }
 function placeMe(){
-  if (!map || !pos) return;
-  const icon = L.divIcon({ className: '', iconSize: [28, 20], iconAnchor: [14, 10], html: `<img class="px" src="${spr('mini:dende', 2)}" style="filter:drop-shadow(0 0 4px #f7b731)">` });
-  if (meMarker) meMarker.setLatLng([pos.lat, pos.lng]); else meMarker = L.marker([pos.lat, pos.lng], { icon, zIndexOffset: 1000 }).addTo(map);
+  if (!M || !pos) return;
+  M.me(pos.lat, pos.lng, `<img class="px" src="${spr('mini:dende', 2)}" style="filter:drop-shadow(0 0 4px #f7b731)">`);
 }
-function destroyMap(){ if (map) { map.remove(); map = null; meMarker = null; } }
+function destroyMap(){ if (M) { try { M.destroy(); } catch (e) {} M = null; } }
 
 function vFilter(){
   const use = usage('lure_id'), useRig = usage('rig');
@@ -1231,12 +1307,11 @@ document.addEventListener('click', async e => {
     case 'mapReset': mf = { lure:[], rig:[], season:[], tod:[], size:'', trip:'' }; save(LS.map, mf); hideSheet(); render(); break;
     case 'mapTripClear': mf.trip = ''; save(LS.map, mf); render(); break;
     case 'mapBase':
-      if (!map) break;
-      map.removeLayer(baseLayers[curBase]); curBase = curBase === 'sat' ? 'dark' : 'sat'; save('bl_base', curBase);
-      baseLayers[curBase].addTo(map); el.textContent = curBase === 'sat' ? '🛰 위성' : '🌙 다크'; break;
+      if (!M) break;
+      M.nextBase(); el.textContent = M.baseLabel(); break;
     case 'mapMe':
       startGPS();
-      if (pos && map) { placeMe(); map.setView([pos.lat, pos.lng], Math.max(map.getZoom(), 15)); } else say('위치 찾는 중…', 'dende');
+      if (pos && M) { placeMe(); M.view([pos.lat, pos.lng], Math.max(M.zoom(), 15)); } else say('위치 찾는 중…', 'dende');
       break;
   }
 });
