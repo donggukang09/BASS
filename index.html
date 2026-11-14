@@ -13,6 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <title>BASS LOG · 덴데 & 부우의 배스 조행기</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
 <style>
 :root{
@@ -22,9 +23,11 @@
   --notch:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px));
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text);font-family:'Galmuri11','Apple SD Gothic Neo','Noto Sans KR',sans-serif;font-size:15px;line-height:1.5}
+html,body{background:var(--bg);color:var(--text);font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;font-size:15px;line-height:1.5}
 body{min-height:100vh;overflow-x:hidden}
 .pf{font-family:'Press Start 2P',monospace;letter-spacing:.5px}
+/* 레트로 요소는 도트 폰트 유지, 설명 글씨는 프리텐다드 */
+.dot,h1.t,.chip,.tg,.bubble,.badge,.stitle span,#nav button,.photo label,.inline button,.mb,.spin b,.mapNote,.x,.sync{font-family:'Galmuri11','Pretendard Variable',sans-serif}
 .px{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 input{font:inherit}
@@ -45,9 +48,9 @@ input{font:inherit}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:4px 0 10px}
 .logo{font-size:17px;color:#fff;text-shadow:0 0 18px rgba(247,183,49,.5),0 0 34px rgba(233,69,96,.3)}
 .logo em{font-style:normal;color:var(--gold)}
-.tag{font-size:12px;color:var(--sub);margin-top:6px}
+.tag{font-size:13px;color:var(--sub);margin-top:6px}
 h1.t{font-size:20px}
-.sub{font-size:12px;color:var(--sub)}
+.sub{font-size:13px;color:var(--sub)}
 
 /* 카드 */
 .card{background:var(--bg2);border:2px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;position:relative;overflow:hidden}
@@ -110,7 +113,7 @@ h1.t{font-size:20px}
 @keyframes catJump{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
 
 /* 말풍선 */
-.bubble{position:absolute;background:rgba(22,33,62,.96);border:2px solid var(--gold);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none;z-index:8;box-shadow:0 4px 15px rgba(0,0,0,.5),0 0 10px rgba(247,183,49,.15)}
+.bubble{position:absolute;background:rgba(22,33,62,.96);border:2px solid var(--gold);border-radius:10px;padding:6px 10px;font-size:13px;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none;z-index:8;box-shadow:0 4px 15px rgba(0,0,0,.5),0 0 10px rgba(247,183,49,.15)}
 .bubble.show{opacity:1}
 .bubble.tail::after{content:'';position:absolute;bottom:-10px;left:16px;border:5px solid transparent;border-top-color:var(--gold)}
 #say{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-10px);display:flex;align-items:flex-end;gap:4px;z-index:60;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;width:max-content;max-width:94vw}
@@ -128,7 +131,7 @@ h1.t{font-size:20px}
 .stat{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center}
 .stat b{display:block;font-family:'Press Start 2P',monospace;font-size:16px;color:#fff;margin-bottom:6px}
 .stat b.gold{color:var(--gold);text-shadow:0 0 10px rgba(247,183,49,.35)}
-.stat span{font-size:11px;color:var(--sub)}
+.stat span{font-size:12px;color:var(--sub)}
 
 /* 목록 */
 .list{display:flex;flex-direction:column;gap:8px}
@@ -136,7 +139,7 @@ h1.t{font-size:20px}
 .row:active{border-color:var(--gold)}
 .row .len{font-family:'Press Start 2P',monospace;font-size:15px;min-width:58px;color:#fff}
 .row .len small{font-size:7px;color:var(--sub);margin-left:2px}
-.row .meta{flex:1;font-size:12px;color:var(--sub);min-width:0}
+.row .meta{flex:1;font-size:13.5px;line-height:1.55;color:var(--sub);min-width:0}
 .row .meta b{color:var(--text);font-weight:400}
 .t1{color:var(--green)!important} .t2{color:var(--gold)!important} .t3{color:var(--accent)!important}
 .badge{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--line);color:var(--sub);white-space:nowrap}
@@ -145,10 +148,11 @@ h1.t{font-size:20px}
 .empty .px{margin:0 auto 8px}
 
 /* 입력 */
-label.f{display:block;color:var(--sub);font-size:12px;margin:16px 0 7px}
+label.f{display:block;color:var(--sub);font-size:13px;font-weight:600;margin:16px 0 7px}
 label.f:first-child{margin-top:0}
-input.t{width:100%;background:rgba(0,0,0,.25);border:2px solid var(--line);color:var(--text);border-radius:8px;padding:12px;font-size:15px}
-input.t:focus{outline:none;border-color:var(--gold)}
+input.t,textarea.t{width:100%;background:rgba(0,0,0,.25);border:2px solid var(--line);color:var(--text);border-radius:8px;padding:12px;font-size:15px}
+textarea.t{min-height:110px;resize:vertical;line-height:1.6}
+input.t:focus,textarea.t:focus{outline:none;border-color:var(--gold)}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{clip-path:var(--notch);background:var(--card);padding:9px 13px;font-size:14px;color:var(--text);box-shadow:inset 0 -3px 0 rgba(0,0,0,.3)}
 .chip small{color:var(--sub);margin-left:5px;font-size:11px}
@@ -229,18 +233,47 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 
 /* 오늘의 공략 */
 .reco .rk{display:flex;gap:10px;align-items:flex-start;margin-top:10px}
-.reco .rk>span{flex:none;width:38px;font-size:12px;color:var(--sub);padding-top:6px}
+.reco .rk>span{flex:none;width:40px;font-size:13px;color:var(--sub);padding-top:6px}
 .tg{display:inline-block;clip-path:var(--notch);background:var(--card);padding:6px 10px;font-size:13px;margin:0 6px 6px 0}
 .tg.top{background:var(--gold);color:#1a1a2e;font-weight:700}
 .tg small{color:var(--sub);margin-left:4px;font-size:11px}
 .tg.top small{color:#5a3d00}
-.why{list-style:none;margin-top:12px;font-size:12px;color:var(--text);display:flex;flex-direction:column;gap:6px}
+.why{list-style:none;margin-top:12px;font-size:14px;line-height:1.55;color:var(--text);display:flex;flex-direction:column;gap:6px}
 .why li{padding-left:14px;position:relative}
 .why li::before{content:'▸';position:absolute;left:0;color:var(--gold)}
-.mine{margin-top:12px;font-size:12px;background:rgba(139,195,74,.08);border:1px solid rgba(139,195,74,.35);border-radius:8px;padding:8px 10px}
+.mine{margin-top:12px;font-size:13.5px;background:rgba(139,195,74,.08);border:1px solid rgba(139,195,74,.35);border-radius:8px;padding:8px 10px}
 .recoHead{display:flex;gap:8px;align-items:flex-end;margin-bottom:4px}
 .recoHead .bubble{position:relative;opacity:1;white-space:normal;margin-bottom:18px}
 .recoToggle{width:100%;text-align:left}
+
+/* 출조 상세 */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pbtn.lbl{cursor:pointer}
+.tphotos{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tphotos img{width:64px;height:64px;object-fit:cover;border:2px solid var(--line);border-radius:6px;cursor:pointer}
+.bpi{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.bpi img{width:76px;height:76px;object-fit:cover;border:2px solid var(--gold);border-radius:6px;flex:none}
+.bpi .chips{gap:5px}.bpi .chip{padding:6px 9px;font-size:12px}
+
+/* 기록판 */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar{display:grid;grid-template-columns:76px 1fr auto;gap:8px;align-items:center;font-size:13px}
+.bar .bl{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .bt{position:relative;height:18px;background:rgba(255,255,255,.04);border-radius:2px}
+.bar .bf{position:absolute;left:0;top:0;bottom:0;background:var(--gold);border-radius:0 4px 4px 0;min-width:3px}
+.bar .bv{font-size:12px;color:var(--text);white-space:nowrap;text-align:right;min-width:92px}
+.bar.t3 .bf{background:var(--accent)}.bar.dim .bf{background:#5a6a8a}
+.cols{display:flex;align-items:flex-end;gap:4px;height:120px;padding-top:16px;border-bottom:1px solid var(--line)}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative}
+.col .cf{width:100%;max-width:26px;background:var(--gold);border-radius:4px 4px 0 0;min-height:0}
+.col.t3 .cf{background:var(--accent)}
+.col .cv{font-size:11px;color:var(--text);margin-bottom:3px}
+.colx{display:flex;gap:4px;margin-top:5px}.colx span{flex:1;text-align:center;font-size:10.5px;color:var(--sub)}
+.notes{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.55}
+.notes li{padding:8px 10px;background:rgba(247,183,49,.06);border-left:3px solid var(--gold);border-radius:0 6px 6px 0}
+.notes b{color:var(--gold)}
+.small-note{font-size:12px;color:var(--sub);margin-top:8px}
 
 /* 지도 */
 #mapWrap{position:fixed;left:0;right:0;top:0;bottom:calc(var(--navH) + env(safe-area-inset-bottom));z-index:1}
@@ -261,14 +294,14 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .pin i{font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#fff;background:#000;padding:1px 3px}
 .spin{display:flex;flex-direction:column;align-items:center}
 .spin b{font-size:11px;background:rgba(22,33,62,.95);border:1px solid var(--gold);color:var(--gold);padding:1px 6px;border-radius:4px;white-space:nowrap;font-weight:400}
-#map.leaflet-container{font-family:'Galmuri11',sans-serif}
+#map.leaflet-container{font-family:'Pretendard Variable',sans-serif}
 #map .leaflet-popup-content-wrapper{background:var(--bg2);color:var(--text);border:2px solid var(--gold);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
 #map .leaflet-popup-tip{background:var(--gold)}
 #map .leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.6}
 #map .popc .pl{font-family:'Press Start 2P',monospace;font-size:15px;margin-bottom:6px}
-#map .popc .pm{color:var(--sub);font-size:12px}
+#map .popc .pm{color:var(--sub);font-size:13px}
 #map a.leaflet-popup-close-button{color:var(--sub)}
-#map .nPop{background:var(--bg2);color:var(--text);border:2px solid var(--gold);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.6);padding:12px 14px;font-size:13px;line-height:1.6;max-width:260px;font-family:'Galmuri11',sans-serif;position:relative;margin-bottom:8px}
+#map .nPop{background:var(--bg2);color:var(--text);border:2px solid var(--gold);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.6);padding:12px 14px;font-size:13px;line-height:1.6;max-width:260px;font-family:'Pretendard Variable',sans-serif;position:relative;margin-bottom:8px}
 #map .nPop::after{content:'';position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--gold)}
 #map .leaflet-bar a{background:var(--bg2)!important;color:var(--gold)!important;border-color:var(--line)!important;font-family:'Press Start 2P',monospace;font-size:14px}
 #map .leaflet-control-attribution{background:rgba(22,33,62,.8)!important;color:var(--sub)!important;font-size:9px}
@@ -457,7 +490,8 @@ let mf    = Object.assign({ lure:[], rig:[], season:[], tod:[], size:'', trip:''
 let view  = !DB ? 'loading' : (trip ? 'trip' : 'home');
 let sf = null, cf = null, ef = null, sheetFn = null;
 let pos = null, watchId = null;
-let photoCount = 0, photoCatchIds = new Set(), localPhotoMap = {}, vw = null, recoOpen = false;
+let photoCount = 0, photoCatchIds = new Set(), localPhotoMap = {}, localTripMap = {}, vw = null, recoOpen = false;
+let tdId = null, td = null, bp = null, statsP = load('bl_statsP', 'all');
 let flushing = false, lastErr = '';
 let M = null, naverFailed = false;
 
@@ -548,7 +582,8 @@ const idb = (() => {
 })();
 async function refreshPhotos(){
   try { const list = await idb.all(); photoCount = list.length;
-    localPhotoMap = {}; list.forEach(p => { if (p.catch_id) (localPhotoMap[p.catch_id] = localPhotoMap[p.catch_id] || []).push(p.data); });
+    localPhotoMap = {}; localTripMap = {};
+    list.forEach(p => { const m = p.catch_id ? localPhotoMap : localTripMap, k = p.catch_id || p.trip_id; if (k) (m[k] = m[k] || []).push(p.data); });
     photoCatchIds = new Set([...list.map(p => p.catch_id), ...rows('Photos').map(p => p.catch_id)].filter(Boolean));
   } catch (e) { photoCount = 0; }
   updateSync();
@@ -556,9 +591,11 @@ async function refreshPhotos(){
 /* 사진 모아 보기: Drive 업로드분 + 아직 폰에만 있는 사진 */
 const driveImg = (id, w) => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
 const driveAlt = (id, w) => `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${w}`;
-function photosOf(catchId){
-  const list = (localPhotoMap[catchId] || []).map(d => ({ src: d, big: d }));
-  rows('Photos').filter(p => p.catch_id === catchId && p.drive_file_id)
+// id가 조과(C…)면 그 조과 사진, 출조(T…)면 조과에 안 붙은 출조 사진
+function photosOf(id){
+  const isTrip = String(id).startsWith('T');
+  const list = ((isTrip ? localTripMap : localPhotoMap)[id] || []).map(d => ({ src: d, big: d }));
+  rows('Photos').filter(p => p.drive_file_id && (isTrip ? (p.trip_id === id && !p.catch_id) : p.catch_id === id))
     .forEach(p => list.push({ src: driveImg(p.drive_file_id, 600), big: driveImg(p.drive_file_id, 1600), alt: driveAlt(p.drive_file_id, 600), altBig: driveAlt(p.drive_file_id, 1600) }));
   return list;
 }
@@ -569,11 +606,12 @@ function openViewer(catchId, i = 0){
 }
 function drawViewer(){
   const el = $('#viewer'); if (!vw) { el.classList.remove('show'); el.innerHTML = ''; return; }
-  const ph = vw.list[vw.i], c = byId('Catches', vw.id) || {};
+  const ph = vw.list[vw.i], c = byId('Catches', vw.id), t = byId('Trips', vw.id);
   el.innerHTML = `<button class="x vx" data-act="vwClose">✕</button>
     <img class="vimg" src="${ph.big}" ${ph.altBig ? `onerror="this.onerror=null;this.src='${ph.altBig}'"` : ''} alt="">
-    <div class="vcap"><b class="pf t${tier(c.length_cm)}">${esc(c.length_cm || '')}<small>cm</small></b>
-      ${esc([[catchDate(c), c.time].filter(Boolean).join(' '), lureName(c.lure_id), c.rig].filter(Boolean).join(' · '))}</div>
+    <div class="vcap">${c ? `<b class="pf t${tier(c.length_cm)}">${esc(c.length_cm || '')}<small>cm</small></b>
+      ${esc([[catchDate(c), c.time].filter(Boolean).join(' '), lureName(c.lure_id), c.rig].filter(Boolean).join(' · '))}`
+      : t ? `<b style="font-size:15px;color:var(--gold)">출조 사진</b>${esc(t.date)} · ${esc(spotName(t.spot_id))}` : ''}</div>
     ${vw.list.length > 1 ? `<div class="vnav"><button class="pbtn small dark" data-act="vwPrev">◀</button><span class="pf">${vw.i + 1}/${vw.list.length}</span><button class="pbtn small dark" data-act="vwNext">▶</button></div>` : ''}`;
   el.classList.add('show');
 }
@@ -660,7 +698,7 @@ function chips(f, k, list, multi){
     return `<button class="chip ${on ? 'on' : ''}" data-f="${f}" data-k="${k}" data-v="${esc(o.v)}" ${multi ? 'data-multi="1"' : ''}>${esc(o.label ?? o.v)}${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</button>`;
   }).join('')}</div>`;
 }
-const forms = () => ({ sf, cf, ef, mf });
+const forms = () => ({ sf, cf, ef, mf, td });
 const simple = arr => arr.map(v => ({ v }));
 function lureName(id){ const l = byId('Lures', id); return l ? [l.brand, l.name].filter(Boolean).join(' ') : ''; }
 function setupLabel(s){ const line = byId('Tackle', s.line_id); return { v: s.setup_id, label: s.name || s.setup_id, sub: line && line.spec1 ? line.spec1 + 'lb' : '' }; }
@@ -765,7 +803,7 @@ function vHome(){
   <div class="card"><div class="stitle">RECENT TRIPS</div>
     <div class="list">${trips.length ? trips.slice(0, 12).map(t => {
       const cs = tripCatches(t.trip_id), mx = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
-      return `<div class="row" data-act="mapTrip" data-id="${esc(t.trip_id)}">
+      return `<div class="row" data-act="openTrip" data-id="${esc(t.trip_id)}">
         <div class="len">${cs.length}<small>수</small></div>
         <div class="meta"><b>${esc(t.date)} · ${esc(spotName(t.spot_id))}</b><br>${mx ? `<span class="t${tier(mx)}">최대 ${mx}cm</span> · ` : ''}${esc(t.summary || t.weather || '')}</div>
         <span class="badge ${t.status !== '정리완료' ? 'warn' : ''}">${esc(t.status || '')}</span></div>`;
@@ -976,9 +1014,11 @@ function vTrip(){
 }
 
 /* ═════════ 시트: 조과 ═════════ */
-function openCatch(id){
-  const t = curTrip(); if (!t) return;
-  const today = (t.setup_ids || '').split(',').filter(Boolean);
+function openCatch(id, tripId){
+  const t = byId('Trips', tripId || (trip && trip.trip_id)); if (!t) return;
+  const live = !!(trip && t.trip_id === trip.trip_id);
+  let today = (t.setup_ids || '').split(',').filter(Boolean);
+  if (!today.length) today = active('Setups').map(s => s.setup_id);
   if (id) { const c = byId('Catches', id); cf = { ...c, length: c.length_cm || '', photo: null, more: false, allLures: false, newLure: false, edit: true }; }
   else {
     const setup_id = today.includes(last.setup_id) ? last.setup_id : today[0] || '', st = byId('Setups', setup_id);
@@ -986,7 +1026,9 @@ function openCatch(id){
       structure:'', depth: last.depth || '', weight_g:'', color:'', memo:'', released:'Y', length:'', photo:null, more:false, allLures:false, newLure:false, edit:false };
     if (cf.lure_id && !byId('Lures', cf.lure_id)) cf.lure_id = '';
   }
-  cf.todaySetups = today; showSheet(vCatch);
+  cf.todaySetups = today; cf.trip_id = t.trip_id; cf.live = live && !id;
+  if (!cf.live && !id) cf.time = '';
+  showSheet(vCatch);
 }
 function lureOptions(){
   const order = [], seen = new Set();
@@ -1005,6 +1047,7 @@ function vCatch(){
   <div class="lenWrap">${img('cat:dende', 3, '', 'style="flex:none"')}<div class="lenBox ${cf.length ? (len >= 40 ? 't3' : '') : 'empty'}">${esc(cf.length || '0')}<small>cm</small></div>
     <div class="bubble tail" style="left:4px;top:-30px">${esc(lenLine(len))}</div></div>
   <div class="pad">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k => `<button data-key="${k}">${k}</button>`).join('')}</div>
+  ${cf.live ? '' : `<label class="f">잡은 시간</label><input class="t" type="time" value="${esc(cf.time || '')}" data-in="cf.time">`}
   <label class="f">세팅</label>${chips('cf', 'setup_id', setupIds.map(id => byId('Setups', id)).filter(Boolean).map(setupLabel))}
   <label class="f">루어</label>${chips('cf', 'lure_id', lo.list)}
   <div class="chips" style="margin-top:8px">${lo.more ? '<button class="chip add" data-act="allLures">더보기</button>' : ''}${cf.newLure ? '' : '<button class="chip add" data-act="newLure">+ 새 루어</button>'}</div>
@@ -1029,7 +1072,7 @@ function vCatch(){
 async function saveCatch(){
   const len = parseFloat(cf.length);
   if (!len) return say('길이부터 알려줘!', 'dende');
-  const t = curTrip(), edit = cf.edit;
+  const t = byId('Trips', cf.trip_id), edit = cf.edit, live = cf.live;
   let id = cf.catch_id;
   if (!id) {
     const base = 'C' + t.trip_id.slice(1) + '-';
@@ -1039,16 +1082,17 @@ async function saveCatch(){
   const lure = byId('Lures', cf.lure_id);
   const row = { catch_id: id, trip_id: t.trip_id, length_cm: String(len), setup_id: cf.setup_id, lure_id: cf.lure_id, rig: cf.rig, action: cf.action,
     structure: cf.structure, depth: cf.depth, weight_g: cf.weight_g, color: cf.color || (lure && lure.color) || '', memo: cf.memo, released: cf.released };
-  if (!edit) { row.time = hm(); if (pos) { row.lat = pos.lat.toFixed(6); row.lng = pos.lng.toFixed(6); } }
+  if (live) { row.time = hm(); if (pos) { row.lat = pos.lat.toFixed(6); row.lng = pos.lng.toFixed(6); } }
+  else row.time = cf.time || '';
   write('Catches', row);
   if (cf.photo) {
     await idb.put({ photo_id: 'P' + stamp() + Math.random().toString(36).slice(2, 4), trip_id: t.trip_id, catch_id: id, taken_at: ymd() + ' ' + hm(),
       caption:'', is_cover:'', blog_include:'', mime:'image/jpeg', data: cf.photo });
     await refreshPhotos();
   }
-  if (!edit) { last = { ...last, setup_id: cf.setup_id, lure_id: cf.lure_id, rig: cf.rig, action: cf.action, depth: cf.depth }; save(LS.last, last); }
+  if (live) { last = { ...last, setup_id: cf.setup_id, lure_id: cf.lure_id, rig: cf.rig, action: cf.action, depth: cf.depth }; save(LS.last, last); }
   hideSheet(); render();
-  if (edit) say('고쳤어!', 'dende'); else celebrate(len);
+  if (live) celebrate(len); else say(edit ? '고쳤어!' : `${len}cm 추가했어!`, 'dende');
 }
 function celebrate(len){
   const el = $('#cele'), t = tier(len), sparks = Array.from({ length: 14 }, (_, i) => {
@@ -1298,20 +1342,232 @@ function vFilter(){
   <div class="saveBar"><button class="pbtn" data-act="mapApply">적용</button></div>`;
 }
 
+/* ═════════ 화면: 출조 상세 (집에서 정리) ═════════ */
+function openDetail(id){
+  if (trip && trip.trip_id === id) { view = 'trip'; render(); return; }
+  const t = byId('Trips', id); if (!t) return;
+  tdId = id; td = { ...t }; view = 'detail'; render(); window.scrollTo(0, 0);
+}
+function vDetail(){
+  const t = byId('Trips', tdId);
+  if (!t) { view = 'home'; return vHome(); }
+  const cs = tripCatches(tdId), max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0), tp = photosOf(tdId);
+  const spots = active('Spots').map(s => ({ v: s.spot_id, label: s.name }));
+  return `<div class="head"><div><div class="sub">${esc(t.date)} · <span class="badge ${t.status !== '정리완료' ? 'warn' : ''}">${esc(t.status || '')}</span></div>
+    <h1 class="t">${esc(spotName(t.spot_id))}</h1></div><button class="x" data-act="detailBack">✕</button></div>
+  <div class="card"><div class="stitle">CATCHES <span>${cs.length}수${max ? ` · 최대 ${max}cm` : ''}</span></div>
+    <div class="list">${cs.length ? cs.map(c => `
+      <div class="row" data-act="editCatchT" data-id="${esc(c.catch_id)}">
+        <div class="len t${tier(c.length_cm)}">${esc(c.length_cm)}<small>cm</small></div>
+        <div class="meta"><b>${esc(c.time || '시간 미정')}</b> · ${esc(lureName(c.lure_id) || '루어 미정')} · ${esc(c.rig || '')}${c.action ? ' · ' + esc(c.action) : ''}${c.memo ? `<br>📝 ${esc(c.memo)}` : ''}</div>
+        ${photoCatchIds.has(c.catch_id) ? `<button class="camb" data-act="photos" data-id="${esc(c.catch_id)}">📷</button>` : ''}</div>`).join('')
+      : `<div class="empty">${img('cat:boo:sleep', 3)}이날은 꽝이었어… 깜빡한 조과가 있으면 추가해!</div>`}</div>
+    ${tp.length ? `<div class="sub" style="margin-top:12px">출조 사진</div><div class="tphotos">${tp.map((ph, i) => `<img src="${ph.src}" ${imgFallback(ph)} alt="" data-act="photos" data-id="${esc(tdId)}" data-i="${i}">`).join('')}</div>` : ''}
+    <button class="pbtn small dark" data-act="addCatchT" style="margin-top:14px">+ 깜빡한 조과 추가</button>
+    <label class="pbtn small dark lbl">📷 사진 여러 장 올리기<input type="file" accept="image/*" multiple id="bulkIn" hidden></label>
+    <div class="sub">찍은 시각으로 가장 가까운 조과에 자동으로 붙여줘. 틀린 것만 고치면 돼.</div>
+    ${cs.some(c => +c.lat) ? `<button class="link" data-act="mapTrip" data-id="${esc(tdId)}">🗺 이 출조 지도로 보기</button>` : ''}
+  </div>
+  <div class="card"><div class="stitle">REVIEW <span>후기</span></div>
+    <label class="f">한 줄 평</label><input class="t" value="${esc(td.summary)}" placeholder="예: 아침 피딩 짧고 해 뜨고 끝" data-in="td.summary">
+    <label class="f">후기</label><textarea class="t" placeholder="오늘 어땠어? 블로그 쓸 때 그대로 쓰여" data-in="td.review">${esc(td.review)}</textarea>
+    <label class="f">조황</label><div class="stars-pick">${chips('td', 'rating', [1,2,3,4,5].map(n => ({ v: String(n), label: '★'.repeat(n) })))}</div>
+  </div>
+  <div class="card"><div class="stitle">TRIP INFO <span>출조 정보</span></div>
+    <label class="f">날짜</label><input class="t" type="date" value="${esc(td.date)}" data-in="td.date">
+    <div class="two"><div><label class="f">시작</label><input class="t" type="time" value="${esc(td.start)}" data-in="td.start"></div>
+      <div><label class="f">종료</label><input class="t" type="time" value="${esc(td.end)}" data-in="td.end"></div></div>
+    <label class="f">포인트</label>${chips('td', 'spot_id', spots)}
+    <label class="f">동행 (쉼표로 구분)</label><input class="t" value="${esc(td.companions)}" data-in="td.companions">
+    <div class="two"><div><label class="f">날씨</label><input class="t" value="${esc(td.weather)}" data-in="td.weather"></div>
+      <div><label class="f">기온 ℃</label><input class="t" inputmode="decimal" value="${esc(td.air_temp)}" data-in="td.air_temp"></div></div>
+    <div class="two"><div><label class="f">바람</label><input class="t" value="${esc(td.wind)}" placeholder="북서 3m/s" data-in="td.wind"></div>
+      <div><label class="f">기압 hPa</label><input class="t" inputmode="numeric" value="${esc(td.pressure)}" data-in="td.pressure"></div></div>
+    <label class="f">수온 ℃</label><input class="t" inputmode="decimal" value="${esc(td.water_temp)}" data-in="td.water_temp">
+    <label class="f">물색</label>${chips('td', 'water_clarity', simple(opts('물색')))}
+    <label class="f">수위</label>${chips('td', 'water_level', simple(opts('수위')))}
+  </div>
+  <div class="saveBar"><button class="pbtn dark" data-act="saveTrip">저장</button>${t.status !== '정리완료' ? '<button class="pbtn" data-act="finishReview">✓ 정리 완료</button>' : ''}</div>`;
+}
+const TD_FIELDS = ['date','start','end','spot_id','companions','weather','air_temp','wind','pressure','water_temp','water_clarity','water_level','summary','review','rating'];
+function saveTrip(done){
+  const row = { trip_id: tdId }; TD_FIELDS.forEach(k => row[k] = td[k] ?? '');
+  if (done) row.status = '정리완료';
+  write('Trips', row); td = { ...byId('Trips', tdId) };
+  render(); say(done ? '정리 끝! 수고했어~' : '저장했어!', done ? 'boo' : 'dende');
+}
+
+// 사진 여러 장: EXIF 촬영 시각 → 가장 가까운 조과(60분 이내)에 자동 연결
+async function exifDate(file){
+  try {
+    const v = new DataView(await file.slice(0, 256 * 1024).arrayBuffer());
+    if (v.getUint16(0) !== 0xFFD8) return null;
+    let o = 2;
+    while (o < v.byteLength - 4) {
+      const m = v.getUint16(o), len = v.getUint16(o + 2);
+      if (m === 0xFFE1 && v.getUint32(o + 4) === 0x45786966) {
+        const t = o + 10, le = v.getUint16(t) === 0x4949;
+        const u16 = q => v.getUint16(q, le), u32 = q => v.getUint32(q, le);
+        const str = (q, n) => { let r = ''; for (let i = 0; i < n - 1; i++) r += String.fromCharCode(v.getUint8(q + i)); return r; };
+        const scan = (ifd, tags) => { const out = {}, n = u16(t + ifd); for (let i = 0; i < n; i++) { const e = t + ifd + 2 + i * 12, tag = u16(e); if (tags.includes(tag)) out[tag] = tag === 0x8769 ? u32(e + 8) : str(t + u32(e + 8), u32(e + 4)); } return out; };
+        const ifd0 = scan(u32(t + 4), [0x8769, 0x0132]);
+        let d = ifd0[0x8769] ? scan(ifd0[0x8769], [0x9003])[0x9003] : null;
+        d = d || ifd0[0x0132];
+        const mm = d && d.match(/(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2})/);
+        return mm ? new Date(+mm[1], mm[2] - 1, +mm[3], +mm[4], +mm[5]) : null;
+      }
+      if ((m & 0xFF00) !== 0xFF00) break;
+      o += 2 + len;
+    }
+  } catch (e) {}
+  return null;
+}
+async function onBulk(files){
+  const t = byId('Trips', tdId); if (!t) return;
+  say(`사진 ${files.length}장 읽는 중…`, 'boo');
+  const cs = tripCatches(tdId).filter(c => c.time), items = [];
+  for (const f of files) {
+    const ex = await exifDate(f), when = ex || new Date(f.lastModified);
+    let data; try { data = await resizeImage(f); } catch (e) { continue; }
+    let best = '', bd = Infinity;
+    cs.forEach(c => { const [h, m] = c.time.split(':').map(Number), d = new Date(t.date + 'T00:00'); d.setHours(h, m, 0, 0); const diff = Math.abs(d - when); if (diff < bd) { bd = diff; best = c.catch_id; } });
+    items.push({ data, when, exif: !!ex, catch_id: bd <= 60 * 60000 ? best : '' });
+  }
+  if (!items.length) return say('사진을 못 읽었어…', 'dende');
+  bp = { trip_id: tdId, items }; showSheet(vBulk);
+}
+function vBulk(){
+  const cs = tripCatches(bp.trip_id);
+  const auto = bp.items.filter(i => i.catch_id).length;
+  return `<div class="shead"><div><h1 class="t">사진 ${bp.items.length}장</h1><div class="sub">${auto}장은 찍은 시각으로 조과에 자동 연결했어. 틀린 것만 바꿔줘!</div></div><button class="x" data-act="closeSheet">✕</button></div>
+  ${bp.items.map((it, i) => `<div class="bpi"><img src="${it.data}" alt="">
+    <div><div class="sub" style="margin-bottom:6px">${esc(ymd(it.when) === (byId('Trips', bp.trip_id) || {}).date ? '' : ymd(it.when) + ' ')}${hm(it.when)} ${it.exif ? '촬영' : '(파일 시각)'}</div>
+    <div class="chips">${cs.map(c => `<button class="chip ${it.catch_id === c.catch_id ? 'on' : ''}" data-act="bpSet" data-i="${i}" data-v="${esc(c.catch_id)}">${esc(c.length_cm)}cm${c.time ? ' ' + esc(c.time) : ''}</button>`).join('')}
+      <button class="chip ${!it.catch_id ? 'on' : ''}" data-act="bpSet" data-i="${i}" data-v="">출조 사진</button></div></div></div>`).join('')}
+  <div class="saveBar"><button class="pbtn" data-act="bpSave">${navigator.onLine ? '저장하고 바로 업로드' : '저장 (와이파이에서 업로드)'}</button></div>`;
+}
+async function bpSave(){
+  for (const it of bp.items) {
+    await idb.put({ photo_id: 'P' + stamp(it.when) + Math.random().toString(36).slice(2, 6), trip_id: bp.trip_id, catch_id: it.catch_id,
+      taken_at: ymd(it.when) + ' ' + hm(it.when), caption: '', is_cover: '', blog_include: '', mime: 'image/jpeg', data: it.data });
+  }
+  const n = bp.items.length; bp = null; hideSheet(); await refreshPhotos(); render();
+  if (navigator.onLine) uploadPhotos(); else say(`사진 ${n}장 저장했어! 와이파이에서 올리자`, 'boo');
+}
+
+/* ═════════ 화면: 기록 (패턴 노트·기록판) ═════════ */
+const WT_BUCKETS = [['~8℃', -99, 8], ['8–12℃', 8, 12], ['12–16℃', 12, 16], ['16–22℃', 16, 22], ['22–26℃', 22, 26], ['26℃~', 26, 99]];
+function statsData(){
+  const now = new Date(), y = String(now.getFullYear());
+  const cut = new Date(now - 90 * 864e5), cutS = ymd(cut);
+  const trips = rows('Trips').filter(t => t.date && (statsP === 'all' || (statsP === 'year' ? t.date.startsWith(y) : t.date >= cutS)));
+  const ids = new Set(trips.map(t => t.trip_id));
+  return { trips, catches: rows('Catches').filter(c => ids.has(c.trip_id)) };
+}
+function groupCount(list, keyFn){
+  const m = {}; list.forEach(c => { const k = keyFn(c); if (!k) return; (m[k] = m[k] || []).push(c); });
+  return Object.entries(m).map(([k, a]) => ({ k, n: a.length, avg: Math.round(a.reduce((s, c) => s + (+c.length_cm || 0), 0) / a.length), max: a.reduce((s, c) => Math.max(s, +c.length_cm || 0), 0) })).sort((a, b) => b.n - a.n);
+}
+function hbars(list, label, value, text, cls){
+  const max = Math.max(...list.map(value), 1);
+  return `<div class="bars">${list.map(x => `<div class="bar ${cls ? cls(x) : ''}"><span class="bl">${esc(label(x))}</span>
+    <div class="bt"><div class="bf" style="width:${Math.max(2, value(x) / max * 100)}%"></div></div><span class="bv">${esc(text(x))}</span></div>`).join('')}</div>`;
+}
+function cols(list, cls){
+  const max = Math.max(...list.map(x => x.n), 1);
+  return `<div class="cols">${list.map(x => `<div class="col ${cls ? cls(x) : ''}" title="${esc(x.label)} ${x.n}수">${x.n ? `<span class="cv">${x.n}</span>` : ''}<div class="cf" style="height:${x.n / max * 82}%"></div></div>`).join('')}</div>
+    <div class="colx">${list.map(x => `<span>${esc(x.label)}</span>`).join('')}</div>`;
+}
+function patternNotes(trips, cs){
+  const notes = [], pct = (a, b) => Math.round(a / b * 100);
+  if (cs.length >= 3) {
+    const r = groupCount(cs, c => c.rig)[0];
+    if (r) notes.push(`리그 1위 <b>${esc(r.k)}</b> — 전체의 ${pct(r.n, cs.length)}% (${r.n}/${cs.length}수)`);
+  }
+  SEASONS.forEach(se => {
+    const sc = cs.filter(c => season(catchDate(c)) === se);
+    if (sc.length >= 3) { const r = groupCount(sc, c => c.rig)[0]; if (r && r.n >= 2) notes.push(`<b>${se}</b>엔 ${esc(r.k)} — ${se} ${sc.length}수 중 ${r.n}수`); }
+  });
+  const wt = WT_BUCKETS.map(([l, a, b]) => {
+    const ts = trips.filter(t => t.water_temp !== '' && !isNaN(+t.water_temp) && +t.water_temp >= a && +t.water_temp < b);
+    const n = cs.filter(c => ts.some(t => t.trip_id === c.trip_id)).length;
+    return { l, trips: ts.length, per: ts.length ? n / ts.length : 0 };
+  }).filter(x => x.trips >= 2).sort((a, b) => b.per - a.per)[0];
+  if (wt && wt.per > 0) notes.push(`수온 <b>${wt.l}</b>에서 출조당 ${wt.per.toFixed(1)}수로 가장 좋았어 (${wt.trips}회 출조)`);
+  const td = groupCount(cs, c => tod(c.time))[0];
+  if (td && td.n >= 2) notes.push(`<b>${td.k}</b>에 가장 많이 잡았어 — ${td.n}수, 평균 ${td.avg}cm`);
+  const big = cs.filter(c => +c.length_cm >= 40);
+  if (big.length >= 2) {
+    const r = groupCount(big, c => c.rig)[0], t2 = groupCount(big, c => tod(c.time))[0];
+    const parts = [r && r.n >= 2 ? `${esc(r.k)} ${r.n}마리` : '', t2 && t2.n >= 2 ? `${esc(t2.k)} ${t2.n}마리` : ''].filter(Boolean);
+    notes.push(`40업 <b>${big.length}마리</b>${parts.length ? ' — ' + parts.join(', ') : ' — 아직 뚜렷한 공통점은 없어'}`);
+  }
+  const lu = groupCount(cs, c => c.lure_id).filter(x => byId('Lures', x.k))[0];
+  if (lu && lu.n >= 2) notes.push(`최애 루어 <b>${esc(lureName(lu.k))}</b> — ${lu.n}수, 평균 ${lu.avg}cm`);
+  const zero = trips.filter(t => !cs.some(c => c.trip_id === t.trip_id)).length;
+  if (trips.length >= 3) notes.push(`꽝 ${zero}회 / 출조 ${trips.length}회 — 꽝 비율 ${pct(zero, trips.length)}%`);
+  return notes;
+}
+function vStats(){
+  const { trips, catches: cs } = statsData();
+  const per = trips.length ? (cs.length / trips.length).toFixed(1) : '-';
+  const max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
+  const avg = cs.length ? Math.round(cs.reduce((s, c) => s + (+c.length_cm || 0), 0) / cs.length) : 0;
+  const zero = trips.filter(t => !cs.some(c => c.trip_id === t.trip_id)).length;
+  const head = `<div class="head"><div><h1 class="t">기록판</h1><div class="sub pf" style="font-size:8px;margin-top:6px">HIGH SCORE</div></div></div>
+    ${chipsRaw('statsP', statsP, [{ v:'all', label:'전체' }, { v:'year', label:'올해' }, { v:'90', label:'최근 90일' }])}`;
+  if (!cs.length) return head + `<div class="card"><div class="empty">${img('cat:boo:sleep', 4)}${trips.length ? '이 기간엔 아직 잡은 고기가 없어…' : '아직 기록이 없어 zzZ'}<br>잡을수록 패턴이 보여!</div></div>`;
+  const notes = patternNotes(trips, cs);
+  const rig = groupCount(cs, c => c.rig).slice(0, 8);
+  const lure = groupCount(cs, c => c.lure_id).filter(x => byId('Lures', x.k)).slice(0, 5);
+  const setup = groupCount(cs, c => c.setup_id).filter(x => byId('Setups', x.k)).slice(0, 6);
+  const tods = TODS.map(k => ({ k, ...(groupCount(cs, c => tod(c.time)).find(x => x.k === k) || { n: 0, avg: 0 }) }));
+  const wts = WT_BUCKETS.map(([l, a, b]) => {
+    const ts = trips.filter(t => t.water_temp !== '' && !isNaN(+t.water_temp) && +t.water_temp >= a && +t.water_temp < b);
+    const n = cs.filter(c => ts.some(t => t.trip_id === c.trip_id)).length;
+    return { k: l, trips: ts.length, n, per: ts.length ? n / ts.length : 0 };
+  }).filter(x => x.trips);
+  const months = Array.from({ length: 12 }, (_, i) => ({ label: String(i + 1), n: cs.filter(c => +catchDate(c).slice(5, 7) === i + 1).length }));
+  const sizes = [[0, 25, '~25'], [25, 30, '25'], [30, 35, '30'], [35, 40, '35'], [40, 45, '40'], [45, 50, '45'], [50, 999, '50+']]
+    .map(([a, b, l]) => ({ label: l, a, n: cs.filter(c => +c.length_cm >= a && +c.length_cm < b).length }));
+  return head + `
+  <div class="card"><div class="stitle">SUMMARY</div><div class="tiles">
+    <div class="stat"><b>${trips.length}</b><span>출조</span></div><div class="stat"><b>${cs.length}</b><span>마릿수</span></div><div class="stat"><b>${per}</b><span>출조당</span></div>
+    <div class="stat"><b class="gold">${max}</b><span>최대어 cm</span></div><div class="stat"><b>${avg}</b><span>평균 cm</span></div><div class="stat"><b>${trips.length ? Math.round(zero / trips.length * 100) : 0}%</b><span>꽝 비율</span></div></div></div>
+  ${notes.length ? `<div class="card"><div class="stitle">PATTERN NOTE <span>덴데의 분석</span></div>
+    <div class="recoHead">${img('cat:dende', 3)}<div class="bubble tail">기록 ${cs.length}수로 찾은 패턴이야!</div></div>
+    <ul class="notes">${notes.map(n => `<li>${n}</li>`).join('')}</ul>
+    ${cs.length < 15 ? '<div class="small-note">아직 기록이 적어서 참고만! 쌓일수록 정확해져.</div>' : ''}</div>` : ''}
+  <div class="card"><div class="stitle">RIG <span>리그별</span></div>${hbars(rig, x => x.k, x => x.n, x => `${x.n}수 · 평균 ${x.avg}cm`)}</div>
+  ${lure.length ? `<div class="card"><div class="stitle">LURE <span>루어 TOP 5</span></div>${hbars(lure, x => lureName(x.k), x => x.n, x => `${x.n}수 · 최대 ${x.max}cm`)}</div>` : ''}
+  ${wts.length ? `<div class="card"><div class="stitle">WATER TEMP <span>수온대별 출조당 마릿수</span></div>${hbars(wts, x => x.k, x => x.per, x => `${x.per.toFixed(1)}수 (${x.trips}회)`)}
+    <div class="small-note">수온을 입력한 출조만 계산해.</div></div>` : ''}
+  <div class="card"><div class="stitle">TIME <span>시간대별</span></div>${hbars(tods, x => x.k, x => x.n, x => x.n ? `${x.n}수 · 평균 ${x.avg}cm` : '0', x => x.n ? '' : 'dim')}</div>
+  <div class="card"><div class="stitle">MONTH <span>월별 마릿수</span></div>${cols(months)}</div>
+  <div class="card"><div class="stitle">SIZE <span>사이즈 분포 (cm)</span></div>${cols(sizes, x => x.a >= 40 ? 't3' : '')}</div>
+  ${setup.length ? `<div class="card"><div class="stitle">TACKLE <span>세팅별</span></div>${hbars(setup, x => byId('Setups', x.k).name, x => x.n, x => `${x.n}수 · 최대 ${x.max}cm`)}</div>` : ''}
+  <footer>DEVELOPED BY DONGGU KANG<br>DENDE & BOO FOREVER</footer>`;
+}
+// 상태 하나짜리 칩 (기간 선택 등)
+function chipsRaw(key, cur, list){
+  return `<div class="chips" style="margin-bottom:4px">${list.map(o => `<button class="chip ${cur === o.v ? 'on' : ''}" data-act="raw" data-k="${key}" data-v="${o.v}">${esc(o.label)}</button>`).join('')}</div>`;
+}
+
 /* ═════════ 하단 탭 · 렌더 ═════════ */
 function vNav(){
-  const tab = view === 'map' ? 'map' : view === 'settings' ? 'settings' : 'home';
+  const tab = view === 'map' ? 'map' : view === 'settings' ? 'settings' : view === 'stats' ? 'stats' : 'home';
   return `<button class="${tab === 'home' ? 'on' : ''}" data-act="tabHome"><i>${trip ? '🎣' : '⛺'}</i>${trip ? '출조중' : '홈'}</button>
+    <button class="${tab === 'stats' ? 'on' : ''}" data-act="tabStats"><i>📊</i>기록</button>
     <button class="${tab === 'map' ? 'on' : ''}" data-act="tabMap"><i>🗺</i>지도</button>
     <button class="${tab === 'settings' ? 'on' : ''}" data-act="settings"><i>⚙</i>관리</button>`;
 }
 function render(){
   destroyMap();
   const app = $('#app'), top = window.scrollY;
-  app.className = view === 'map' ? 'full' : view === 'start' ? 'nonav' : '';
-  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : vHome();
-  const nav = $('#nav'); nav.className = (view === 'start' || view === 'loading') ? 'hide' : ''; nav.innerHTML = vNav();
-  if (view === 'start' || view === 'trip') window.scrollTo(0, top);
+  app.className = view === 'map' ? 'full' : (view === 'start' || view === 'detail') ? 'nonav' : '';
+  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : vHome();
+  const nav = $('#nav'); nav.className = (view === 'start' || view === 'loading' || view === 'detail') ? 'hide' : ''; nav.innerHTML = vNav();
+  if (view === 'start' || view === 'trip' || view === 'detail') window.scrollTo(0, top);
   if (view === 'map') initMap();
 }
 
@@ -1335,7 +1591,7 @@ document.addEventListener('click', async e => {
     if (f === 'cf' && k === 'setup_id') { const st = byId('Setups', v); if (st && st.default_rig) cf.rig = st.default_rig; }
     if (f === 'cf' && k === 'lure_id') { const l = byId('Lures', cf.lure_id); if (l && l.default_rig) cf.rig = l.default_rig; }
     if (f === 'sf' && k === 'spot_id') loadWeather();
-    return f === 'sf' ? render() : rerenderSheet();
+    return (f === 'sf' || f === 'td') ? render() : rerenderSheet();
   }
   if (el.dataset.key) {
     const k = el.dataset.key; let s = String(cf.length || '');
@@ -1371,6 +1627,16 @@ document.addEventListener('click', async e => {
     case 'beginTrip': beginTrip(); break;
     case 'catch': openCatch(); break;
     case 'editCatch': openCatch(el.dataset.id); break;
+    case 'openTrip': openDetail(el.dataset.id); break;
+    case 'detailBack': view = 'home'; render(); window.scrollTo(0, 0); break;
+    case 'editCatchT': openCatch(el.dataset.id, tdId); break;
+    case 'addCatchT': openCatch(null, tdId); break;
+    case 'saveTrip': saveTrip(false); break;
+    case 'finishReview': saveTrip(true); break;
+    case 'bpSet': bp.items[+el.dataset.i].catch_id = el.dataset.v; rerenderSheet(); break;
+    case 'bpSave': bpSave(); break;
+    case 'tabStats': view = 'stats'; render(); window.scrollTo(0, 0); break;
+    case 'raw': if (el.dataset.k === 'statsP') { statsP = el.dataset.v; save('bl_statsP', statsP); render(); } break;
     case 'closeSheet': hideSheet(); break;
     case 'allLures': cf.allLures = true; rerenderSheet(); break;
     case 'newLure': cf.newLure = true; rerenderSheet(); $('#nl_name').focus(); break;
@@ -1414,6 +1680,7 @@ document.addEventListener('input', e => {
   if (p === 'sf.water_temp') { const rc = $('#recoCard'); if (rc) rc.innerHTML = vReco(startSrc()); }
 });
 document.addEventListener('change', async e => {
+  if (e.target.id === 'bulkIn' && e.target.files.length) { const fs = [...e.target.files]; e.target.value = ''; return onBulk(fs); }
   if (e.target.id !== 'photoIn' || !e.target.files[0]) return;
   try { cf.photo = await resizeImage(e.target.files[0]); rerenderSheet(); } catch (err) { say(err.message, 'dende'); }
 });
