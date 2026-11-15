@@ -340,6 +340,38 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .quote.big{font-size:17px;font-weight:600;margin-bottom:12px}
 .btnrow{display:flex;gap:8px}.btnrow .pbtn{margin:6px 0}
 
+/* 위치 피커 · 지난 출조 · 예보 · 카드 */
+.locrow{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--sub)}
+.locrow .chip{flex:none}
+#picker{position:fixed;inset:0;z-index:90;background:#0a0e1a;display:none}
+#picker.show{display:block}
+#pmap{position:absolute;inset:0;width:100%;height:100%}
+#picker .cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);z-index:600;pointer-events:none;display:flex;flex-direction:column;align-items:center}
+#picker .cross i{width:3px;height:22px;background:var(--gold);box-shadow:0 0 0 2px #000}
+#picker .cross b{width:12px;height:12px;border:3px solid var(--gold);border-radius:50%;margin-top:-3px;box-shadow:0 0 0 2px #000;background:rgba(247,183,49,.3)}
+#picker .ptop{position:absolute;left:10px;right:10px;top:calc(10px + env(safe-area-inset-top));z-index:600;display:flex;gap:8px;align-items:flex-end;pointer-events:none}
+#picker .ptop .bubble{position:relative;opacity:1;white-space:normal;margin-bottom:18px}
+#picker .pbar{position:absolute;left:0;right:0;bottom:0;z-index:600;display:flex;gap:8px;padding:10px 14px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(10,14,26,.95) 40%)}
+#picker .pbar .pbtn{margin:0}
+.fcTop{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.fcScore{font-family:'Press Start 2P',monospace;font-size:34px}
+.fcGrade{font-family:'Galmuri11',sans-serif;font-size:15px;margin-top:6px}
+.fcDays{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.fcD{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:8px;padding:7px 2px;text-align:center;cursor:pointer}
+.fcD.today{border-color:var(--gold)}
+.fcD .dl{font-size:11px;color:var(--sub)}
+.fcD .de{font-size:18px;margin:3px 0}
+.fcD .ds{font-family:'Press Start 2P',monospace;font-size:10px}
+.fcD .db{height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin:6px 4px 0;overflow:hidden}
+.fcD .db i{display:block;height:100%}
+.s-hi{color:var(--accent)}.s-gd{color:var(--gold)}.s-md{color:var(--text)}.s-lo{color:var(--sub)}
+.bg-hi{background:var(--accent)}.bg-gd{background:var(--gold)}.bg-md{background:#8a9ab8}.bg-lo{background:#4a5a7a}
+.hrs{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+.hrs th{color:var(--sub);font-weight:500;padding:5px 2px;border-bottom:1px solid var(--line)}
+.hrs td{text-align:center;padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.04)}
+.hrs tr.pk td{background:rgba(247,183,49,.08)}
+.cardPrev{max-width:92vw;max-height:70vh;border:3px solid var(--gold);border-radius:6px}
+
 /* 지도 */
 #mapWrap{position:fixed;left:0;right:0;top:0;bottom:calc(var(--navH) + env(safe-area-inset-bottom));z-index:1}
 #map{position:absolute;inset:0;width:100%;height:100%;background:#0a0e1a} /* 네이버 지도가 position:relative로 덮어써도 높이 유지 */
@@ -381,6 +413,7 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 <div id="say"></div>
 <div id="cele"></div>
 <div id="viewer"></div>
+<div id="picker"></div>
 <script>
 /* BASS LOG — 덴데 & 부우의 배스 조행기
    DEVELOPED BY DONGGU KANG */
@@ -558,6 +591,7 @@ let pos = null, watchId = null;
 let photoCount = 0, photoCatchIds = new Set(), localPhotoMap = {}, localTripMap = {}, vw = null, recoOpen = false;
 let tdId = null, td = null, bp = null, statsP = load('bl_statsP', 'all');
 let briefId = null, BM = null, localKind = {};
+let pf = null, PM = null, pickSt = null, fc = load('bl_fc', null), fcSpot = load('bl_fcSpot', ''), fcLoading = false;
 const KINDS = ['scene', 'selfie'];
 let flushing = false, lastErr = '';
 let M = null, naverFailed = false;
@@ -675,7 +709,9 @@ function kindPhoto(tid, kind){
 }
 async function setKindPhoto(tid, kind, file){
   try {
-    const data = await resizeImage(file), ex = await exifDate(file), when = ex || new Date();
+    const data = await resizeImage(file), info = await exifInfo(file), ex = info && info.date, when = ex || new Date();
+    const sp = byId('Spots', (byId('Trips', tid) || {}).spot_id);
+    if (info && info.lat && sp && !+sp.lat) write('Spots', { spot_id: sp.spot_id, lat: info.lat.toFixed(6), lng: info.lng.toFixed(6) });
     for (const p of (await idb.all()).filter(p => p.trip_id === tid && p.is_cover === kind)) await idb.del(p.photo_id);
     rows('Photos').filter(p => p.trip_id === tid && p.is_cover === kind).forEach(p => remove('Photos', p.photo_id));
     await idb.put({ photo_id: 'P' + stamp() + Math.random().toString(36).slice(2, 6), trip_id: tid, catch_id: '', taken_at: ymd(when) + ' ' + hm(when),
@@ -793,7 +829,7 @@ function chips(f, k, list, multi){
     return `<button class="chip ${on ? 'on' : ''}" data-f="${f}" data-k="${k}" data-v="${esc(o.v)}" ${multi ? 'data-multi="1"' : ''}>${esc(o.label ?? o.v)}${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</button>`;
   }).join('')}</div>`;
 }
-const forms = () => ({ sf, cf, ef, mf, td });
+const forms = () => ({ sf, cf, ef, mf, td, pf });
 const simple = arr => arr.map(v => ({ v }));
 function lureName(id){ const l = byId('Lures', id); return l ? [l.brand, l.name].filter(Boolean).join(' ') : ''; }
 function setupLabel(s){ const line = byId('Tackle', s.line_id); return { v: s.setup_id, label: s.name || s.setup_id, sub: line && line.spec1 ? line.spec1 + 'lb' : '' }; }
@@ -888,6 +924,8 @@ function vHome(){
   return `<div class="head"><div><div class="logo pf">BASS <em>LOG</em></div><div class="tag">덴데 & 부우의 배스 조행기</div></div>${syncBar()}</div>
   ${scene()}
   <button class="pbtn start-btn" data-act="start"><b>🎣 출조 시작</b><span class="pf blink" style="font-size:8px">PRESS START</span></button>
+  <div class="card" id="fcCard">${vForecast()}</div>
+  <button class="pbtn small dark" data-act="pastTrip">+ 지난 출조 추가</button>
   ${photoCount ? `<button class="pbtn small dark" data-act="upPhotos">📷 사진 ${photoCount}장 업로드 <span class="sub">(와이파이에서)</span></button>` : ''}
   <div class="card"><div class="stitle">RECORD</div>
     <div class="stats"><div class="stat"><b>${trips.length}</b><span>출조</span></div>
@@ -1143,7 +1181,8 @@ function vCatch(){
   <div class="lenWrap">${img('cat:dende', 3, '', 'style="flex:none"')}<div class="lenBox ${cf.length ? (len >= 40 ? 't3' : '') : 'empty'}">${esc(cf.length || '0')}<small>cm</small></div>
     <div class="bubble tail" style="left:4px;top:-30px">${esc(lenLine(len))}</div></div>
   <div class="pad">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k => `<button data-key="${k}">${k}</button>`).join('')}</div>
-  ${cf.live ? '' : `<label class="f">잡은 시간</label><input class="t" type="time" value="${esc(cf.time || '')}" data-in="cf.time">`}
+  ${cf.live ? '' : `<label class="f">잡은 시간</label><input class="t" type="time" value="${esc(cf.time || '')}" data-in="cf.time">
+  <label class="f">잡은 자리</label><div class="locrow"><span>${+cf.lat ? `📍 ${(+cf.lat).toFixed(5)}, ${(+cf.lng).toFixed(5)}` : '아직 없음 · 사진에 GPS가 있으면 자동'}</span><button class="chip add" data-act="pickLoc">${+cf.lat ? '다시 찍기' : '📍 지도에서 찍기'}</button></div>`}
   <label class="f">세팅</label>${chips('cf', 'setup_id', setupIds.map(id => byId('Setups', id)).filter(Boolean).map(setupLabel))}
   <label class="f">루어</label>${chips('cf', 'lure_id', lo.list)}
   <div class="chips" style="margin-top:8px">${lo.more ? '<button class="chip add" data-act="allLures">더보기</button>' : ''}${cf.newLure ? '' : '<button class="chip add" data-act="newLure">+ 새 루어</button>'}</div>
@@ -1179,7 +1218,7 @@ async function saveCatch(){
   const row = { catch_id: id, trip_id: t.trip_id, length_cm: String(len), setup_id: cf.setup_id, lure_id: cf.lure_id, rig: cf.rig, action: cf.action,
     structure: cf.structure, depth: cf.depth, weight_g: cf.weight_g, color: cf.color || (lure && lure.color) || '', memo: cf.memo, released: cf.released };
   if (live) { row.time = hm(); if (pos) { row.lat = pos.lat.toFixed(6); row.lng = pos.lng.toFixed(6); } }
-  else row.time = cf.time || '';
+  else { row.time = cf.time || ''; row.lat = cf.lat || ''; row.lng = cf.lng || ''; }
   write('Catches', row);
   if (cf.photo) {
     await idb.put({ photo_id: 'P' + stamp() + Math.random().toString(36).slice(2, 4), trip_id: t.trip_id, catch_id: id, taken_at: ymd() + ' ' + hm(),
@@ -1333,6 +1372,7 @@ function naverAdapter(el = 'map', mini = false){
       if (map.getZoom() > 17) map.setZoom(17);
     },
     view(pt, z){ map.setCenter(LL(pt[0], pt[1])); map.setZoom(z); },
+    center(){ const c = map.getCenter(); return [typeof c.lat === 'function' ? c.lat() : c.y, typeof c.lng === 'function' ? c.lng() : c.x]; },
     zoom(){ return map.getZoom(); },
     catchesVisible(v){ if (v === showCatch) return; showCatch = v; g.catch.forEach(m => m.setMap(v ? map : null)); },
     me(lat, lng, html){ if (me) me.setPosition(LL(lat, lng)); else me = new N.Marker({ position: LL(lat, lng), map, zIndex: 2000, icon: { content: html, anchor: new N.Point(14, 10) } }); },
@@ -1362,6 +1402,7 @@ function leafletAdapter(el = 'map', mini = false){
     line(pts){ L.polyline(pts, { color: '#f7b731', weight: 3, dashArray: '6 6', opacity: .9 }).addTo(g.line); },
     fit(pts){ map.fitBounds(pts, { padding: [50, 50], maxZoom: 17 }); },
     view(pt, z){ map.setView(pt, z); },
+    center(){ const c = map.getCenter(); return [c.lat, c.lng]; },
     zoom(){ return map.getZoom(); },
     catchesVisible(v){ if (v && !map.hasLayer(g.catch)) map.addLayer(g.catch); if (!v && map.hasLayer(g.catch)) map.removeLayer(g.catch); },
     me(lat, lng, html){ if (me) me.setLatLng([lat, lng]); else me = L.marker([lat, lng], { icon: L.divIcon({ className: '', html, iconSize: [28, 20], iconAnchor: [14, 10] }), zIndexOffset: 1000 }).addTo(map); },
@@ -1420,7 +1461,7 @@ function placeMe(){
   if (!M || !pos) return;
   M.me(pos.lat, pos.lng, `<img class="px" src="${spr('mini:dende', 2)}" style="filter:drop-shadow(0 0 4px #f7b731)">`);
 }
-function destroyMap(){ if (M) { try { M.destroy(); } catch (e) {} M = null; } if (BM) { try { BM.destroy(); } catch (e) {} BM = null; } }
+function destroyMap(){ closePicker(); if (M) { try { M.destroy(); } catch (e) {} M = null; } if (BM) { try { BM.destroy(); } catch (e) {} BM = null; } }
 
 function vFilter(){
   const use = usage('lure_id'), useRig = usage('rig');
@@ -1436,6 +1477,304 @@ function vFilter(){
   ${trips.length ? `<label class="f">출조 하나만 (경로 표시)</label>${chips('mf', 'trip', trips)}` : ''}
   <button class="link" data-act="mapReset">전부 초기화</button>
   <div class="saveBar"><button class="pbtn" data-act="mapApply">적용</button></div>`;
+}
+
+/* ═════════ 지난 출조 추가 ═════════ */
+function openPast(){
+  const y = new Date(Date.now() - 864e5), prev = tripsDesc()[0];
+  pf = { date: ymd(y), start: '06:00', end: '10:00', spot_id: prev ? prev.spot_id : '', setups: prev && prev.setup_ids ? prev.setup_ids.split(',').filter(id => byId('Setups', id)) : [],
+         companions: '', water_temp: '', water_clarity: '', water_level: '' };
+  showSheet(vPast);
+}
+function vPast(){
+  const spots = active('Spots').map(s => ({ v: s.spot_id, label: s.name }));
+  const setups = active('Setups').map(setupLabel);
+  return `<div class="shead"><div><h1 class="t">지난 출조 추가</h1><div class="sub pf" style="font-size:8px;margin-top:6px">CONTINUE?</div></div><button class="x" data-act="closeSheet">✕</button></div>
+  <div style="display:flex;gap:8px;align-items:flex-end;margin:6px 0 2px">${img('cat:dende', 3)}<div class="bubble tail" style="position:relative;opacity:1;white-space:normal;margin-bottom:18px">날짜랑 시간만 알려줘. 그날 날씨는 내가 찾아올게!</div></div>
+  <label class="f">날짜</label><input class="t" type="date" max="${ymd()}" value="${esc(pf.date)}" data-in="pf.date">
+  <div class="two"><div><label class="f">시작</label><input class="t" type="time" value="${esc(pf.start)}" data-in="pf.start"></div>
+    <div><label class="f">종료</label><input class="t" type="time" value="${esc(pf.end)}" data-in="pf.end"></div></div>
+  <label class="f">포인트</label>${chips('pf', 'spot_id', spots)}
+  <label class="f">들고 간 세팅</label>${chips('pf', 'setups', setups, true)}
+  <label class="f">동행 (쉼표로 구분)</label><input class="t" value="${esc(pf.companions)}" data-in="pf.companions">
+  <label class="f">수온 (기억나면)</label><input class="t" inputmode="decimal" value="${esc(pf.water_temp)}" data-in="pf.water_temp">
+  <label class="f">물색</label>${chips('pf', 'water_clarity', simple(opts('물색')))}
+  <label class="f">수위</label>${chips('pf', 'water_level', simple(opts('수위')))}
+  <div class="saveBar"><button class="pbtn" data-act="savePast">만들고 조과 넣으러 가기</button></div>`;
+}
+async function pastWeather(date, hour, lat, lng){
+  const days = (Date.now() - new Date(date + 'T00:00')) / 864e5;
+  const base = days <= 80 ? 'https://api.open-meteo.com/v1/forecast' : 'https://archive-api.open-meteo.com/v1/archive';
+  const u = `${base}?latitude=${lat}&longitude=${lng}&start_date=${date}&end_date=${date}&hourly=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure&wind_speed_unit=ms&timezone=Asia%2FSeoul`;
+  const h = (await (await fetch(u)).json()).hourly, i = Math.min(Math.max(hour, 0), h.time.length - 1);
+  if (h.temperature_2m[i] == null) return null;
+  return { weather: WMO(h.weather_code[i]), air_temp: Math.round(h.temperature_2m[i] * 10) / 10, wind: `${DIR(h.wind_direction_10m[i])} ${Math.round(h.wind_speed_10m[i])}m/s`, pressure: Math.round(h.surface_pressure[i]) };
+}
+async function savePast(){
+  if (!pf.date || pf.date > ymd()) return say('날짜를 확인해줘!', 'boo');
+  if (!pf.spot_id) return say('포인트를 골라줘!', 'boo');
+  let id = 'T' + pf.date.replace(/-/g, '') + '-' + (pf.start || '0000').replace(':', '');
+  while (byId('Trips', id)) id += 'b';
+  const sp = byId('Spots', pf.spot_id), at = sp && +sp.lat ? [+sp.lat, +sp.lng] : pos ? [pos.lat, pos.lng] : null;
+  let w = null;
+  if (at && navigator.onLine) { say('그날 날씨 찾는 중…', 'dende'); try { w = await pastWeather(pf.date, toMin(pf.start || '12:00') / 60 | 0, at[0], at[1]); } catch (e) {} }
+  write('Trips', { trip_id: id, date: pf.date, start: pf.start, end: pf.end, spot_id: pf.spot_id, companions: pf.companions, setup_ids: pf.setups.join(','),
+    weather: w ? w.weather : '', air_temp: w ? w.air_temp : '', wind: w ? w.wind : '', pressure: w ? w.pressure : '',
+    water_temp: pf.water_temp, water_clarity: pf.water_clarity, water_level: pf.water_level, status: '현장기록', blog_status: '미작성' });
+  hideSheet(); pf = null; openDetail(id);
+  say(w ? `그날은 ${w.weather} ${w.air_temp}℃였어! 이제 조과를 넣자` : '만들었어! 이제 조과를 넣자', 'dende');
+}
+
+/* ═════════ 지도에서 위치 찍기 (십자선) ═════════ */
+function openPicker(mode, id){
+  pickSt = { mode, id };
+  const el = $('#picker');
+  el.innerHTML = `<div id="pmap"></div><div class="cross"><b></b><i></i></div>
+    <div class="ptop">${img('cat:dende', 3)}<div class="bubble tail">${mode === 'spot' ? '포인트 위치에 십자선을 맞춰줘!' : '잡은 자리에 십자선을 맞춰줘!'}</div></div>
+    <div class="pbar"><button class="pbtn dark" data-act="pickCancel">취소</button><button class="pbtn" data-act="pickOk">📍 여기로!</button></div>`;
+  el.classList.add('show'); initPickMap();
+}
+async function initPickMap(){
+  let A = null;
+  if (!naverFailed) { try { await loadNaver(); if (!pickSt || !$('#pmap') || PM) return; A = naverAdapter('pmap', true); } catch (e) { naverFailed = true; } }
+  if (!A) { try { await loadLeaflet(); } catch (e) { say('지도를 못 불러왔어 (오프라인?)', 'dende'); return closePicker(); } if (!pickSt || !$('#pmap') || PM) return; A = leafletAdapter('pmap', true); }
+  PM = A;
+  // 참고용 핀: 같은 출조의 다른 조과 + 포인트
+  const tid = pickSt.mode === 'catch' ? cf && cf.trip_id : null, t = tid && byId('Trips', tid);
+  const others = tid ? tripCatches(tid).filter(c => +c.lat && c.catch_id !== (cf && cf.catch_id)) : [];
+  others.forEach(c => PM.marker('catch', +c.lat, +c.lng, pinHtml(c, 0), [44, 34], [22, 17], 0, catchPopup(c)));
+  const sp = pickSt.mode === 'spot' ? byId('Spots', pickSt.id) : t && byId('Spots', t.spot_id);
+  if (sp && +sp.lat) PM.marker('spot', +sp.lat, +sp.lng, spotHtml(sp), [90, 44], [45, 22], 0, spotPopup(sp));
+  const start = pickSt.mode === 'catch' && cf && +cf.lat ? [+cf.lat, +cf.lng]
+    : pickSt.mode === 'spot' && sp && +sp.lat ? [+sp.lat, +sp.lng]
+    : others[0] ? [+others[0].lat, +others[0].lng] : sp && +sp.lat ? [+sp.lat, +sp.lng] : pos ? [pos.lat, pos.lng] : null;
+  if (start) PM.view(start, 17); else PM.view([36.5, 127.8], 7);
+}
+function closePicker(){ if (PM) { try { PM.destroy(); } catch (e) {} PM = null; } pickSt = null; const el = $('#picker'); if (el) { el.classList.remove('show'); el.innerHTML = ''; } }
+function pickOk(){
+  if (!PM || !pickSt) return closePicker();
+  const [la, lo] = PM.center(), mode = pickSt.mode, id = pickSt.id;
+  closePicker();
+  if (mode === 'catch' && cf) { cf.lat = la.toFixed(6); cf.lng = lo.toFixed(6); rerenderSheet(); say('자리 찍었어! 저장하면 반영돼', 'dende'); }
+  if (mode === 'spot') { write('Spots', { spot_id: id, lat: la.toFixed(6), lng: lo.toFixed(6) }); render(); say('포인트 위치 등록 완료!', 'dende'); }
+}
+
+/* ═════════ 출조 예보 "오늘 갈까?" ═════════ */
+const WX_EMOJI = c => c === 0 ? '☀️' : c <= 2 ? '⛅' : c === 3 ? '☁️' : c <= 48 ? '🌫' : c <= 67 || (c >= 80 && c <= 82) ? '🌧' : c <= 77 || (c >= 85 && c <= 86) ? '❄️' : '⛈';
+function fcPlace(){
+  const sp = active('Spots').filter(s => +s.lat && +s.lng);
+  const s = sp.find(x => x.spot_id === fcSpot) || tripsDesc().map(t => sp.find(x => x.spot_id === t.spot_id)).find(Boolean) || sp[0];
+  if (s) return { id: s.spot_id, name: s.name, lat: +s.lat, lng: +s.lng };
+  if (pos) return { id: '', name: '현재 위치', lat: +pos.lat.toFixed(2), lng: +pos.lng.toFixed(2) };
+  return null;
+}
+async function loadForecast(force){
+  const pl = fcPlace(); if (!pl || fcLoading || !navigator.onLine) return;
+  const key = pl.id + '@' + pl.lat.toFixed(3);
+  if (!force && fc && fc.key === key && Date.now() - fc.at < 3 * 3600e3) return;
+  fcLoading = true;
+  try {
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${pl.lat}&longitude=${pl.lng}&hourly=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,precipitation,precipitation_probability&daily=sunrise,sunset&past_days=6&forecast_days=7&wind_speed_unit=ms&timezone=Asia%2FSeoul`;
+    const j = await (await fetch(u)).json();
+    fc = { key, at: Date.now(), place: pl, days: buildDays(j) }; save('bl_fc', fc);
+  } catch (e) {}
+  fcLoading = false;
+  const el = $('#fcCard'); if (el) el.innerHTML = vForecast();
+}
+function buildDays(j){
+  const h = j.hourly, by = {};
+  h.time.forEach((t, i) => { const d = t.slice(0, 10); (by[d] = by[d] || []).push(i); });
+  const avg = a => a.reduce((x, y) => x + y, 0) / (a.length || 1);
+  const days = Object.keys(by).sort().map(d => {
+    const ix = by[d], day = ix.filter(i => { const hh = +h.time[i].slice(11, 13); return hh >= 6 && hh <= 20; });
+    const codes = day.map(i => h.weather_code[i]), cnt = {}; codes.forEach(c => cnt[c] = (cnt[c] || 0) + 1);
+    const main = +Object.entries(cnt).sort((a, b) => b[1] - a[1])[0][0];
+    const di = j.daily.time.indexOf(d);
+    return { date: d, t: avg(ix.map(i => h.temperature_2m[i])), p: avg(ix.map(i => h.surface_pressure[i])),
+      wind: avg(day.map(i => h.wind_speed_10m[i])), windMax: Math.max(...day.map(i => h.wind_speed_10m[i])),
+      rain: ix.reduce((s, i) => s + (h.precipitation[i] || 0), 0), code: main, codeMax: Math.max(...codes),
+      sunrise: di >= 0 ? j.daily.sunrise[di].slice(11, 16) : '06:30', sunset: di >= 0 ? j.daily.sunset[di].slice(11, 16) : '17:30',
+      hours: ix.filter(i => +h.time[i].slice(11, 13) % 2 === 0 && +h.time[i].slice(11, 13) >= 6 && +h.time[i].slice(11, 13) <= 20).map(i => ({
+        h: h.time[i].slice(11, 13), code: h.weather_code[i], t: Math.round(h.temperature_2m[i]), w: Math.round(h.wind_speed_10m[i]), wd: DIR(h.wind_direction_10m[i]), rp: h.precipitation_probability[i] ?? 0 })) };
+  });
+  const today = ymd();
+  return days.map((d, k) => {
+    if (d.date < today || k === 0) return null;
+    const prev = days[k - 1], m = +d.date.slice(5, 7);
+    const past5 = days.slice(Math.max(0, k - 5), k).map(x => x.t);
+    const wt = Math.round((0.5 * MONTH_WT[m - 1] + 0.5 * (avg(past5) + 1.5)) * 2) / 2;
+    return { ...d, ...scoreDay(d, prev, wt, m), wt };
+  }).filter(Boolean).slice(0, 7);
+}
+function scoreDay(d, prev, wt, m){
+  let s = 50; const why = [];
+  const dp = d.p - prev.p, dt = d.t - prev.t;
+  if (dp <= -3 && dp >= -10) { s += 15; why.push(`기압 하강 (${dp.toFixed(0)}hPa) — 저기압 오기 전 피딩 기대`); }
+  else if (dp < -10) { s -= 5; why.push(`기압 급하강 (${dp.toFixed(0)}hPa) — 날씨 급변 주의`); }
+  else if (dp >= 4) { s -= 10; why.push(`기압 상승 (+${dp.toFixed(0)}hPa) — 전선 지난 직후라 입 닫힐 수 있어`); }
+  if (d.p >= 1025 && Math.abs(dp) < 2) { s -= 5; why.push('강한 고기압 정체 — 피네스로 천천히'); }
+  if (dt <= -5) { s -= 15; why.push(`기온 급강하 (${dt.toFixed(0)}℃) — 한파 직후는 힘들어`); }
+  else if (dt >= 3 && [3, 4, 5, 9, 10, 11].includes(m)) { s += 8; why.push(`기온 상승 (+${dt.toFixed(0)}℃) — 활성 오르는 날`); }
+  if (d.codeMax >= 95) { s -= 25; why.push('뇌우 예보 — 안전 먼저!'); }
+  else if (d.rain >= 20) { s -= 10; why.push(`비 많음 (${Math.round(d.rain)}mm) — 흙탕·불어나는 물 주의`); }
+  else if (d.rain >= 1) { s += 6; why.push(`약한 비 (${Math.round(d.rain)}mm) — 경계심 낮아지는 날`); }
+  else if ([2, 3, 45, 48].includes(d.code)) { s += 6; why.push('흐림 — 하루 종일 기회'); }
+  else why.push('맑음 — 아침·저녁 승부');
+  if (d.windMax >= 9) { s -= 15; why.push(`강풍 (최대 ${Math.round(d.windMax)}m/s) — 캐스팅·안전 주의`); }
+  else if (d.wind >= 2 && d.wind <= 5) { s += 5; why.push(`적당한 바람 (${d.wind.toFixed(0)}m/s) — 수면에 잔물결`); }
+  if (wt < 8) { s -= 15; why.push(`예상 수온 ${wt}℃ — 혹한기, 깊은 곳 느리게`); }
+  else if (wt < 12) { s -= 5; why.push(`예상 수온 ${wt}℃ — 아직 차가워`); }
+  else if (wt <= 24 && wt >= 15) { s += 10; why.push(`예상 수온 ${wt}℃ — 활성 좋은 구간`); }
+  else if (wt > 28) { s -= 5; why.push(`예상 수온 ${wt}℃ — 고수온, 새벽·저녁 위주`); }
+  s = Math.max(5, Math.min(98, Math.round(s)));
+  const cloudy = d.rain >= 1 || [2, 3, 45, 48].includes(d.code);
+  const pk = cloudy ? `하루 종일 (특히 ${d.sunset} 전후)` : `${d.sunrise}~${addMin(d.sunrise, 120)} · ${addMin(d.sunset, -120)}~${d.sunset}`;
+  return { score: s, why, peak: pk };
+}
+const addMin = (hm0, n) => { const m = toMin(hm0) + n; return `${pad(Math.floor(m / 60))}:${pad(m % 60)}`; };
+const gradeOf = s => s >= 80 ? ['대박 예감!', 'hi'] : s >= 65 ? ['가볼 만해', 'gd'] : s >= 50 ? ['평범한 날', 'md'] : s >= 35 ? ['힘들 수도…', 'lo'] : ['쉬는 게 나아', 'lo'];
+const dayLabel = d => { const t = ymd(), tm = ymd(new Date(Date.now() + 864e5)); return d === t ? '오늘' : d === tm ? '내일' : '일월화수목금토'[new Date(d + 'T00:00').getDay()]; };
+function vForecast(){
+  const pl = fcPlace();
+  if (!pl) return `<div class="stitle">FORECAST <span>오늘 갈까?</span></div><div class="empty">포인트 위치가 있어야 예보를 볼 수 있어.<br>출조 정리 화면에서 📍 위치를 찍어줘!</div>`;
+  if ((!fc || !fc.days || !fc.days.length) && !navigator.onLine) return `<div class="stitle">FORECAST <span>오늘 갈까?</span></div><div class="empty">오프라인이야. 신호 잡히면 예보 가져올게!</div>`;
+  if (!fc || !fc.days || !fc.days.length) { setTimeout(() => loadForecast(), 0); return `<div class="stitle">FORECAST <span>오늘 갈까?</span></div><div class="empty"><span class="pf blink" style="font-size:9px;color:var(--gold)">LOADING...</span></div>`; }
+  if (Date.now() - fc.at > 3 * 3600e3 || fc.place.id !== pl.id) setTimeout(() => loadForecast(), 0);
+  const d0 = fc.days[0], [g, c] = gradeOf(d0.score);
+  const ago = Math.round((Date.now() - fc.at) / 3600e3);
+  return `<div class="stitle">FORECAST <span>오늘 갈까?</span></div>
+    <div class="fcTop" data-act="fcDay" data-i="0">${img('cat:dende', 3)}
+      <div><div class="fcScore s-${c}">${d0.score}<span style="font-size:11px;color:var(--sub)">점</span></div><div class="fcGrade s-${c}">${dayLabel(d0.date)} ${g}</div></div></div>
+    <div class="fcDays">${fc.days.map((d, i) => { const [, cc] = gradeOf(d.score); return `<div class="fcD ${i === 0 ? 'today' : ''}" data-act="fcDay" data-i="${i}">
+      <div class="dl">${dayLabel(d.date)}</div><div class="de">${WX_EMOJI(d.code)}</div><div class="ds s-${cc}">${d.score}</div><div class="db"><i class="bg-${cc}" style="width:${d.score}%"></i></div></div>`; }).join('')}</div>
+    <div class="locrow" style="margin-top:10px"><span>📍 ${esc(fc.place.name)} 기준${ago >= 1 ? ` · ${ago}시간 전` : ''}</span>${active('Spots').filter(s => +s.lat).length > 1 ? '<button class="chip add" data-act="fcNext">포인트 바꾸기</button>' : ''}</div>`;
+}
+function vFcDay(){
+  const d = fc.days[fcDayI], [g, c] = gradeOf(d.score);
+  const src = { date: d.date, time: d.peak.match(/\d{2}:\d{2}/) ? d.peak.match(/\d{2}:\d{2}/)[0] : '06:00', weather: WMO(d.code), air_temp: Math.round(d.t),
+    wind: `${Math.round(d.wind)}m/s`, pressure: Math.round(d.p), water_temp: d.wt, water_clarity: '', water_level: '', setups: [] };
+  const pk = d.hours.filter(x => { const peakHs = (d.peak.match(/\d{2}/g) || []).map(Number); return !/하루/.test(d.peak) && peakHs.length >= 2 && (+x.h >= peakHs[0] && +x.h <= peakHs[0] + 2 || +x.h >= (peakHs[4] || 99) && +x.h <= (peakHs[6] || 0)); }).map(x => x.h);
+  return `<div class="shead"><div><h1 class="t">${dayLabel(d.date)} · ${esc(d.date.slice(5).replace('-', '/'))}</h1><div class="sub">${esc(fc.place.name)} 예보</div></div><button class="x" data-act="closeSheet">✕</button></div>
+  <div class="fcTop">${img('cat:dende', 3)}<div><div class="fcScore s-${c}">${d.score}<span style="font-size:11px;color:var(--sub)">점</span></div><div class="fcGrade s-${c}">${g}</div></div></div>
+  <div class="box" style="margin-top:4px"><div class="sub">⏰ 피크 시간</div><div style="font-size:16px;font-weight:700;margin-top:4px;color:var(--gold)">${esc(d.peak)}</div>
+    <div class="sub" style="margin-top:6px">일출 ${d.sunrise} · 일몰 ${d.sunset} · 예상 수온 ${d.wt}℃ (추정)</div></div>
+  <ul class="why" style="margin-top:14px">${d.why.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
+  <table class="hrs"><tr><th>시</th><th>날씨</th><th>기온</th><th>바람</th><th>비</th></tr>
+    ${d.hours.map(x => `<tr class="${pk.includes(x.h) ? 'pk' : ''}"><td>${x.h}</td><td>${WX_EMOJI(x.code)}</td><td>${x.t}℃</td><td>${x.wd} ${x.w}</td><td>${x.rp}%</td></tr>`).join('')}</table>
+  <div class="card" style="margin-top:16px">${vReco(src)}</div>
+  <div class="small-note">점수는 기압·기온 변화, 비, 바람, 예상 수온으로 계산한 참고용이야. 정답은 물이 알려줘!</div>`;
+}
+let fcDayI = 0;
+
+/* ═════════ 브리핑 이미지 카드 (1080×1350) ═════════ */
+const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+async function kindImageData(tid, kind){
+  const l = localKind[tid + '|' + kind]; if (l) return l;
+  const r = rows('Photos').filter(p => p.trip_id === tid && p.is_cover === kind && p.drive_file_id).sort((a, b) => (b.photo_id || '').localeCompare(a.photo_id || ''))[0];
+  if (!r) return null;
+  const res = await apiGet({ action: 'photo', id: r.drive_file_id });
+  if (!res.ok) throw new Error(res.error || '사진을 못 가져왔어');
+  return `data:${res.mime || 'image/jpeg'};base64,${res.data}`;
+}
+function wrapText(ctx, text, maxW){
+  const out = []; let line = '';
+  for (const ch of text) { if (ctx.measureText(line + ch).width > maxW && line) { out.push(line); line = ch; } else line += ch; }
+  if (line) out.push(line); return out;
+}
+function rrect(ctx, x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function drawCover(ctx, im, x, y, w, h){
+  const s = Math.max(w / im.width, h / im.height), sw = w / s, sh = h / s;
+  ctx.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, x, y, w, h);
+}
+async function makeCard(tid){
+  const t = byId('Trips', tid), cs = tripCatches(tid), n = cs.length;
+  const max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
+  const times = cs.map(c => toMin(c.time)).filter(x => x != null);
+  let a = toMin(t.start), b = toMin(t.end); if (a == null && times.length) a = Math.min(...times); if (b == null || (a != null && b < a)) b = times.length ? Math.max(...times) : null;
+  const dur = a != null && b != null ? b - a : null;
+  try { await Promise.all(['36px "Press Start 2P"', '30px Galmuri11', '30px Galmuri14', '30px "Pretendard Variable"'].map(f => document.fonts.load(f))); } catch (e) {}
+  let warn = '';
+  const getImg = async kind => { try { const d = await kindImageData(tid, kind); return d ? await loadImg(d) : null; } catch (e) { warn = e.message; return null; } };
+  const [scene, selfie] = await Promise.all([getImg('scene'), getImg('selfie')]);
+  const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  // 배경 + 별
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#1a1a2e'); bg.addColorStop(1, '#10162c'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  for (let i = 0; i < 90; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + Math.random() * 0.6})`; const z = Math.random() > .8 ? 3 : 2; ctx.fillRect(Math.random() * W, Math.random() * H, z, z); }
+  // 헤더
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '34px "Press Start 2P"'; ctx.fillStyle = '#fff'; ctx.fillText('BASS', 60, 92); ctx.fillStyle = '#f7b731'; ctx.fillText('LOG', 60 + ctx.measureText('BASS ').width, 92);
+  ctx.font = '28px "Pretendard Variable"'; ctx.fillStyle = '#a0a0b8'; ctx.textAlign = 'right';
+  ctx.fillText(`${t.date.replace(/-/g, '.')}  ${t.start || ''}${t.end ? '~' + t.end : ''}`, W - 60, 88); ctx.textAlign = 'left';
+  ctx.font = '50px Galmuri14, Galmuri11'; ctx.fillStyle = '#fff'; ctx.fillText(spotName(t.spot_id), 60, 168);
+  if (+t.rating) { ctx.font = '34px Galmuri11'; ctx.fillStyle = '#f7b731'; ctx.textAlign = 'right'; ctx.fillText('★'.repeat(+t.rating) + '☆'.repeat(5 - +t.rating), W - 60, 166); ctx.textAlign = 'left'; }
+  // 풍경
+  const SX = 60, SY = 200, SW = 960, SH = 560;
+  ctx.save(); rrect(ctx, SX, SY, SW, SH, 14); ctx.clip();
+  if (scene) drawCover(ctx, scene, SX, SY, SW, SH);
+  else {
+    const g = ctx.createLinearGradient(0, SY, 0, SY + SH); g.addColorStop(0, '#2e7bcf'); g.addColorStop(.62, '#b0d8ff'); g.addColorStop(.62, '#0d3050'); g.addColorStop(1, '#081e35'); ctx.fillStyle = g; ctx.fillRect(SX, SY, SW, SH);
+    ctx.imageSmoothingEnabled = false; const bi = await loadImg(spr('bass', 12)); ctx.drawImage(bi, SX + SW / 2 - bi.width / 2, SY + SH * .62 - bi.height / 2);
+  }
+  ctx.restore();
+  ctx.lineWidth = 6; ctx.strokeStyle = '#f7b731'; rrect(ctx, SX, SY, SW, SH, 14); ctx.stroke();
+  // STAGE CLEAR
+  ctx.font = '26px "Press Start 2P"'; const lab = n ? 'STAGE CLEAR!' : 'GAME OVER...'; const lw = ctx.measureText(lab).width + 36;
+  ctx.fillStyle = 'rgba(10,10,30,.75)'; ctx.fillRect(SX + 24, SY + 24, lw, 64); ctx.strokeStyle = n ? '#f7b731' : '#e94560'; ctx.lineWidth = 4; ctx.strokeRect(SX + 24, SY + 24, lw, 64);
+  ctx.fillStyle = '#fff'; ctx.fillText(lab, SX + 42, SY + 70);
+  // 셀카 폴라로이드
+  if (selfie) {
+    ctx.save(); ctx.translate(840, 640); ctx.rotate(5 * Math.PI / 180);
+    ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = '#f4f1e8'; ctx.fillRect(-140, -165, 280, 330); ctx.shadowColor = 'transparent';
+    drawCover(ctx, selfie, -126, -151, 252, 252);
+    ctx.font = '24px Galmuri11'; ctx.fillStyle = '#444'; ctx.textAlign = 'center'; ctx.fillText('오늘의 나', 0, 145); ctx.textAlign = 'left';
+    ctx.restore();
+  }
+  // 덴데 스티커
+  ctx.imageSmoothingEnabled = false;
+  const dende = await loadImg(spr('cat:dende', 7)); ctx.drawImage(dende, 34, SY + SH - 70);
+  // 스코어
+  const cols = [[String(n), '마릿수', n ? '#f7b731' : '#fff'], [max ? String(max) : '-', '최대 cm', max >= 40 ? '#e94560' : max ? '#f7b731' : '#fff'], [dur != null && dur >= 0 ? `${Math.floor(dur / 60)}:${pad(dur % 60)}` : '-', '낚시 시간', '#fff']];
+  cols.forEach(([v, l, col], i) => {
+    const cx = 60 + 160 + i * 320;
+    ctx.textAlign = 'center'; ctx.font = '62px "Press Start 2P"'; ctx.fillStyle = col; ctx.fillText(v, cx, 900);
+    ctx.font = '26px "Pretendard Variable"'; ctx.fillStyle = '#a0a0b8'; ctx.fillText(l, cx, 950);
+  });
+  ctx.textAlign = 'left';
+  // 배지
+  const ach = achievements(t, cs).slice(0, 4);
+  const bw = (960 - 14 * (ach.length - 1)) / Math.max(ach.length, 1);
+  ach.forEach(([ic, ti], i) => {
+    const x = 60 + i * (bw + 14), y = 995;
+    ctx.fillStyle = 'rgba(247,183,49,.1)'; rrect(ctx, x, y, bw, 84, 12); ctx.fill(); ctx.strokeStyle = 'rgba(247,183,49,.5)'; ctx.lineWidth = 2; rrect(ctx, x, y, bw, 84, 12); ctx.stroke();
+    ctx.font = '34px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.fillText(ic, x + bw / 2, y + 42);
+    ctx.font = '22px Galmuri11'; ctx.fillStyle = '#f7b731'; ctx.fillText(ti, x + bw / 2, y + 72); ctx.textAlign = 'left';
+  });
+  // 덴데·부우 한마디
+  const [dl] = talkLines(t, cs, !!scene, !!selfie);
+  const boo = await loadImg(spr('cat:boo', 6)); ctx.drawImage(boo, W - 60 - boo.width, 1128);
+  ctx.font = '30px Galmuri11'; const lines = wrapText(ctx, dl, 700).slice(0, 2);
+  const bh = 34 + lines.length * 42, bx = 60, by = 1120;
+  ctx.fillStyle = 'rgba(22,33,62,.96)'; rrect(ctx, bx, by, 760, bh, 16); ctx.fill(); ctx.strokeStyle = '#f7b731'; ctx.lineWidth = 4; rrect(ctx, bx, by, 760, bh, 16); ctx.stroke();
+  ctx.fillStyle = '#f7b731'; lines.forEach((ln, i) => ctx.fillText(ln, bx + 30, by + 48 + i * 42));
+  // 푸터
+  ctx.font = '15px "Press Start 2P"'; ctx.fillStyle = '#4a4a6a'; ctx.textAlign = 'center'; ctx.fillText('DEVELOPED BY DONGGU KANG · DENDE & BOO', W / 2, 1312);
+  return { cv, warn };
+}
+async function showCard(tid){
+  say('카드 그리는 중…', 'boo');
+  let r; try { r = await makeCard(tid); } catch (e) { return say('카드를 못 만들었어: ' + e.message, 'dende'); }
+  const t = byId('Trips', tid), name = `BASS_${t.date}_${spotName(t.spot_id)}.png`.replace(/\s/g, '');
+  r.cv.toBlob(blob => {
+    const url = URL.createObjectURL(blob), file = new File([blob], name, { type: 'image/png' });
+    const canShare = navigator.canShare && navigator.canShare({ files: [file] });
+    const el = $('#viewer'); vw = { card: true };
+    el.innerHTML = `<button class="x vx" data-act="vwClose">✕</button><img class="cardPrev" src="${url}" alt="">
+      ${r.warn ? `<div class="sub" style="color:var(--accent)">${esc(r.warn)} — Drive 사진 대신 기본 그림으로 그렸어</div>` : ''}
+      <div class="btnrow" style="width:min(420px,92vw)">${canShare ? '<button class="pbtn" data-act="cardShare">📤 공유하기</button>' : ''}<a class="pbtn dark" href="${url}" download="${esc(name)}" style="text-decoration:none">💾 이미지 저장</a></div>`;
+    el.classList.add('show'); window.__card = file;
+  }, 'image/png');
 }
 
 /* ═════════ 화면: 출조 브리핑 (STAGE CLEAR) ═════════ */
@@ -1563,6 +1902,7 @@ function vBrief(){
       : `<div class="empty">${img('cat:boo:sleep', 3)}아직 후기가 없어. 기억날 때 써두자!</div>`}
   </div>
 
+  <button class="pbtn" data-act="makeCard" data-id="${esc(t.trip_id)}">🖼 이미지 카드 만들기</button>
   <div class="btnrow"><button class="pbtn dark" data-act="openTrip" data-id="${esc(t.trip_id)}">✏️ 정리·수정</button>${geo ? `<button class="pbtn" data-act="mapTrip" data-id="${esc(t.trip_id)}">🗺 지도</button>` : ''}</div>
   <footer>DEVELOPED BY DONGGU KANG<br>DENDE & BOO FOREVER</footer>`;
 }
@@ -1617,6 +1957,7 @@ function vDetail(){
     <div class="two"><div><label class="f">시작</label><input class="t" type="time" value="${esc(td.start)}" data-in="td.start"></div>
       <div><label class="f">종료</label><input class="t" type="time" value="${esc(td.end)}" data-in="td.end"></div></div>
     <label class="f">포인트</label>${chips('td', 'spot_id', spots)}
+    ${(() => { const sp = byId('Spots', td.spot_id); return sp ? `<div class="locrow" style="margin-top:8px"><span>${+sp.lat ? `⛺ 위치 등록됨` : '⛺ 이 포인트 위치가 아직 없어'}</span><button class="chip add" data-act="pickSpot" data-id="${esc(sp.spot_id)}">${+sp.lat ? '위치 수정' : '📍 위치 찍기'}</button></div>` : ''; })()}
     <label class="f">동행 (쉼표로 구분)</label><input class="t" value="${esc(td.companions)}" data-in="td.companions">
     <div class="two"><div><label class="f">날씨</label><input class="t" value="${esc(td.weather)}" data-in="td.weather"></div>
       <div><label class="f">기온 ℃</label><input class="t" inputmode="decimal" value="${esc(td.air_temp)}" data-in="td.air_temp"></div></div>
@@ -1637,7 +1978,9 @@ function saveTrip(done){
 }
 
 // 사진 여러 장: EXIF 촬영 시각 → 가장 가까운 조과(60분 이내)에 자동 연결
-async function exifDate(file){
+async function exifDate(file){ const i = await exifInfo(file); return i ? i.date : null; }
+// JPEG EXIF에서 촬영 시각 + GPS 좌표 읽기
+async function exifInfo(file){
   try {
     const v = new DataView(await file.slice(0, 256 * 1024).arrayBuffer());
     if (v.getUint16(0) !== 0xFFD8) return null;
@@ -1648,12 +1991,30 @@ async function exifDate(file){
         const t = o + 10, le = v.getUint16(t) === 0x4949;
         const u16 = q => v.getUint16(q, le), u32 = q => v.getUint32(q, le);
         const str = (q, n) => { let r = ''; for (let i = 0; i < n - 1; i++) r += String.fromCharCode(v.getUint8(q + i)); return r; };
-        const scan = (ifd, tags) => { const out = {}, n = u16(t + ifd); for (let i = 0; i < n; i++) { const e = t + ifd + 2 + i * 12, tag = u16(e); if (tags.includes(tag)) out[tag] = tag === 0x8769 ? u32(e + 8) : str(t + u32(e + 8), u32(e + 4)); } return out; };
-        const ifd0 = scan(u32(t + 4), [0x8769, 0x0132]);
+        const PTR = [0x8769, 0x8825];
+        const scan = (ifd, tags) => { const out = {}, n = u16(t + ifd); for (let i = 0; i < n; i++) { const e = t + ifd + 2 + i * 12, tag = u16(e); if (tags.includes(tag)) out[tag] = PTR.includes(tag) ? u32(e + 8) : str(t + u32(e + 8), u32(e + 4)); } return out; };
+        const ifd0 = scan(u32(t + 4), [0x8769, 0x8825, 0x0132]);
         let d = ifd0[0x8769] ? scan(ifd0[0x8769], [0x9003])[0x9003] : null;
         d = d || ifd0[0x0132];
         const mm = d && d.match(/(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2})/);
-        return mm ? new Date(+mm[1], mm[2] - 1, +mm[3], +mm[4], +mm[5]) : null;
+        const out = { date: mm ? new Date(+mm[1], mm[2] - 1, +mm[3], +mm[4], +mm[5]) : null, lat: null, lng: null };
+        const g = ifd0[0x8825];
+        if (g) {
+          let latR = 'N', lngR = 'E', la = null, lo = null;
+          const n = u16(t + g);
+          for (let i = 0; i < n; i++) {
+            const e = t + g + 2 + i * 12, tag = u16(e);
+            if (tag === 1) latR = String.fromCharCode(v.getUint8(e + 8));
+            if (tag === 3) lngR = String.fromCharCode(v.getUint8(e + 8));
+            if (tag === 2 || tag === 4) {
+              const off = t + u32(e + 8), r = k => u32(off + k * 8) / (u32(off + k * 8 + 4) || 1);
+              const val = r(0) + r(1) / 60 + r(2) / 3600;
+              if (tag === 2) la = val; else lo = val;
+            }
+          }
+          if (la && lo) { out.lat = latR === 'S' ? -la : la; out.lng = lngR === 'W' ? -lo : lo; }
+        }
+        return out;
       }
       if ((m & 0xFF00) !== 0xFF00) break;
       o += 2 + len;
@@ -1666,11 +2027,11 @@ async function onBulk(files){
   say(`사진 ${files.length}장 읽는 중…`, 'boo');
   const cs = tripCatches(tdId).filter(c => c.time), items = [];
   for (const f of files) {
-    const ex = await exifDate(f), when = ex || new Date(f.lastModified);
+    const info = await exifInfo(f), ex = info && info.date, when = ex || new Date(f.lastModified);
     let data; try { data = await resizeImage(f); } catch (e) { continue; }
     let best = '', bd = Infinity;
     cs.forEach(c => { const [h, m] = c.time.split(':').map(Number), d = new Date(t.date + 'T00:00'); d.setHours(h, m, 0, 0); const diff = Math.abs(d - when); if (diff < bd) { bd = diff; best = c.catch_id; } });
-    items.push({ data, when, exif: !!ex, catch_id: bd <= 60 * 60000 ? best : '' });
+    items.push({ data, when, exif: !!ex, lat: info && info.lat, lng: info && info.lng, catch_id: bd <= 60 * 60000 ? best : '' });
   }
   if (!items.length) return say('사진을 못 읽었어…', 'dende');
   bp = { trip_id: tdId, items }; showSheet(vBulk);
@@ -1680,7 +2041,7 @@ function vBulk(){
   const auto = bp.items.filter(i => i.catch_id).length;
   return `<div class="shead"><div><h1 class="t">사진 ${bp.items.length}장</h1><div class="sub">${auto}장은 찍은 시각으로 조과에 자동 연결했어. 틀린 것만 바꿔줘!</div></div><button class="x" data-act="closeSheet">✕</button></div>
   ${bp.items.map((it, i) => `<div class="bpi"><img src="${it.data}" alt="">
-    <div><div class="sub" style="margin-bottom:6px">${esc(ymd(it.when) === (byId('Trips', bp.trip_id) || {}).date ? '' : ymd(it.when) + ' ')}${hm(it.when)} ${it.exif ? '촬영' : '(파일 시각)'}</div>
+    <div><div class="sub" style="margin-bottom:6px">${esc(ymd(it.when) === (byId('Trips', bp.trip_id) || {}).date ? '' : ymd(it.when) + ' ')}${hm(it.when)} ${it.exif ? '촬영' : '(파일 시각)'}${it.lat ? ' · 📍위치 있음' : ''}</div>
     <div class="chips">${cs.map(c => `<button class="chip ${it.catch_id === c.catch_id ? 'on' : ''}" data-act="bpSet" data-i="${i}" data-v="${esc(c.catch_id)}">${esc(c.length_cm)}cm${c.time ? ' ' + esc(c.time) : ''}</button>`).join('')}
       <button class="chip ${!it.catch_id ? 'on' : ''}" data-act="bpSet" data-i="${i}" data-v="">출조 사진</button></div></div></div>`).join('')}
   <div class="saveBar"><button class="pbtn" data-act="bpSave">${navigator.onLine ? '저장하고 바로 업로드' : '저장 (와이파이에서 업로드)'}</button></div>`;
@@ -1690,6 +2051,16 @@ async function bpSave(){
     await idb.put({ photo_id: 'P' + stamp(it.when) + Math.random().toString(36).slice(2, 6), trip_id: bp.trip_id, catch_id: it.catch_id,
       taken_at: ymd(it.when) + ' ' + hm(it.when), caption: '', is_cover: '', blog_include: '', mime: 'image/jpeg', data: it.data });
   }
+  // 사진 GPS → 위치 없는 조과·포인트에 자동 입력
+  let geo = 0;
+  bp.items.forEach(it => {
+    if (!it.lat || !it.catch_id) return;
+    const c = byId('Catches', it.catch_id);
+    if (c && !+c.lat) { write('Catches', { catch_id: c.catch_id, lat: it.lat.toFixed(6), lng: it.lng.toFixed(6) }); geo++; }
+  });
+  const g1 = bp.items.find(it => it.lat), sp = byId('Spots', (byId('Trips', bp.trip_id) || {}).spot_id);
+  if (g1 && sp && !+sp.lat) write('Spots', { spot_id: sp.spot_id, lat: g1.lat.toFixed(6), lng: g1.lng.toFixed(6) });
+  if (geo) say(`사진 위치로 조과 ${geo}개 자리 찍었어!`, 'dende');
   const n = bp.items.length; bp = null; hideSheet(); await refreshPhotos(); render();
   if (navigator.onLine) uploadPhotos(); else say(`사진 ${n}장 저장했어! 와이파이에서 올리자`, 'boo');
 }
@@ -1904,6 +2275,19 @@ document.addEventListener('click', async e => {
     case 'vwPrev': vw.i = (vw.i - 1 + vw.list.length) % vw.list.length; drawViewer(); break;
     case 'vwNext': vw.i = (vw.i + 1) % vw.list.length; drawViewer(); break;
     case 'recoToggle': recoOpen = !recoOpen; { const rc = $('#recoCard'); if (rc) rc.innerHTML = vReco(tripSrc(), true); } break;
+    case 'pastTrip': openPast(); break;
+    case 'savePast': savePast(); break;
+    case 'pickLoc': openPicker('catch'); break;
+    case 'pickSpot': openPicker('spot', el.dataset.id); break;
+    case 'pickOk': pickOk(); break;
+    case 'pickCancel': closePicker(); break;
+    case 'fcDay': if (fc && fc.days[+el.dataset.i]) { fcDayI = +el.dataset.i; showSheet(vFcDay); } break;
+    case 'fcNext': {
+      const sp = active('Spots').filter(s => +s.lat && +s.lng), cur = fcPlace(), i = sp.findIndex(s => s.spot_id === (cur && cur.id));
+      fcSpot = sp[(i + 1) % sp.length].spot_id; save('bl_fcSpot', fcSpot); $('#fcCard').innerHTML = vForecast(); loadForecast(true); break;
+    }
+    case 'makeCard': showCard(el.dataset.id); break;
+    case 'cardShare': if (window.__card) navigator.share({ files: [window.__card], title: 'BASS LOG' }).catch(() => {}); break;
     case 'mapFilter': showSheet(vFilter); break;
     case 'mapApply': save(LS.map, mf); hideSheet(); render(); break;
     case 'mapReset': mf = { lure:[], rig:[], season:[], tod:[], size:'', trip:'' }; save(LS.map, mf); hideSheet(); render(); break;
@@ -1926,7 +2310,12 @@ document.addEventListener('change', async e => {
   if (e.target.dataset && e.target.dataset.kind && e.target.files[0]) { const f = e.target.files[0], d = e.target.dataset; e.target.value = ''; return setKindPhoto(d.trip, d.kind, f); }
   if (e.target.id === 'bulkIn' && e.target.files.length) { const fs = [...e.target.files]; e.target.value = ''; return onBulk(fs); }
   if (e.target.id !== 'photoIn' || !e.target.files[0]) return;
-  try { cf.photo = await resizeImage(e.target.files[0]); rerenderSheet(); } catch (err) { say(err.message, 'dende'); }
+  try {
+    const f = e.target.files[0], info = await exifInfo(f);
+    cf.photo = await resizeImage(f);
+    if (!cf.live && !+cf.lat && info && info.lat) { cf.lat = info.lat.toFixed(6); cf.lng = info.lng.toFixed(6); say('사진 위치로 자리 찍었어!', 'dende'); }
+    rerenderSheet();
+  } catch (err) { say(err.message, 'dende'); }
 });
 window.addEventListener('online', () => { updateSync(); flush(); });
 window.addEventListener('offline', updateSync);
