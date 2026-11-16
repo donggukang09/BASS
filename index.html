@@ -904,8 +904,6 @@ async function boot(){
 function vSettings(){
   const failed = queue.filter(o => (o.tries || 0) >= MAX_TRIES);
   return `<div class="head"><div><h1 class="t">관리</h1><div class="sub">데이터 · 전송 상태</div></div>${syncBar()}</div>
-  <a class="card guideCard" href="rigs.html"><div class="stitle">RIG GUIDE <span>리그 도감</span></div>
-    <div class="recoHead">${img('cat:boo', 3)}<div class="bubble tail">채비마다 물속에서 어떻게 움직이는지 보여줄게! <b>▶ 열기</b></div></div></a>
   <div class="card"><div class="stitle">DATA</div>
     <button class="pbtn small" data-act="refresh">서버에서 새로고침</button>
     <div class="sub">세팅·루어·선택지를 시트에서 직접 고쳤다면 새로고침하면 반영돼.</div>
@@ -2182,6 +2180,7 @@ function vNav(){
   return `<button class="${tab === 'home' ? 'on' : ''}" data-act="tabHome"><i>${trip ? '🎣' : '⛺'}</i>${trip ? '출조중' : '홈'}</button>
     <button class="${tab === 'stats' ? 'on' : ''}" data-act="tabStats"><i>📊</i>기록</button>
     <button class="${tab === 'map' ? 'on' : ''}" data-act="tabMap"><i>🗺</i>지도</button>
+    <button data-act="tabGuide"><i>📖</i>도감</button>
     <button class="${tab === 'settings' ? 'on' : ''}" data-act="settings"><i>⚙</i>관리</button>`;
 }
 function render(){
@@ -2287,6 +2286,7 @@ document.addEventListener('click', async e => {
     case 'vwClose': vw = null; drawViewer(); break;
     case 'vwPrev': vw.i = (vw.i - 1 + vw.list.length) % vw.list.length; drawViewer(); break;
     case 'vwNext': vw.i = (vw.i + 1) % vw.list.length; drawViewer(); break;
+    case 'tabGuide': location.href = 'rigs.html'; break;
     case 'recoToggle': recoOpen = !recoOpen; { const rc = $('#recoCard'); if (rc) rc.innerHTML = vReco(tripSrc(), true); } break;
     case 'pastTrip': openPast(); break;
     case 'savePast': savePast(); break;
