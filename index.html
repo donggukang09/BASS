@@ -495,6 +495,10 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .aw b{display:block;font-family:'Galmuri14','Galmuri11',sans-serif;color:var(--gold);font-size:15px;word-break:keep-all;margin:2px 0}
 .aw span{font-size:11px;color:#c8c8d8}
 .sbig{width:100%;border-radius:10px;display:block}
+.iconPick{display:flex;align-items:center;gap:14px;background:#120e09;border:2px solid #3b3021;padding:10px}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:30px;height:30px;border:2px solid #000;box-shadow:0 0 0 1px #4a3b28}
+.sw.on{box-shadow:0 0 0 3px #f7b731}
 </style>
 </head>
 <body>
@@ -640,7 +644,7 @@ const SPR = {};
 function spr(name, s){
   const k = name + '@' + s; if (SPR[k]) return SPR[k];
   const [kind, arg, opt] = name.split(':');
-  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispool:[14,11], irig:[16,16] }[kind];
+  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispin:[16,12], ispool:[14,11], irig:[16,16] }[kind];
   const cv = document.createElement('canvas'); cv.width = size[0] * s; cv.height = size[1] * s;
   const ctx = cv.getContext('2d');
   const p = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect(x * s, y * s, s, s); };
@@ -651,8 +655,9 @@ function spr(name, s){
   if (kind === 'tent') drawTent(p);
   if (kind === 'fire') drawFire(p, +arg);
   if (kind === 'rod') drawRod(p);
-  if (kind === 'irod') drawIRod(p);
-  if (kind === 'ireel') rowsDraw(p, IREEL, { K:'#1d1f24', S:'#9aa3ad', W:'#e8edf2', L:'#5c6670', H:'#3a3f46', O:'#c9a46a' });
+  if (kind === 'irod') drawIRod(p, arg && '#' + arg, opt === 's');
+  if (kind === 'ireel' || kind === 'ispin') { const c = arg ? '#' + arg : '#9aa3ad';
+    rowsDraw(p, kind === 'ispin' ? ISPIN : IREEL, { K:'#1d1f24', S: c, W: shade(c, 1.5), L: kind === 'ispin' ? '#d8dee6' : shade(c, .55), H:'#3a3f46', O:'#c9a46a' }); }
   if (kind === 'ispool') drawISpool(p, +arg, '#' + opt);
   if (kind === 'irig') rowsDraw(p, IRIG, { w:'#cfe7ee', G:'#8d969e', g:'#c3ccd2', s:'#e8eef2', p:'#d65d97' });
   if (kind === 'moon' || kind === 'sun') drawOrb(p, kind === 'moon');
@@ -2305,6 +2310,23 @@ let gearSel = load('bl_gearSel', ''), gq = null;
 
 const roman = n => ['I','II','III','IV','V','VI','VII','VIII','IX','X'][n - 1] || String(n);
 const lineCol = it => !it ? '#9fe3ef' : /red|레드/i.test(it.model + it.brand) ? '#e05555' : /black|블랙/i.test(it.model + it.brand) ? '#8a8aa0' : /합사|pe/i.test(it.type + it.model) ? '#7fd36b' : '#9fe3ef';
+const ICON_COLORS = ['#d64545', '#3d7bd9', '#9b59d0', '#2fae6a', '#e8892c', '#1fb5a8', '#e0c23a', '#c7c7d1', '#3a3a46', '#e85d9e'];
+function iconCol(it){
+  if (!it) return '#9aa3ad';
+  if (/^#[0-9a-f]{6}$/i.test(it.spec3 || '')) return it.spec3;
+  if (it.kind === '라인') return lineCol(it);
+  const list = rows('Tackle').filter(t => t.kind === it.kind).map(t => t.tackle_id).sort();
+  return ICON_COLORS[Math.max(0, list.indexOf(it.tackle_id)) % ICON_COLORS.length];
+}
+const isSpin = it => /스피닝|spin/i.test((it && (it.type + it.model)) || '');
+function iconImg(it, sc, fill){
+  const c = iconCol(it).slice(1);
+  if (!it) return '';
+  if (it.kind === '로드') return img(`irod:${c}:${isSpin(it) ? 's' : 'b'}`, sc);
+  if (it.kind === '릴') return img(`${isSpin(it) ? 'ispin' : 'ireel'}:${c}`, sc);
+  return img(`ispool:${fill ?? 7}:${c}`, sc);
+}
+const shade = (hex, f) => { const n = parseInt(hex.replace('#', ''), 16), ch = k => Math.max(0, Math.min(255, Math.round(((n >> k) & 255) * f))); return '#' + [16, 8, 0].map(k => ch(k).toString(16).padStart(2, '0')).join(''); };
 const pctCol = p => p == null ? '#666' : p <= 30 ? '#e94560' : p <= 60 ? '#f7b731' : '#5fd068';
 const items = kind => active('Tackle').filter(t => t.kind === kind).sort((a, b) => RAR_ORDER.indexOf(rarOf(b)) - RAR_ORDER.indexOf(rarOf(a)) || a.tackle_id.localeCompare(b.tackle_id));
 function gearSetups(){ return active('Setups').slice().sort((a, b) => (+a.slot || 99) - (+b.slot || 99) || a.setup_id.localeCompare(b.setup_id)); }
@@ -2350,10 +2372,19 @@ const IREEL = ['....KKKKKKK.....','..KKSSSSSSSKK...','.KSSSWSSSSSSSK..','.KSSLLL
   '.KSSLLLLLLLSSKHO','.KSSSSSSSSSSSK.O','..KKSSSSSSSKK...','....KKKKKKK.....'];
 const IRIG = ['.......w........','.......w........','......GG........','.....GgGG.......','.....GGGG.......','......GG........','.......w........',
   '.......ss.......','......pppp......','.....pppppp.....','....pppppppp....','...ppp.pp.ppp...','..pp...pp...pp..','.......p........','......pp........','.......p........'];
-function drawIRod(p){
-  for (let i = 0; i < 16; i++) { const x = i, y = 15 - i, c = i < 4 ? '#c9a46a' : i < 6 ? '#9aa3ad' : i < 15 ? '#4a6fa5' : '#f0f0f0'; p(x, y, c); if (i < 6) p(x + 1, y, i < 4 ? '#a8854e' : '#6f7882'); }
-  [8, 11, 14].forEach(i => p(i, 14 - i, '#d8dee6'));
+function drawIRod(p, col, spin){
+  col = col || '#4a6fa5';
+  const grip = spin ? '#c9a46a' : '#2b2b33', grip2 = spin ? '#a8854e' : '#1a1a20', seat = shade(col, 1.35), wrap = shade(col, 1.6);
+  for (let i = 0; i < 16; i++) {
+    const x = i, y = 15 - i, c = i < 4 ? grip : i < 6 ? seat : i < 15 ? col : '#f0f0f0';
+    p(x, y, c); if (i < 6) p(x + 1, y, i < 4 ? grip2 : shade(col, .8));
+  }
+  if (!spin) p(5, 12, seat);                       // 베이트 트리거
+  [8, 11, 14].forEach(i => { p(i, 15 - i, wrap); p(i, 14 - i, '#d8dee6'); });
+  if (spin) { p(7, 7, '#d8dee6'); p(8, 8, '#d8dee6'); }   // 스피닝 큰 가이드
 }
+const ISPIN = ['......KK........','.....KSSK.......','....KSLLSK......','....KSLLSK......','.....KSSK.......','......KK.....HO.',
+  '.....KSSSK..HH..','....KSSWSSKH....','....KSSSSSK.....','.....KSSSK......','......KK........','.....KKKK.......'];
 function drawISpool(p, fill, col){
   const K = '#1d1f24', M = '#9aa3ad', C = '#3a3f46';
   for (let x = 2; x <= 11; x++) { p(x, 0, K); p(x, 10, K); }
@@ -2382,11 +2413,11 @@ function vGear(){
   <div class="dpanel">
     <div class="dtitle"><div><span>${esc(st.name || st.setup_id)}</span><small>${esc([st.role, st.use].filter(Boolean).join(' · '))}</small></div><button class="dedit" data-act="gearEdit">✏</button></div>
     <div class="doll">
-      ${slot('rod_id', rod, img('irod', 4), 'ROD')}
+      ${slot('rod_id', rod, iconImg(rod, 4), 'ROD')}
       <div class="hero2">${img('cat:dende', 5)}<div class="plate pf">LV.${Math.min(99, 1 + ss.n)}</div></div>
       <div class="col2">
-        ${slot('reel_id', reel, img('ireel', 4), 'REEL')}
-        ${slot('line_id', line, img(`ispool:${fill}:${lineCol(line).slice(1)}`, 4), 'LINE')}
+        ${slot('reel_id', reel, iconImg(reel, 4), 'REEL')}
+        ${slot('line_id', line, img(`ispool:${fill}:${iconCol(line).slice(1)}`, 4), 'LINE')}
       </div>
     </div>
     <button class="rigslot" data-act="gearRig"><em>RIG</em>${st.default_rig ? `${img('irig', 3)}<div><b>${esc(st.default_rig)}</b>
@@ -2408,7 +2439,7 @@ function vGear(){
   <div class="card stash"><div class="stitle">STASH <span>보관함 · 눌러서 보기</span></div>
     ${['로드', '릴', '라인'].map(k => `<div class="skind">${k}</div><div class="sgrid">${items(k).map(it => {
       const on = [st.rod_id, st.reel_id, st.line_id].includes(it.tackle_id), anyOn = active('Setups').some(s => [s.rod_id, s.reel_id, s.line_id].includes(it.tackle_id));
-      const sp = k === '로드' ? img('irod', 2) : k === '릴' ? img('ireel', 2) : img(`ispool:7:${lineCol(it).slice(1)}`, 2);
+      const sp = iconImg(it, 2);
       return `<button class="scell ${anyOn ? '' : 'idle'}" style="--rc:${rarCol(it)}" data-act="itemOpen" data-id="${esc(it.tackle_id)}">${sp}${on ? '<i class="eq">E</i>' : ''}<span>${esc((it.model || '').length <= 4 ? itemName(it) : it.model)}${k === '라인' && it.spec1 ? ` ${esc(it.spec1)}lb` : ''}</span></button>`;
     }).join('')}<button class="scell add" data-act="itemNew" data-k="${k}">+</button></div>`).join('')}
     <div class="legend">${RAR_ORDER.map(r => `<span style="color:${RARITY[r]}">■ ${r}</span>`).join('')}</div>
@@ -2423,8 +2454,8 @@ function vGear(){
 /* ── 시트: 아이템 ── */
 function openItem(id, kind){
   const it = id ? byId('Tackle', id) : null;
-  gq = it ? { mode:'item', id, edit:false, kind: it.kind, brand: it.brand || '', model: it.model || '', type: it.type || '', spec1: it.spec1 || '', rarity: rarOf(it), notes: it.notes || '', since: it.since || '', price: it.price || '' }
-    : { mode:'item', id:'', edit:true, kind: kind || '로드', brand:'', model:'', type: (KIND_TYPES[kind || '로드'] || [])[0] || '', spec1:'', rarity:'일반', notes:'', since: ymd(), price:'' };
+  gq = it ? { mode:'item', id, edit:false, kind: it.kind, brand: it.brand || '', model: it.model || '', type: it.type || '', spec1: it.spec1 || '', rarity: rarOf(it), notes: it.notes || '', since: it.since || '', price: it.price || '', icon: iconCol(it) }
+    : { mode:'item', id:'', edit:true, kind: kind || '로드', brand:'', model:'', type: (KIND_TYPES[kind || '로드'] || [])[0] || '', spec1:'', rarity:'일반', notes:'', since: ymd(), price:'', icon: ICON_COLORS[active('Tackle').filter(t => t.kind === (kind || '로드')).length % ICON_COLORS.length] };
   showSheet(vItem);
 }
 function vItem(){
@@ -2433,7 +2464,7 @@ function vItem(){
     const s = itemStats(it.tackle_id);
     return `<div class="shead"><div><h1 class="t">아이템</h1><div class="sub pf" style="font-size:8px;margin-top:6px">${esc(it.tackle_id)}</div></div><button class="x" data-act="closeSheet">✕</button></div>
     <div class="tipbox big" style="--rc:${rarCol(it)}">
-      <div class="ticon">${it.kind === '로드' ? img('irod', 5) : it.kind === '릴' ? img('ireel', 5) : img(`ispool:7:${lineCol(it).slice(1)}`, 5)}</div>
+      <div class="ticon">${iconImg(it, 5)}</div>
       <div class="tn" style="color:${rarCol(it)}">${esc(itemName(it))}</div>
       <div class="tt">${esc(rarOf(it))} ${esc(it.kind)}${it.type ? ' · ' + esc(it.type) : ''}</div>
       ${it.spec1 ? `<div class="tw">${it.kind === '라인' ? '굵기' : it.kind === '릴' ? '기어비' : '스펙'}: ${esc(it.spec1)}${it.kind === '라인' ? 'lb' : ''}</div>` : ''}
@@ -2450,6 +2481,9 @@ function vItem(){
     <label class="f">모델</label><input class="t" value="${esc(gq.model)}" placeholder="예: 조디아스 166ML" data-in="gq.model">
     <label class="f">타입</label>${chips('gq', 'type', simple(KIND_TYPES[gq.kind] || []))}
     <label class="f">${esc(KIND_SPEC[gq.kind] || '스펙')}</label><input class="t" value="${esc(gq.spec1)}" ${gq.kind === '라인' ? 'inputmode="decimal"' : ''} data-in="gq.spec1">
+    <label class="f">아이콘 색 <span class="sub">— 실제 장비 색으로 골라 두면 안 헷갈려</span></label>
+    <div class="iconPick">${iconImg({ tackle_id: gq.id || 'NEW', kind: gq.kind, type: gq.type, model: gq.model, brand: gq.brand, spec3: gq.icon }, 4)}
+      <div class="swatches">${ICON_COLORS.map(c => `<button class="sw ${gq.icon === c ? 'on' : ''}" style="background:${c}" data-f="gq" data-k="icon" data-v="${c}"></button>`).join('')}</div></div>
     <label class="f">등급</label><div class="chips">${RAR_ORDER.map(r => `<button class="chip rar ${gq.rarity === r ? 'on' : ''}" style="--rc:${RARITY[r]}" data-f="gq" data-k="rarity" data-v="${r}">${r}</button>`).join('')}</div>
     <label class="f">메모 (특징·주의점)</label><input class="t" value="${esc(gq.notes)}" placeholder="예: 스풀 틈 있음 → 14lb 이상" data-in="gq.notes">
     <div class="two"><div><label class="f">구입일</label><input class="t" type="date" value="${esc(gq.since)}" data-in="gq.since"></div>
@@ -2460,7 +2494,7 @@ function itemSave(){
   if (!gq.model.trim() && !gq.brand.trim()) return say('이름을 알려줘!', 'boo');
   const id = gq.id || nextId('Tackle', KIND_PREFIX[gq.kind], 2);
   write('Tackle', { tackle_id: id, kind: gq.kind, brand: gq.brand.trim(), model: gq.model.trim(), type: gq.type, spec1: gq.spec1.trim(), rarity: gq.rarity,
-    notes: gq.notes.trim(), since: gq.since, price: gq.price.trim(), active:'Y' });
+    notes: gq.notes.trim(), since: gq.since, price: gq.price.trim(), spec3: gq.icon, active:'Y' });
   const isNew = !gq.id; gq.id = id; gq.edit = false; rerenderSheet(); render();
   say(isNew ? `${gq.rarity} 아이템 획득! ✨` : '고쳤어!', isNew ? 'boo' : 'dende');
 }
@@ -2473,7 +2507,7 @@ function vEquip(){
     ${gq.k === 'line_id' ? `<label class="f">라인을 바꿀 때</label>${chips('gq', 'fresh', [{ v: true, label:'새로 감았어 (100%부터)' }, { v: false, label:'감긴 채로 옮겨' }].map(o => ({ ...o, v: String(o.v) })))}` : ''}
     <div class="elist">${items(kind).map(it => { const on = active('Setups').filter(s => s[gq.k] === it.tackle_id && s !== st);
       return `<button class="erow ${cur === it.tackle_id ? 'on' : ''}" style="--rc:${rarCol(it)}" data-act="equipItem" data-id="${esc(it.tackle_id)}">
-        ${kind === '로드' ? img('irod', 3) : kind === '릴' ? img('ireel', 3) : img(`ispool:7:${lineCol(it).slice(1)}`, 3)}
+        ${iconImg(it, 3)}
         <div><b style="color:${rarCol(it)}">${esc(itemName(it))}${kind === '라인' && it.spec1 ? ` ${esc(it.spec1)}lb` : ''}</b><small>${esc(rarOf(it))}${cur === it.tackle_id ? ' · 장착 중' : on.length ? ' · ' + on.map(s => esc(s.name)).join(', ') + '에도 장착' : ''}</small></div></button>`; }).join('')}
       <button class="erow add" data-act="itemNew" data-k="${kind}">+ 새 ${kind} 추가</button>
       ${cur ? '<button class="erow off" data-act="equipItem" data-id="">장착 해제</button>' : ''}</div>`;
@@ -2503,7 +2537,7 @@ function vMaint(){
     <div style="display:flex;gap:8px;align-items:flex-end;margin:8px 0 6px">${img('cat:dende', 3)}<div class="bubble tail" style="position:relative;opacity:1;white-space:normal;margin-bottom:18px">스풀 보고 대충 몇 % 남았는지 밀어줘. 한 일도 눌러 두면 기록돼!</div></div>
     ${gq.ids.map(id => { const st = byId('Setups', id), x = gq.it[id], line = byId('Tackle', st.line_id);
       return `<div class="mcard"><div class="mh"><b>${esc(st.name)}</b><small style="color:${line ? rarCol(line) : '#888'}">${line ? esc(itemName(line)) + (line.spec1 ? ` ${esc(line.spec1)}lb` : '') : '라인 없음'}</small></div>
-        <div class="mrange">${img(`ispool:${Math.round(x.pct / 100 * 7)}:${lineCol(line).slice(1)}`, 3, 'msp', `data-mtimg="${esc(id)}"`)}
+        <div class="mrange">${img(`ispool:${Math.round(x.pct / 100 * 7)}:${iconCol(line).slice(1)}`, 3, 'msp', `data-mtimg="${esc(id)}"`)}
           <input type="range" min="0" max="100" step="5" value="${x.pct}" data-mt="${esc(id)}">
           <b data-mtv="${esc(id)}" style="color:${pctCol(x.pct)}">${x.pct}%</b></div>
         <div class="chips">${MAINT_TASKS.map(tk => `<button class="chip ${x.tasks.includes(tk) ? 'on' : ''}" data-act="mtTask" data-id="${esc(id)}" data-v="${tk}">${tk}</button>`).join('')}</div>
@@ -2732,7 +2766,7 @@ document.addEventListener('click', async e => {
   if (el.dataset.f) {
     const f = el.dataset.f, k = el.dataset.k, v = el.dataset.v, form = forms()[f];
     if (el.dataset.multi) form[k] = form[k].includes(v) ? form[k].filter(x => x !== v) : [...form[k], v];
-    else form[k] = form[k] === v && k !== 'setup_id' && k !== 'released' && !(f === 'gq' && ['fresh', 'kind', 'rarity'].includes(k)) ? '' : v;
+    else form[k] = form[k] === v && k !== 'setup_id' && k !== 'released' && !(f === 'gq' && ['fresh', 'kind', 'rarity', 'icon', 'type'].includes(k)) ? '' : v;
     if (f === 'gq' && k === 'kind') gq.type = (KIND_TYPES[v] || [''])[0];
     if (f === 'cf' && k === 'setup_id') { const st = byId('Setups', v); if (st && st.rig_lure_id && byId('Lures', st.rig_lure_id)) cf.lure_id = st.rig_lure_id; }
     if (f === 'cf' && k === 'setup_id') { const st = byId('Setups', v); if (st && st.default_rig) cf.rig = st.default_rig; }
@@ -2873,7 +2907,7 @@ document.addEventListener('click', async e => {
 document.addEventListener('input', e => {
   const ds = e.target.dataset || {};
   if (ds.mt && gq && gq.it) { const x = gq.it[ds.mt], v = +e.target.value; x.pct = v; const lb = document.querySelector(`[data-mtv="${ds.mt}"]`); if (lb) { lb.textContent = v + '%'; lb.style.color = pctCol(v); }
-    const im = document.querySelector(`[data-mtimg="${ds.mt}"]`), st = byId('Setups', ds.mt); if (im) im.src = spr(`ispool:${Math.round(v / 100 * 7)}:${lineCol(byId('Tackle', st.line_id)).slice(1)}`, 3); return; }
+    const im = document.querySelector(`[data-mtimg="${ds.mt}"]`), st = byId('Setups', ds.mt); if (im) im.src = spr(`ispool:${Math.round(v / 100 * 7)}:${iconCol(byId('Tackle', st.line_id)).slice(1)}`, 3); return; }
   if (ds.mtm && gq && gq.it) { gq.it[ds.mtm].memo = e.target.value; return; }
   const p = ds.in; if (!p) return;
   const [f, k] = p.split('.'); forms()[f][k] = e.target.value;
