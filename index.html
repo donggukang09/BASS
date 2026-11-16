@@ -236,6 +236,9 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .reco .rk>span{flex:none;width:40px;font-size:13px;color:var(--sub);padding-top:6px}
 .tg{display:inline-block;clip-path:var(--notch);background:var(--card);padding:6px 10px;font-size:13px;margin:0 6px 6px 0}
 .tg.top{background:var(--gold);color:#1a1a2e;font-weight:700}
+.tg.rl{color:inherit;text-decoration:none}.tg.rl i{font-style:normal;margin-left:4px;font-size:11px}
+.rigLink{float:right;font-size:12px;color:var(--gold);text-decoration:none}
+.guideCard{display:block;color:inherit;text-decoration:none}
 .tg small{color:var(--sub);margin-left:4px;font-size:11px}
 .tg.top small{color:#5a3d00}
 .why{list-style:none;margin-top:12px;font-size:14px;line-height:1.55;color:var(--text);display:flex;flex-direction:column;gap:6px}
@@ -901,6 +904,8 @@ async function boot(){
 function vSettings(){
   const failed = queue.filter(o => (o.tries || 0) >= MAX_TRIES);
   return `<div class="head"><div><h1 class="t">관리</h1><div class="sub">데이터 · 전송 상태</div></div>${syncBar()}</div>
+  <a class="card guideCard" href="rigs.html"><div class="stitle">RIG GUIDE <span>리그 도감</span></div>
+    <div class="recoHead">${img('cat:boo', 3)}<div class="bubble tail">채비마다 물속에서 어떻게 움직이는지 보여줄게! <b>▶ 열기</b></div></div></a>
   <div class="card"><div class="stitle">DATA</div>
     <button class="pbtn small" data-act="refresh">서버에서 새로고침</button>
     <div class="sub">세팅·루어·선택지를 시트에서 직접 고쳤다면 새로고침하면 반영돼.</div>
@@ -1089,6 +1094,12 @@ function setupFor(rig, ids){
   const s = pool.find(s => s.default_rig === rig) || pool.find(s => (s.use || '').includes(rig));
   return s ? s.name : '';
 }
+/* ═════════ 리그 도감 연결 ═════════ */
+const RIG_GUIDE = { '프리리그':'st-free', '다운샷':'st-ds', '와키':'st-wacky', '카이젤(지그헤드 와키)':'st-kaizer', '카이젤':'st-kaizer',
+  '네꼬':'st-neko', '네코':'st-neko', '지그헤드':'st-jig', '텍사스':'st-texas', '캐롤라이나':'st-caro', '러버지그':'st-rj', '스몰러버지그':'st-srj',
+  '하드베이트':'ep4', '스피너베이트':'st-spin', '버즈베이트':'st-buzz', '채터베이트':'st-chat' };
+const rigHref = name => RIG_GUIDE[name] ? `rigs.html#${RIG_GUIDE[name]}` : '';
+
 function vReco(src, compact){
   const r = recommend(src), my = myPattern(r, src.trip_id);
   // 내 기록에서 비슷한 조건 3수 이상 잡은 리그는 가산점 → 기록이 쌓일수록 내 패턴 반영
@@ -1105,7 +1116,9 @@ function vReco(src, compact){
   return `${compact ? `<button class="recoToggle" data-act="recoToggle"><div class="stitle">TODAY'S PLAN <span>참고용 · 접기 ▴</span></div></button>` : `<div class="stitle">TODAY'S PLAN <span>참고용</span></div>`}
     <div class="recoHead">${img('cat:dende', 3)}<div class="bubble tail">${head}</div></div>
     <div class="reco">
-      <div class="rk"><span>리그</span><div>${tag(r.rigs, x => setupFor(x, src.setups))}</div></div>
+      <div class="rk"><span>리그</span><div>${r.rigs.map((x, i) => { const h = rigHref(x), sub = setupFor(x, src.setups);
+        const inner = `${esc(x)}${sub ? `<small>${esc(sub)}</small>` : ''}`;
+        return h ? `<a class="tg rl ${i === 0 ? 'top' : ''}" href="${h}">${inner}<i>📖</i></a>` : `<span class="tg ${i === 0 ? 'top' : ''}">${inner}</span>`; }).join('')}</div></div>
       <div class="rk"><span>웜</span><div>${tag(r.worms)}</div></div>
       <div class="rk"><span>액션</span><div>${tag(r.acts)}</div></div>
       <div class="rk"><span>컬러</span><div>${tag(r.colors)}</div></div>
@@ -1187,7 +1200,7 @@ function vCatch(){
   <label class="f">루어</label>${chips('cf', 'lure_id', lo.list)}
   <div class="chips" style="margin-top:8px">${lo.more ? '<button class="chip add" data-act="allLures">더보기</button>' : ''}${cf.newLure ? '' : '<button class="chip add" data-act="newLure">+ 새 루어</button>'}</div>
   ${cf.newLure ? `<div class="inline"><input class="t" id="nl_name" placeholder="루어 이름 (예: 센코 4인치)"><input class="t" id="nl_color" placeholder="컬러" style="max-width:32%"><button data-act="addLure">추가</button></div>` : ''}
-  <label class="f">리그</label>${chips('cf', 'rig', simple(opts('리그')))}
+  <label class="f">리그${rigHref(cf.rig) ? ` <a class="rigLink" href="${rigHref(cf.rig)}" target="_blank" rel="noopener">📖 ${esc(cf.rig)} 도감</a>` : ''}</label>${chips('cf', 'rig', simple(opts('리그')))}
   <label class="f">액션</label>${chips('cf', 'action', simple(opts('액션')))}
   <div class="photo"><label>📷 사진<input type="file" accept="image/*" capture="environment" id="photoIn" hidden></label>
     ${cf.photo ? `<img src="${cf.photo}" alt="">` : ''}

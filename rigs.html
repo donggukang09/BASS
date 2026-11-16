@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>배스 리그 도감</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{margin:0}
+
+/* Layout: 어두운 호수 화면, 편(탭)마다 도트 수조 스테이지를 나란히, 아래에 비교표 */
+:root{
+  --lake:#0f1d29;
+  --panel:#16293a;
+  --edge:#2b4a63;
+  --text:#e9f0ee;
+  --muted:#9fb6c2;
+  --worm:#ee77ae;
+  --gold:#f2cf5b;
+  --sinker:#a9b4bc;
+  --line:#e6f4f6;
+  --font-display:"Do Hyeon","Noto Sans KR",system-ui,sans-serif;
+  --font-body:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--lake);color:var(--text);font-family:var(--font-body);
+  font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 40px;
+}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-family:var(--font-display);color:var(--gold);letter-spacing:.08em;font-size:15px}
+h1{font-family:var(--font-display);font-weight:400;font-size:clamp(34px,6vw,52px);line-height:1.1;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--worm)}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+
+.hosts{display:flex;flex-wrap:wrap;gap:14px 28px}
+.host{display:flex;align-items:flex-end;gap:10px;min-width:0}
+.host canvas{width:64px;height:64px;aspect-ratio:1;border:0;background:transparent;flex:none}
+.bubble{position:relative;background:var(--panel);border:3px solid var(--edge);padding:6px 12px;font-size:14px;margin-bottom:18px;max-width:30ch}
+.bubble b{font-family:var(--font-display);font-weight:400;color:var(--gold);margin-right:6px}
+.bubble::before{content:"";position:absolute;left:-9px;bottom:6px;width:9px;height:9px;background:var(--edge);clip-path:polygon(100% 0,0 100%,100% 100%)}
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:3px solid var(--edge)}
+.tabs a{font-family:var(--font-display);font-size:19px;color:var(--muted);text-decoration:none;padding:8px 18px;border:3px solid transparent;border-bottom:0;margin-bottom:-3px}
+.tabs a b{font-weight:400;color:var(--gold);margin-right:8px}
+.tabs a[aria-current="page"]{color:var(--text);background:var(--panel);border-color:var(--edge)}
+.tabs a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+.controls{display:flex;flex-wrap:wrap;gap:10px}
+button{
+  font-family:var(--font-display);font-size:17px;color:var(--text);
+  background:var(--panel);border:3px solid var(--edge);padding:6px 16px;cursor:pointer;
+  box-shadow:3px 3px 0 #08121a;
+}
+button:hover{border-color:var(--muted)}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #08121a}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+
+.episode{display:flex;flex-direction:column;gap:26px}
+.thesis{margin:0;font-size:17px;max-width:62ch;border-left:6px solid var(--worm);padding:4px 0 4px 14px}
+.thesis strong{color:var(--worm)}
+.stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px}
+.stage{background:var(--panel);border:3px solid var(--edge);box-shadow:5px 5px 0 #08121a;display:flex;flex-direction:column;min-width:0}
+.stage-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:12px 16px 10px;flex-wrap:wrap}
+.stage-head h2{font-family:var(--font-display);font-weight:400;font-size:30px;margin:0;line-height:1}
+.stage-head .tag{font-family:var(--font-display);font-size:15px;color:var(--gold)}
+canvas{display:block;width:100%;height:auto;aspect-ratio:4/3;image-rendering:pixelated;image-rendering:crisp-edges;border-block:3px solid var(--edge);background:#245d82}
+.caption{padding:12px 16px 4px;display:flex;flex-direction:column;gap:8px;min-height:96px}
+.steps{display:flex;gap:6px}
+.steps button{width:22px;height:12px;padding:0;border-width:2px;box-shadow:none;background:var(--lake)}
+.steps button.on{background:var(--worm);border-color:var(--worm)}
+.cap-text{font-size:16px;font-weight:500;margin:0;text-wrap:balance}
+.anatomy{padding:8px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.anatomy .label{font-family:var(--font-display);color:var(--muted);font-size:14px;letter-spacing:.05em}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px}
+.chip{border:2px solid var(--edge);padding:2px 8px;background:var(--lake);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip i{width:10px;height:10px;display:inline-block}
+.arrow{color:var(--muted);font-family:var(--font-display)}
+.note{color:var(--muted);font-size:13.5px;margin:0}
+
+section.compare h2{font-family:var(--font-display);font-weight:400;font-size:30px;margin:0 0 12px}
+.table-box{overflow-x:auto;border:3px solid var(--edge);background:var(--panel);box-shadow:5px 5px 0 #08121a}
+table{border-collapse:collapse;width:100%;min-width:600px}
+th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:2px solid var(--edge)}
+tr:last-child td,tr:last-child th{border-bottom:0}
+thead th{font-family:var(--font-display);font-weight:400;font-size:20px;background:var(--lake)}
+tbody th{font-family:var(--font-display);font-weight:400;font-size:16px;color:var(--gold);white-space:nowrap;width:110px}
+td strong{color:var(--worm);font-weight:700}
+.map{background:var(--panel);border:3px solid var(--edge);box-shadow:5px 5px 0 #08121a;display:flex;flex-direction:column;min-width:0}
+.map h2{font-family:var(--font-display);font-weight:400;font-size:30px;margin:0;padding:12px 16px 10px;line-height:1}
+.map canvas{aspect-ratio:2/1}
+.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 18px;padding:12px 16px 16px;margin:0;list-style:none}
+.lanes li{display:flex;gap:10px;align-items:baseline;font-size:14px}
+.lanes b{font-family:var(--font-display);font-weight:400;font-size:17px;white-space:nowrap}
+.lanes span{color:var(--muted)}
+.lanes i{width:12px;height:12px;display:inline-block;flex:none;align-self:center}
+footer{color:var(--muted);font-family:var(--font-display);font-size:13px;letter-spacing:.12em;text-align:right}
+@media (prefers-reduced-motion:reduce){button:active{transform:none}}
+
+.appbar{position:sticky;top:0;z-index:5;margin:-28px -16px 0;padding:10px 16px;background:rgba(15,29,41,.94);border-bottom:3px solid var(--edge);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.appbar a{font-family:var(--font-display);font-size:18px;color:var(--text);text-decoration:none;background:var(--panel);border:3px solid var(--edge);padding:4px 14px;box-shadow:3px 3px 0 #08121a}
+.appbar span{font-family:var(--font-display);color:var(--gold);font-size:15px;letter-spacing:.06em}
+.stage.focus{outline:3px solid var(--gold);outline-offset:4px;scroll-margin-top:70px}
+</style>
+</head>
+<body>
+<nav class="appbar"><a href="./" id="backApp">◀ BASS LOG</a><span>RIG GUIDE</span></nav>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">배스 리그 도감</div>
+    <h1>웜은 같아도 <em>채비</em>가 다르면<br>움직임이 다르다</h1>
+    <p class="lede">채비가 물에 들어가서 배스가 무는 순간까지를 도트 애니메이션으로 나란히 보여드려요. 회색은 무게(싱커), 분홍은 웜, 흰 선은 낚싯줄이에요.</p>
+  </header>
+
+  <div class="hosts">
+    <div class="host"><canvas id="host-dende" width="16" height="16" aria-label="덴데"></canvas><p class="bubble"><b>덴데</b><span id="say-dende"></span></p></div>
+    <div class="host"><canvas id="host-boo" width="16" height="16" aria-label="부우"></canvas><p class="bubble"><b>부우</b><span id="say-boo"></span></p></div>
+  </div>
+
+  <nav class="tabs" aria-label="편 선택">
+    <a href="#ep1" data-ep="ep1"><b>01</b>프리리그 · 다운샷</a>
+    <a href="#ep2" data-ep="ep2"><b>02</b>와키 · 네코 · 카이젤</a>
+    <a href="#ep3" data-ep="ep3"><b>03</b>지그헤드 · 텍사스 · 캐롤라이나</a>
+    <a href="#ep4" data-ep="ep4"><b>04</b>하드베이트 수심 지도</a>
+    <a href="#ep5" data-ep="ep5"><b>05</b>스피너 · 버즈 · 채터</a>
+    <a href="#ep6" data-ep="ep6"><b>06</b>러버지그</a>
+  </nav>
+
+  <div class="controls">
+    <button id="play" type="button">❚❚ 일시정지</button>
+    <button id="slow" type="button" aria-pressed="false">느리게 보기</button>
+    <button id="restart" type="button">↺ 처음부터</button>
+  </div>
+
+  <!-- ============ 01편 ============ -->
+  <div class="episode" id="ep1">
+    <p class="thesis">두 채비 모두 바닥을 노리지만, <strong>싱커가 웜보다 위에 있느냐 아래에 있느냐</strong>가 다릅니다.</p>
+    <div class="stages">
+      <article class="stage" id="st-free">
+        <div class="stage-head"><h2>프리리그</h2><span class="tag">떨어지는 순간이 승부</span></div>
+        <canvas width="128" height="96" aria-label="프리리그 채비 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">채비 구조 (위에서 아래로)</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>싱커 · 라인 위를 미끄러짐</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>바늘 + 웜</span>
+          </div>
+          <p class="note">싱커가 고정돼 있지 않아서, 싱커가 먼저 떨어진 뒤 웜이 따로 천천히 떨어져요. 이 '따로 노는' 움직임에 배스가 반응해요.</p>
+        </div>
+      </article>
+      <article class="stage" id="st-ds">
+        <div class="stage-head"><h2>다운샷</h2><span class="tag">제자리에서 계속 유혹</span></div>
+        <canvas width="128" height="96" aria-label="다운샷 채비 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">채비 구조 (위에서 아래로)</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>바늘 + 웜 · 라인 중간</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--gold)"></i>리더 (간격)</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>싱커 · 맨 끝</span>
+          </div>
+          <p class="note">싱커가 맨 아래라 바닥에 닻처럼 박혀 있고, 웜은 노란 점선만큼 바닥에서 떠 있어요. 간격은 배스가 노는 높이에 맞춰 조절해요.</p>
+        </div>
+      </article>
+    </div>
+    <section class="compare">
+      <h2>한눈에 비교</h2>
+      <div class="table-box"><table>
+        <thead><tr><th></th><th>프리리그</th><th>다운샷</th></tr></thead>
+        <tbody>
+          <tr><th>싱커 위치</th><td>웜 앞쪽, 라인 위에서 자유롭게 움직임</td><td>맨 끝, 웜보다 아래</td></tr>
+          <tr><th>웜의 움직임</th><td>싱커와 따로 <strong>천천히 떨어짐</strong></td><td>바닥 위에 떠서 <strong>제자리 춤</strong></td></tr>
+          <tr><th>낚시하는 법</th><td>들었다 놨다 하며 바닥을 조금씩 이동</td><td>로드 끝만 톡톡 흔들며 한자리 공략</td></tr>
+          <tr><th>잘 맞는 상황</th><td>넓은 바닥을 훑으며 배스를 찾을 때</td><td>배스가 예민하거나 한 포인트에 머물 때</td></tr>
+          <tr><th>한 마디로</th><td>"떨어질 때 문다"</td><td>"눈앞에서 계속 알짱거린다"</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <!-- ============ 02편 ============ -->
+  <div class="episode" id="ep2" hidden>
+    <p class="thesis">세 채비 모두 막대 모양 스틱웜의 <strong>가운데에 바늘을 꿰요.</strong> 다른 점은 딱 하나, <strong>무게를 어디에 다느냐</strong>예요.</p>
+    <div class="stages">
+      <article class="stage" id="st-wacky">
+        <div class="stage-head"><h2>와키리그</h2><span class="tag">가장 느리고 자연스럽게</span></div>
+        <canvas width="128" height="96" aria-label="와키리그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">무게 위치</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>바늘 · 웜 가운데</span>
+            <span class="chip">무게 없음</span>
+          </div>
+          <p class="note">바늘 말고는 아무것도 달지 않아요. 웜 자체 무게로만 가라앉아서 양끝이 팔랑팔랑 떨려요.</p>
+        </div>
+      </article>
+      <article class="stage" id="st-neko">
+        <div class="stage-head"><h2>네코리그</h2><span class="tag">바닥에서 물구나무</span></div>
+        <canvas width="128" height="96" aria-label="네코리그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">무게 위치</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>바늘 · 웜 가운데</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>네일싱커 · 웜 한쪽 끝</span>
+          </div>
+          <p class="note">못처럼 생긴 싱커를 웜 한쪽 끝에 꽂아요. 무게가 한쪽에 몰려서 바닥에 거꾸로 서요.</p>
+        </div>
+      </article>
+      <article class="stage" id="st-kaizer">
+        <div class="stage-head"><h2>카이젤리그</h2><span class="tag">와키를 더 빠르고 깊게</span></div>
+        <canvas width="128" height="96" aria-label="카이젤리그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">무게 위치</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>지그헤드 · 웜 가운데</span>
+          </div>
+          <p class="note">무게와 바늘이 한 몸인 지그헤드를 웜 가운데에 꿰요. 그래서 '지그헤드 와키'라고도 불러요.</p>
+        </div>
+      </article>
+    </div>
+    <section class="compare">
+      <h2>한눈에 비교</h2>
+      <div class="table-box"><table>
+        <thead><tr><th></th><th>와키리그</th><th>네코리그</th><th>카이젤리그</th></tr></thead>
+        <tbody>
+          <tr><th>무게 위치</th><td>없음 (바늘만)</td><td>웜 <strong>한쪽 끝</strong> (네일싱커)</td><td>웜 <strong>가운데</strong> (지그헤드)</td></tr>
+          <tr><th>가라앉는 속도</th><td>가장 느림</td><td>싱커 쪽부터 쑥</td><td>가장 빠름</td></tr>
+          <tr><th>물속 자세</th><td>수평, 양끝이 팔랑</td><td>바닥에 거꾸로 서서 꼬리를 흔듦</td><td>수평 유지, 양끝이 파닥</td></tr>
+          <tr><th>낚시하는 법</th><td>던지고 천천히 떨어뜨리기</td><td>바닥에 세워두고 제자리 흔들기</td><td>바닥에서 톡톡 튕기기</td></tr>
+          <tr><th>잘 맞는 상황</th><td>얕은 곳, 떨어지는 먹이를 노리는 배스</td><td>바닥에 붙어 있는 배스</td><td>깊은 곳, 바람 부는 날</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <!-- ============ 03편 ============ -->
+  <div class="episode" id="ep3" hidden>
+    <p class="thesis">셋 다 무게가 <strong>웜 앞쪽</strong>에 있어요. 다른 점은 <strong>무게와 웜 사이의 거리</strong>예요. 한 몸, 바로 앞에 붙음, 멀리 떨어짐.</p>
+    <div class="stages">
+      <article class="stage" id="st-jig">
+        <div class="stage-head"><h2>지그헤드</h2><span class="tag">헤엄치는 미끼</span></div>
+        <canvas width="128" height="96" aria-label="지그헤드 리그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">무게와 웜 사이: 거리 0</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>지그헤드 · 무게+바늘 한 몸</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>웜</span>
+          </div>
+          <p class="note">바늘 머리에 둥근 납이 붙어 있어요. 감아 들이면 머리가 앞장서고 꼬리가 흔들리며 헤엄쳐요.</p>
+        </div>
+      </article>
+      <article class="stage" id="st-texas">
+        <div class="stage-head"><h2>텍사스리그</h2><span class="tag">수초 속도 거침없이</span></div>
+        <canvas width="128" height="96" aria-label="텍사스리그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">무게와 웜 사이: 바로 앞에 붙음</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>총알 싱커</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>바늘 + 웜 · 바늘 끝 숨김</span>
+          </div>
+          <p class="note">뾰족한 총알 모양 싱커가 웜 코앞에 있고, 바늘 끝은 웜 속에 묻어둬요. 그래서 수초나 돌 틈에 넣어도 잘 안 걸려요.</p>
+        </div>
+      </article>
+      <article class="stage" id="st-caro">
+        <div class="stage-head"><h2>캐롤라이나리그</h2><span class="tag">넓은 바닥을 크게 훑기</span></div>
+        <canvas width="128" height="96" aria-label="캐롤라이나리그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">무게와 웜 사이: 멀리 떨어짐</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--sinker)"></i>무거운 싱커</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#d9473f"></i>구슬</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--line)"></i>도래</span><span class="arrow">▸</span>
+            <span class="chip">긴 리더</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:var(--worm)"></i>바늘 + 웜</span>
+          </div>
+          <p class="note">무거운 싱커와 웜 사이를 긴 줄(리더)로 띄워요. 싱커는 바닥을 긁고, 웜은 뒤에서 가볍게 따라와요.</p>
+        </div>
+      </article>
+    </div>
+    <section class="compare">
+      <h2>한눈에 비교</h2>
+      <div class="table-box"><table>
+        <thead><tr><th></th><th>지그헤드</th><th>텍사스리그</th><th>캐롤라이나리그</th></tr></thead>
+        <tbody>
+          <tr><th>무게와 웜 사이</th><td><strong>한 몸</strong></td><td>바로 앞에 <strong>붙음</strong></td><td>긴 리더로 <strong>멀리</strong></td></tr>
+          <tr><th>바늘</th><td>밖으로 드러남</td><td>웜 속에 숨김</td><td>무게 없는 바늘만</td></tr>
+          <tr><th>웜의 움직임</th><td>머리부터 떨어지고, 감으면 헤엄침</td><td>싱커와 같이 통통 뜀</td><td>싱커 뒤에서 둥실둥실 따라옴</td></tr>
+          <tr><th>낚시하는 법</th><td>천천히 감아 들이기</td><td>바닥에서 들었다 놨다</td><td>옆으로 천천히 끌기</td></tr>
+          <tr><th>잘 맞는 상황</th><td>걸릴 게 적은 곳, 중간 깊이</td><td>수초·돌무더기 속</td><td>넓고 평평한 바닥 탐색</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <!-- ============ 04편 ============ -->
+  <div class="episode" id="ep4" hidden>
+    <p class="thesis">하드베이트는 플라스틱이나 나무로 만든 <strong>딱딱한 루어</strong>예요. 종류마다 헤엄치는 <strong>깊이</strong>가 정해져 있어서, 배스가 있는 깊이에 맞춰 골라요. 입 앞의 투명한 판(립)이 클수록 깊이 들어가요.</p>
+    <section class="map">
+      <h2>수심 지도</h2>
+      <canvas width="192" height="96" aria-label="네 가지 하드베이트가 각자의 깊이에서 동시에 헤엄치는 도트 애니메이션"></canvas>
+      <ul class="lanes">
+        <li><i style="background:#d8403a"></i><b>탑워터</b><span>물 위</span></li>
+        <li><i style="background:#3b6fb0"></i><b>미노우</b><span>수면 바로 아래</span></li>
+        <li><i style="background:#e8792a"></i><b>크랭크베이트</b><span>파고들어 중간 깊이</span></li>
+        <li><i style="background:#c9a43a"></i><b>바이브레이션</b><span>바닥 근처</span></li>
+      </ul>
+    </section>
+    <div class="stages">
+      <article class="stage" id="st-popper">
+        <div class="stage-head"><h2>탑워터 (포퍼)</h2><span class="tag">물 위에서 퐁퐁</span></div>
+        <canvas width="128" height="96" aria-label="포퍼 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">헤엄치는 깊이 · 물 위</div>
+          <p class="note">컵처럼 오목한 입이 물을 받아서 '퐁' 소리와 물보라를 내요. 배스가 수면으로 튀어 오르는 장면을 눈으로 볼 수 있어요. 왼쪽 노란 눈금이 지나가는 깊이예요.</p></div>
+      </article>
+      <article class="stage" id="st-minnow">
+        <div class="stage-head"><h2>미노우</h2><span class="tag">휙 하고 멈칫</span></div>
+        <canvas width="128" height="96" aria-label="미노우 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">헤엄치는 깊이 · 수면 바로 아래</div>
+          <p class="note">날씬한 작은 물고기 모양이에요. 작은 립 덕분에 얕게만 들어가고, 저크할 때 옆구리가 번쩍여요.</p></div>
+      </article>
+      <article class="stage" id="st-crank">
+        <div class="stage-head"><h2>크랭크베이트</h2><span class="tag">쑥 파고들어 부르르</span></div>
+        <canvas width="128" height="96" aria-label="크랭크베이트 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">헤엄치는 깊이 · 파고들어 중간 깊이</div>
+          <p class="note">통통한 몸에 큰 립이 달려 있어요. 감기만 해도 비스듬히 파고들어서, 그 깊이를 유지하며 몸을 떨어요.</p></div>
+      </article>
+      <article class="stage" id="st-vib">
+        <div class="stage-head"><h2>바이브레이션</h2><span class="tag">바닥에서 부르르</span></div>
+        <canvas width="128" height="96" aria-label="바이브레이션 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">헤엄치는 깊이 · 바닥 근처</div>
+          <p class="note">립이 없는 납작한 몸이라 물에 가라앉아요. 당기면 강하게 떨면서 몸 안의 구슬이 달그락 소리를 내요.</p></div>
+      </article>
+    </div>
+    <section class="compare">
+      <h2>한눈에 비교</h2>
+      <div class="table-box"><table>
+        <thead><tr><th></th><th>탑워터 (포퍼)</th><th>미노우</th><th>크랭크베이트</th><th>바이브레이션</th></tr></thead>
+        <tbody>
+          <tr><th>헤엄치는 깊이</th><td><strong>물 위</strong></td><td><strong>수면 바로 아래</strong></td><td><strong>중간 깊이</strong></td><td><strong>바닥 근처</strong></td></tr>
+          <tr><th>립</th><td>없음, 컵 모양 입</td><td>작은 립</td><td>큰 립</td><td>없음</td></tr>
+          <tr><th>물에 뜨나요?</th><td>뜸</td><td>대부분 뜸</td><td>대부분 뜸</td><td>가라앉음</td></tr>
+          <tr><th>낚시하는 법</th><td>톡 치고 멈추기</td><td>저크하고 멈추기</td><td>꾸준히 감기</td><td>들었다 내리기</td></tr>
+          <tr><th>잘 맞는 상황</th><td>아침·저녁, 잔잔한 수면</td><td>작은 물고기를 쫓는 배스</td><td>넓은 곳을 빠르게 탐색</td><td>깊은 곳, 추운 날</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <!-- ============ 05편 ============ -->
+  <div class="episode" id="ep5" hidden>
+    <p class="thesis">와이어베이트는 철사(와이어)에 금속 <strong>블레이드</strong>를 달아 반짝임과 진동으로 배스를 부르는 루어예요. 셋 다 감기만 하면 되고, 차이는 <strong>블레이드가 어디서 어떻게 움직이느냐</strong>예요.</p>
+    <div class="stages">
+      <article class="stage" id="st-spin">
+        <div class="stage-head"><h2>스피너베이트</h2><span class="tag">번쩍번쩍 빙글빙글</span></div>
+        <canvas width="128" height="96" aria-label="스피너베이트 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">블레이드 · 와이어 위에서 회전</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#c9d2d8"></i>V자 와이어</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#e9eef2"></i>블레이드 (위)</span>
+            <span class="chip"><i style="background:#c8e04a"></i>헤드 + 스커트 (아래)</span>
+          </div>
+          <p class="note">위쪽 팔에 달린 블레이드가 돌며 번쩍이고, 아래쪽 팔에 바늘이 있어요. 위의 와이어가 바늘을 막아줘서 나뭇가지에 잘 안 걸려요.</p></div>
+      </article>
+      <article class="stage" id="st-buzz">
+        <div class="stage-head"><h2>버즈베이트</h2><span class="tag">수면을 부르르르</span></div>
+        <canvas width="128" height="96" aria-label="버즈베이트 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">블레이드 · 수면 위 프로펠러</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#c9d2d8"></i>와이어</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#e9eef2"></i>프로펠러 (위)</span>
+            <span class="chip"><i style="background:#3a5ad0"></i>헤드 + 스커트 (아래)</span>
+          </div>
+          <p class="note">프로펠러가 수면 위로 나와서 물을 휘저어요. 가라앉는 루어라서 떨어지자마자 감기 시작해야 해요.</p></div>
+      </article>
+      <article class="stage" id="st-chat">
+        <div class="stage-head"><h2>채터베이트</h2><span class="tag">덜덜덜 진동</span></div>
+        <canvas width="128" height="96" aria-label="채터베이트 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy"><div class="label">블레이드 · 머리 앞에서 좌우로 떨림</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#e9eef2"></i>육각 블레이드</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#6b7a3a"></i>지그헤드 + 스커트</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#9ab06a"></i>트레일러 웜</span>
+          </div>
+          <p class="note">블레이드가 머리 바로 앞에 붙어 있어 좌우로 세게 떨려요. 뒤에 웜을 달아 헤엄치는 모양을 더해요.</p></div>
+      </article>
+    </div>
+    <section class="compare">
+      <h2>한눈에 비교</h2>
+      <div class="table-box"><table>
+        <thead><tr><th></th><th>스피너베이트</th><th>버즈베이트</th><th>채터베이트</th></tr></thead>
+        <tbody>
+          <tr><th>블레이드</th><td>와이어 위에서 <strong>빙글빙글 회전</strong></td><td>수면 위에서 <strong>물을 휘저음</strong></td><td>머리 앞에서 <strong>좌우로 떨림</strong></td></tr>
+          <tr><th>헤엄치는 깊이</th><td>중간~바닥 근처 (가라앉혀 조절)</td><td>물 위</td><td>중간 깊이</td></tr>
+          <tr><th>배스를 부르는 것</th><td>번쩍임 + 진동</td><td>소리 + 물보라</td><td>강한 진동</td></tr>
+          <tr><th>낚시하는 법</th><td>꾸준히 감기</td><td>멈추지 말고 감기</td><td>감다가 수초에서 톡 끊기</td></tr>
+          <tr><th>잘 맞는 상황</th><td>흐린 물, 바람 부는 날, 나뭇가지 주변</td><td>아침·저녁, 수초 위</td><td>수초 지대, 흐린 물</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <!-- ============ 06편 ============ -->
+  <div class="episode" id="ep6" hidden>
+    <p class="thesis">러버지그는 지그헤드에 고무 실로 만든 <strong>치마(스커트)</strong>를 입힌 루어예요. 바닥에서 스커트가 퍼졌다 오므라드는 모습이 <strong>가재</strong>와 닮았어요. 크기에 따라 쓰는 곳이 달라요.</p>
+    <div class="stages">
+      <article class="stage" id="st-rj">
+        <div class="stage-head"><h2>러버지그</h2><span class="tag">바닥의 가재</span></div>
+        <canvas width="128" height="96" aria-label="러버지그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">구조</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#3b2a1a"></i>지그헤드 + 위드가드</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#c9762a"></i>스커트</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#8a5a32"></i>가재 트레일러</span>
+          </div>
+          <p class="note">머리 위의 솔(위드가드)이 바늘 끝을 가려서 돌 틈이나 수초 속에 넣어도 잘 안 걸려요. 오른쪽 바닥에 있는 게 진짜 가재예요.</p>
+        </div>
+      </article>
+      <article class="stage" id="st-srj">
+        <div class="stage-head"><h2>스몰러버지그</h2><span class="tag">작고 조용하게</span></div>
+        <canvas width="128" height="96" aria-label="스몰러버지그 도트 애니메이션"></canvas>
+        <div class="caption"><div class="steps"></div><p class="cap-text" aria-live="polite"></p></div>
+        <div class="anatomy">
+          <div class="label">구조</div>
+          <div class="chain">
+            <span class="chip"><i style="background:var(--line)"></i>라인</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#5f6b34"></i>작은 지그헤드</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#8a9a4a"></i>짧은 스커트</span><span class="arrow">▸</span>
+            <span class="chip"><i style="background:#b8a06a"></i>작은 트레일러</span>
+          </div>
+          <p class="note">모든 게 작고 가벼워요. 큰 루어에는 반응하지 않는 예민한 배스한테 조용하게 보여주는 용도예요.</p>
+        </div>
+      </article>
+    </div>
+    <section class="compare">
+      <h2>한눈에 비교</h2>
+      <div class="table-box"><table>
+        <thead><tr><th></th><th>러버지그</th><th>스몰러버지그</th></tr></thead>
+        <tbody>
+          <tr><th>크기·무게</th><td><strong>크고 무거움</strong></td><td><strong>작고 가벼움</strong></td></tr>
+          <tr><th>바늘 보호</th><td>솔(위드가드)로 바늘 끝을 가림</td><td>없거나 아주 작음</td></tr>
+          <tr><th>트레일러</th><td>집게 달린 가재 웜</td><td>작은 웜</td></tr>
+          <tr><th>낚시하는 법</th><td>바닥에서 들었다 놓기</td><td>제자리에서 살살 흔들기</td></tr>
+          <tr><th>잘 맞는 상황</th><td>돌무더기·수초 속, 큰 배스</td><td>맑은 물, 예민한 배스</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <footer>DEVELOPED BY DONGGU KANG</footer>
+</div>
+
+<script>
+(() => {
+const W=128,H=96,SURF=14,BOT=82,CYCLE=11.2,OX=126,OY=0;
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,k)=>a+(b-a)*k;
+const eio=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+const eout=k=>1-(1-k)*(1-k);
+const LINE='rgba(236,250,252,.85)';
+const bayer=[[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+function hash(x,y){let h=(x*374761393+y*668265263)|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967295;}
+
+function P(g,x,y,c){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),1,1);}
+function L(g,x0,y0,x1,y1,c){x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);g.fillStyle=c;
+  let dx=Math.abs(x1-x0),sx=x0<x1?1:-1,dy=-Math.abs(y1-y0),sy=y0<y1?1:-1,err=dx+dy;
+  for(let i=0;i<500;i++){g.fillRect(x0,y0,1,1);if(x0===x1&&y0===y1)break;const e2=2*err;if(e2>=dy){err+=dy;x0+=sx;}if(e2<=dx){err+=dx;y0+=sy;}}}
+function Q(g,x0,y0,cx,cy,x1,y1,c){let px=x0,py=y0;const n=14;for(let i=1;i<=n;i++){const t=i/n,u=1-t;
+  const x=u*u*x0+2*u*t*cx+t*t*x1,y=u*u*y0+2*u*t*cy+t*t*y1;L(g,px,py,x,y,c);px=x;py=y;}}
+function sprite(g,rows,pal,x,y){x=Math.round(x);y=Math.round(y);for(let r=0;r<rows.length;r++)for(let c=0;c<rows[r].length;c++){const ch=rows[r][c];if(ch!=='.'){g.fillStyle=pal[ch];g.fillRect(x+c,y+r,1,1);}}}
+
+const SINK_PAL={o:'#dfe6ea',g:'#7f8a92',G:'#c3ccd2',k:'#59636b'};
+const FREE_SINK=["..o..","..g..",".gGg.","gGggk","gGggk",".gkk."];
+const DS_SINK=[".o.","gGg","gGk","gGk","gGk","gkk"];
+
+/* 큰입배스: 큰 입(눈 아래까지), 옆줄 무늬, 가시지느러미+부드러운 등지느러미, 갈라진 꼬리 */
+const BASS=[
+"........kkkk.kkk........",
+"kk.....kffffkfffkk......",
+"kfk..kkBBBBBBBBBBBkkk...",
+"kffkkBBBBBBBBBBBBBBBBkk.",
+".kfkGGGGGGGGGGGGGGGGyeGk",
+"..kSGSSGSSSGSSSGSSSGGGmk",
+".kfkGGSGGSSGGSSGGGGmmmmk",
+"kffkLLLLLLLLLLLLLLLLLLLk",
+"kfk..kWWWWWWWWWWWWWWWkk.",
+"kk....kkfkWWWWWWWWWkk...",
+"........kfk.kkkkkkk.....",
+".........k..............",
+].map(r=>r.padEnd(24,'.'));
+const BASS_PAL={k:'#1b3218',f:'#4b7434',B:'#3b682b',G:'#6aa244',S:'#284a1f',y:'#d8b84a',e:'#090909',m:'#12200e',L:'#c9d98e',W:'#eceed0'};
+function fish(g,mx,my,t,open){
+  const x0=Math.round(mx-23),y0=Math.round(my-6),wag=Math.sin(t*12)>0?1:0;
+  if(open){g.fillStyle='#6b2424';g.fillRect(x0+15,y0+7,8,1);g.fillStyle='#e8d9c2';g.fillRect(x0+22,y0+7,1,1);}
+  for(let r=0;r<BASS.length;r++)for(let c=0;c<24;c++){const ch=BASS[r][c];if(ch==='.')continue;
+    let y=y0+r;if(c<3)y+=wag;if(open&&r>=7&&c>=14)y+=1;g.fillStyle=BASS_PAL[ch];g.fillRect(x0+c,y,1,1);}
+}
+function bang(g,x,y){g.fillStyle='#ffd84a';g.fillRect(Math.round(x),Math.round(y),2,5);g.fillRect(Math.round(x),Math.round(y)+6,2,2);}
+
+function makeBg(Wd=W){
+  const c=document.createElement('canvas');c.width=Wd;c.height=H;const g=c.getContext('2d');
+  for(let y=0;y<SURF;y++)for(let x=0;x<Wd;x++)P(g,x,y,y<SURF-6?'#c4e4ee':'#d9eff3');
+  for(let x=0;x<Wd;x++){if(!(x<44||x>98))continue;const h=Math.round(3+2*Math.sin(x*.35)+1.5*Math.sin(x*.13+1));
+    for(let y=SURF-h;y<SURF;y++)P(g,x,y,(x+y)%3===0?'#3d6b45':'#4f7f52');}
+  const water=['#4a9bbb','#3a84a6','#2c6b8f','#215576','#183f5c','#132f47'];
+  for(let y=SURF;y<BOT;y++)for(let x=0;x<Wd;x++){const f=(y-SURF)/(BOT-SURF)*(water.length-1);let b=Math.floor(f);
+    if(bayer[y%4][x%4]/16<f-b)b++;P(g,x,y,water[Math.min(b,water.length-1)]);}
+  for(let y=SURF+1;y<BOT-10;y++){const x=Math.round(70+(y-SURF)*.5);if((x+y)%2===0){P(g,x,y,'rgba(200,240,250,.10)');P(g,x+1,y,'rgba(200,240,250,.10)');}}
+  for(let y=BOT;y<H;y++)for(let x=0;x<Wd;x++){const n=hash(x,y);let col='#7c6646';
+    if(y===BOT)col=n<.5?'#9a8358':'#8c764f';else if(n<.18)col='#5f4d34';else if(n>.9)col='#9a8358';P(g,x,y,col);}
+  const rock=(cx,r,h)=>{for(let dx=-r;dx<=r;dx++)for(let dy=0;dy<=h;dy++){if(dx*dx/(r*r)+dy*dy/(h*h)<=1){
+    const col=(dx<0&&dy>h*.4)?'#8d969b':(dx>r*.4||dy<1)?'#4b5358':'#6c757b';P(g,cx+dx,BOT-dy,col);}}};
+  rock(96,6,4);rock(104,3,2);rock(8,3,2);
+  return c;
+}
+const BG=makeBg();
+function scene(g,t,bg=BG){
+  const Wd=bg.width;
+  g.drawImage(bg,0,0);
+  const off=Math.floor(t*6);
+  for(let x=0;x<Wd;x++){if((x+off)%9!==0)P(g,x,SURF,(x+off)%9<5?'#e2f6fa':'#b9e2ee');}
+  const weed=(x,h,ph)=>{for(let y=0;y<h;y++){const ox=Math.round(Math.sin(t*1.6+y*.35+ph)*(y/h)*1.6);P(g,x+ox,BOT-1-y,y%3?'#3f8a4a':'#5aa85c');}};
+  weed(5,18,0);weed(8,11,1);weed(114,22,2);weed(118,14,3);weed(122,9,4);
+}
+function splash(g,x,dt){if(dt<0||dt>.9)return;const s=Math.sin(dt/.9*Math.PI);
+  for(let i=-4;i<=4;i++)P(g,x+i*(1+dt*4),SURF-1-(4-Math.abs(i))*s*.9,'#ffffff');}
+function puff(g,x,dt){if(dt<0||dt>.8)return;for(let i=-4;i<=4;i++){if(hash(i+9,Math.floor(dt*10))>1-dt/.8)continue;
+  P(g,x+i*(.6+dt*8),BOT-1-(4-Math.abs(i))*dt*2.5,'#b8a171');}}
+function fade(g,a){if(a<=0)return;g.fillStyle=`rgba(10,22,32,${clamp(a)})`;g.fillRect(0,0,W,H);}
+
+/* 꼬리 달린 웜 (01편) */
+function worm(g,hx,hy,dx,dy,wig,t){
+  const n=11,len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;const nx=-dy,ny=dx;
+  for(let i=n;i>=1;i--){const k=i/n,o=Math.sin(t*9-i*.8)*wig*k;const x=hx+dx*i+nx*o,y=hy+dy*i+ny*o;
+    P(g,x,y,i%3===0?'#c2457f':'#ee77ae');if(i<8)P(g,x+nx,y+ny,'#d65d97');}
+  P(g,hx,hy,'#e8eef2');P(g,hx-dx,hy-dy,'#e8eef2');
+}
+
+/* ---------- 01편: 프리리그 ---------- */
+const FR={
+  caps:['캐스팅! 채비가 물에 들어가요.','무거운 싱커가 먼저 쑥 가라앉아요.','웜은 싱커와 따로, 하늘하늘 천천히 내려와요.',
+        '바닥 도착. 싱커는 라인 위를 자유롭게 미끄러져요.','로드를 들면 싱커가 바닥에서 떠올라요.',
+        '로드를 내리면 웜이 혼자 천천히 떨어져요. 입질 타이밍!','떨어지는 웜을 배스가 덥석!'],
+  starts:[0,.8,1.9,3.6,5.0,6.4,8.8],
+  draw(g,t){
+    const X0=40;let sx,sy,wx,wy,dx=-1,dy=0,wig=1,cap,fx=null,fy=0,bite=false,taut=false;
+    if(t<.8){const k=t/.8;sx=X0;sy=lerp(-4,SURF+3,k);wx=X0-2;wy=sy-3;dy=-.5;cap=0;}
+    else if(t<1.9){const k=(t-.8)/1.1;sx=X0;sy=lerp(SURF+3,BOT,Math.pow(k,1.25));wx=X0-2-k*3;wy=lerp(SURF,BOT-24,k);dx=-.35;dy=-1;cap=1;}
+    else if(t<3.6){const e=eout((t-1.9)/1.7);sx=X0;sy=BOT;wx=X0-5-e*6+Math.sin(t*3)*1.5*(1-e);wy=lerp(BOT-24,BOT-2,e);dx=lerp(-.35,-1,e);dy=lerp(-1,-.1,e);wig=1.3;cap=2;}
+    else if(t<5.0){sx=X0;sy=BOT;wx=X0-11;wy=BOT-2;dy=-.1;wig=.35;cap=3;}
+    else if(t<6.4){const k=eio((t-5)/1.4);sx=lerp(X0,X0+16,k);sy=lerp(BOT,BOT-24,k);wx=lerp(X0-11,X0+3,k);wy=lerp(BOT-2,BOT-15,k*k);dy=lerp(-.1,.45,k);wig=.6;taut=true;cap=4;}
+    else if(t<8.8){const k1=clamp((t-6.4)/.45);sx=X0+16;sy=lerp(BOT-24,BOT,k1*k1);const k=clamp((t-6.4)/2.4);
+      wx=X0+3-k*3+Math.sin(t*4)*1.5;wy=lerp(BOT-15,BOT-8,k);dy=-.4+Math.sin(t*5)*.35;wig=1.5;cap=5;
+      if(t>6.9){const kf=eout(clamp((t-6.9)/1.9));fx=lerp(-8,wx,kf);fy=lerp(BOT-20,wy,kf)+Math.round(Math.sin(t*4)*(1-kf));}}
+    else{const tb=t-8.8;sx=X0+16;sy=BOT;fx=X0-tb*5;fy=BOT-8-Math.sin(tb*3);wx=fx;wy=fy;wig=.4;bite=true;taut=true;cap=6;}
+    scene(g,t);
+    const rx=sx,ry=sy-5;
+    L(g,OX,OY,rx,ry,LINE);
+    if(taut)L(g,rx,ry,wx,wy,LINE);
+    else Q(g,rx,ry,(rx+wx)/2-4,Math.min(BOT-1,(ry+wy)/2+4),wx,wy,LINE);
+    sprite(g,FREE_SINK,SINK_PAL,sx-2,sy-5);
+    worm(g,wx,wy,dx,dy,wig,t);
+    if(fx!==null)fish(g,fx,fy,t,bite);
+    if(bite)bang(g,fx-14,fy-16);
+    splash(g,X0,t-.75);puff(g,X0,t-1.9);puff(g,X0+16,t-6.85);
+    fade(g,(t-10.4)/.8);
+    return cap;
+  }
+};
+
+/* ---------- 01편: 다운샷 ---------- */
+const DS={
+  caps:['캐스팅! 채비가 물에 들어가요.','맨 끝의 싱커가 채비 전체를 끌고 내려가요.','싱커는 바닥에, 웜은 바닥 위에 떠 있어요.',
+        '로드 끝을 톡톡 흔들면 웜이 제자리에서 춤춰요.','싱커는 그대로. 웜만 같은 자리에서 계속 유혹해요.','제자리에서 춤추는 웜을 배스가 덥석!'],
+  starts:[0,.8,2.2,3.2,6.6,8.6],
+  draw(g,t){
+    const X0=50,LEAD=20;let sx=X0,sy,hx=X0,hy,dx=-1,dy=0,wig=.6,cap,fx=null,fy=0,bite=false,oy=OY,bracket=false;
+    if(t<.8){const k=t/.8;sy=lerp(-2,SURF+3,k);hy=sy-LEAD;dy=-.3;cap=0;}
+    else if(t<2.2){const k=(t-.8)/1.4;sy=lerp(SURF+3,BOT,Math.pow(k,1.2));hy=sy-LEAD;hx=X0+Math.sin(t*3);dy=-.5;wig=.8;cap=1;}
+    else if(t<3.2){sy=BOT;hy=BOT-LEAD;dy=.1;wig=.5;cap=2;bracket=true;}
+    else if(t<6.6){sy=BOT;const s=Math.floor(t*8)%2;hy=BOT-LEAD+(s?1:-1);hx=X0+(Math.floor(t*8)%4<2?0:1);oy=OY+(s?2:0);dy=Math.sin(t*7)*.5;wig=2.2;cap=3;bracket=true;}
+    else if(t<8.6){sy=BOT;const s=Math.floor(t*6)%2;hy=BOT-LEAD+(s?1:0);oy=OY+(s?1:0);dy=Math.sin(t*5)*.4;wig=1.6;cap=4;bracket=true;
+      const kf=eout(clamp((t-6.6)/2));fx=lerp(-8,hx-1,kf);fy=lerp(BOT-8,hy,kf)+Math.round(Math.sin(t*4)*(1-kf));}
+    else{const tb=t-8.6;sy=BOT;fx=X0-1-tb*3;fy=BOT-LEAD-Math.sin(tb*3);hx=fx+1;hy=fy;wig=.4;bite=true;cap=5;}
+    scene(g,t);
+    L(g,OX,oy,hx,hy,LINE);
+    L(g,hx,hy,sx,sy-5,LINE);
+    if(bracket){for(let y=Math.round(hy)+1;y<sy-1;y++)if(y%2===0)P(g,X0+6,y,'#f2cf5b');
+      P(g,X0+5,Math.round(hy)+1,'#f2cf5b');P(g,X0+7,Math.round(hy)+1,'#f2cf5b');P(g,X0+5,sy-2,'#f2cf5b');P(g,X0+7,sy-2,'#f2cf5b');}
+    sprite(g,DS_SINK,SINK_PAL,sx-1,sy-5);
+    worm(g,hx,hy,dx,dy,wig,t);
+    if(fx!==null)fish(g,fx,fy,t,bite);
+    if(bite)bang(g,fx-14,fy-16);
+    splash(g,X0,t-.75);puff(g,X0,t-2.2);
+    fade(g,(t-10.2)/1.0);
+    return cap;
+  }
+};
+
+/* ---------- 02편: 스틱웜 공통 ---------- */
+/* ang: 웜 방향, bend: 끝이 휘는 정도(+는 아래로, -는 위로), mode 'top'이면 위쪽 끝만 휨 */
+function stick(g,cx,cy,ang,bend,mode){
+  const ca=Math.cos(ang),sa=Math.sin(ang),nx=-sa,ny=ca;
+  for(let s=-7;s<=7;s++){const k=s/7;const off=(mode==='top'&&s>0)?0:bend*k*k*3;
+    const x=cx+ca*s+nx*off,y=cy+sa*s+ny*off;
+    P(g,x,y,'#ee77ae');P(g,x+nx,y+ny,(s+7)%4===0?'#c2457f':'#d65d97');}
+  return {ca,sa,nx,ny};
+}
+const HOOK='#e8eef2';
+function makeStickRig(cfg){
+  return {caps:cfg.caps,starts:cfg.starts,
+    draw(g,t){
+      let cap=0;for(let i=0;i<cfg.starts.length;i++)if(t>=cfg.starts[i])cap=i;
+      let p,fx=null,fy=0,bite=false;
+      if(t<8.8){p=cfg.pose(t);
+        if(t>7.0){const kf=eout(clamp((t-7)/1.8));fx=lerp(-8,p.cx,kf);fy=lerp(BOT-22,p.cy,kf)+Math.round(Math.sin(t*4)*(1-kf));}}
+      else{const tg=cfg.pose(8.8),tb=t-8.8;fx=tg.cx-tb*5;fy=tg.cy-Math.sin(tb*3);p={cx:fx,cy:fy,ang:tg.ang,bend:tg.bend*.3};bite=true;}
+      scene(g,t);
+      const ca=Math.cos(p.ang),sa=Math.sin(p.ang),nx=-sa,ny=ca;
+      const eyeOff=cfg.weight==='jig'?2:1;
+      const ex=p.cx-nx*eyeOff,ey=p.cy-ny*eyeOff;
+      if(bite||t<.8)L(g,OX,OY,ex,ey,LINE);
+      else Q(g,OX,OY,(OX+ex)/2,Math.min(BOT-1,(OY+ey)/2+10),ex,ey,LINE);
+      stick(g,p.cx,p.cy,p.ang,p.bend,cfg.weight==='nail'?'top':'');
+      if(cfg.weight==='jig'){
+        const bx=Math.round(p.cx),by=Math.round(p.cy);
+        g.fillStyle='#7f8a92';g.fillRect(bx-1,by-1,3,3);g.fillStyle='#c3ccd2';g.fillRect(bx-1,by-1,1,1);P(g,bx,by-1,'#a9b4bc');
+        P(g,ex,ey,HOOK);P(g,p.cx+nx*2+ca,p.cy+ny*2+sa,HOOK);P(g,p.cx+nx*2,p.cy+ny*2,HOOK);
+      }else{
+        P(g,ex,ey,HOOK);P(g,p.cx+nx*2,p.cy+ny*2,HOOK);P(g,p.cx+nx*2+ca,p.cy+ny*2+sa,HOOK);
+      }
+      if(cfg.weight==='nail'){for(let s=4;s<=7;s++)P(g,p.cx+ca*s+nx*.5,p.cy+sa*s+ny*.5,s===7?'#c3ccd2':'#8f9aa2');}
+      if(fx!==null)fish(g,fx,fy,t,bite);
+      if(bite)bang(g,fx-14,fy-16);
+      splash(g,cfg.X0,t-.75);
+      if(cfg.puffs)cfg.puffs(g,t,p);
+      fade(g,(t-10.4)/.8);
+      return cap;
+    }};
+}
+
+const WACKY=makeStickRig({X0:60,weight:'none',
+  caps:['캐스팅! 웜 가운데에 바늘만 꿰었어요.','무게가 없어서 수평으로 아주 천천히, 양끝을 떨며 내려와요.',
+        '바닥에 살포시 눕듯 내려앉아요.','살짝 들었다 놓으면 다시 팔랑팔랑 떨어져요.','팔랑이며 떨어지는 웜을 배스가 덥석!'],
+  starts:[0,.8,4.4,5.6,8.8],
+  pose(t){const X0=60;
+    if(t<.8)return{cx:X0,cy:lerp(-4,SURF+2,t/.8),ang:0,bend:0};
+    if(t<4.4){const k=(t-.8)/3.6;return{cx:X0+Math.sin(t*1.8)*3,cy:lerp(SURF+2,BOT-2,k),ang:Math.sin(t*2.2)*.25,bend:Math.sin(t*7)*.9};}
+    if(t<5.6)return{cx:X0,cy:BOT-2,ang:0,bend:0};
+    const u=t-5.6;
+    if(u<.5){const k=eout(u/.5);return{cx:X0+k*3,cy:lerp(BOT-2,BOT-14,k),ang:-.3*k,bend:-1.6*k};}
+    const k=clamp((u-.5)/2.7);return{cx:X0+3-k*2+Math.sin(t*1.8)*2,cy:lerp(BOT-14,BOT-7,k),ang:Math.sin(t*2.2)*.25,bend:Math.sin(t*7)*.9};
+  },
+  puffs(g,t){puff(g,60,t-4.4);}
+});
+
+const NEKO=makeStickRig({X0:56,weight:'nail',
+  caps:['캐스팅! 웜 한쪽 끝에 못처럼 생긴 싱커를 꽂았어요.','싱커가 꽂힌 쪽이 먼저, 거꾸로 서서 내려가요.','바닥에 물구나무 선 모양으로 꽂혀요.',
+        '로드를 톡톡 흔들면 위쪽 꼬리가 바닥에서 하늘하늘 춤춰요.','바닥을 뒤지던 배스가 다가와요.','춤추는 꼬리를 배스가 덥석!'],
+  starts:[0,.8,2.4,3.4,7.0,8.8],
+  pose(t){const X0=56;
+    if(t<.8)return{cx:X0,cy:lerp(-8,SURF+1,t/.8),ang:Math.PI/2,bend:0};
+    if(t<2.4){const k=(t-.8)/1.6;return{cx:X0+Math.sin(t*2)*1.5,cy:lerp(SURF+1,BOT-8,Math.pow(k,1.15)),ang:Math.PI/2+Math.sin(t*3)*.12,bend:Math.sin(t*8)*.6};}
+    let a=Math.PI/2+.1,b=.3*Math.sin(t*3);
+    if(t>=3.4&&t<7.0){a=Math.PI/2+(Math.floor(t*7)%2?.24:-.06);b=Math.sin(t*9)*1.4;}
+    else if(t>=7.0){a=Math.PI/2+(Math.floor(t*5)%2?.14:-.02);b=Math.sin(t*7)*1.0;}
+    const bx=X0+1,by=BOT-1;return{cx:bx-Math.cos(a)*7,cy:by-Math.sin(a)*7,ang:a,bend:b};
+  },
+  puffs(g,t){puff(g,57,t-2.4);}
+});
+
+const KAIZER=makeStickRig({X0:52,weight:'jig',
+  caps:['캐스팅! 웜 가운데에 지그헤드(무게 달린 바늘)를 꿰었어요.','가운데 무게 덕분에 수평 자세로, 와키보다 빠르게 내려가요.',
+        '바닥에선 가운데가 닿고 양끝이 살짝 들려요.','톡톡 튕기면 통통 뛰면서 양끝이 파닥파닥.','깊은 곳에서도 바닥을 꾸준히 훑어요. 배스 접근!','파닥이는 웜을 배스가 덥석!'],
+  starts:[0,.8,2.6,3.6,7.0,8.8],
+  pose(t){const X0=52;
+    if(t<.8)return{cx:X0,cy:lerp(-4,SURF+2,t/.8),ang:0,bend:-.6};
+    if(t<2.6){const k=(t-.8)/1.8;return{cx:X0+Math.sin(t*2)*1.5,cy:lerp(SURF+2,BOT-3,Math.pow(k,1.2)),ang:Math.sin(t*2)*.1,bend:-1+Math.sin(t*9)*.35};}
+    if(t<3.6)return{cx:X0,cy:BOT-3,ang:0,bend:lerp(-1,-.45,clamp((t-2.6)*2))};
+    const u=t-3.6,n=Math.floor(u/1.4),p=(u%1.4)/1.4;
+    const lift=p<.22?eout(p/.22)*7:Math.pow(1-(p-.22)/.78,1.5)*7;
+    return{cx:X0+n*2+Math.min(p/.22,1)*2,cy:BOT-3-lift,ang:0,bend:-.45+Math.sin(t*11)*(lift>1?.7:.2)};
+  },
+  puffs(g,t,p){puff(g,52,t-2.6);if(t>3.6+1.4&&t<8.8)puff(g,p.cx,(t-3.6)%1.4);}
+});
+
+/* ---------- 03편 공통 ---------- */
+function chase(t,tx,ty){if(t<7)return null;const kf=eout(clamp((t-7)/1.8));return{x:lerp(-8,tx,kf),y:lerp(BOT-20,ty,kf)+Math.round(Math.sin(t*4)*(1-kf))};}
+function makeRig3(cfg){
+  return{caps:cfg.caps,starts:cfg.starts,draw(g,t){
+    let cap=0;for(let i=0;i<cfg.starts.length;i++)if(t>=cfg.starts[i])cap=i;
+    let p,f=null,bite=false;
+    if(t<8.8){p=cfg.pose(t);f=chase(t,p.hx,p.hy);}
+    else{const tg=cfg.pose(8.8),tb=t-8.8;p=Object.assign({},tg,{hx:tg.hx-tb*5,hy:tg.hy-Math.sin(tb*3),dx:-1,dy:0,wig:.4,land:undefined,drag:false});f={x:p.hx,y:p.hy};bite=true;}
+    scene(g,t);
+    if(cfg.back)cfg.back(g,t);
+    cfg.render(g,t,p,bite);
+    if(f)fish(g,f.x,f.y,t,bite);
+    if(bite)bang(g,f.x-14,f.y-16);
+    splash(g,cfg.X0,t-.75);
+    if(cfg.puffs)cfg.puffs(g,t,p);
+    fade(g,(t-10.4)/.8);
+    return cap;
+  }};
+}
+function upNormal(dx,dy){const l=Math.hypot(dx,dy)||1;let nx=-dy/l,ny=dx/l;if(ny>0||(ny===0&&nx>0)){nx=-nx;ny=-ny;}return[nx,ny,dx/l,dy/l];}
+
+const JIG=makeRig3({X0:30,
+  caps:['캐스팅! 바늘 머리에 무게가 달린 지그헤드예요.','무거운 머리부터 고개를 숙이고 내려가요.','바닥에 닿으면 머리가 바닥을 콕 찍어요.',
+        '천천히 감아 들이면 꼬리를 흔들며 중간 깊이를 헤엄쳐요.','헤엄치는 웜을 배스가 뒤에서 쫓아와요.','헤엄치던 웜을 배스가 덥석!'],
+  starts:[0,.8,2.0,3.0,7.0,8.8],
+  pose(t){const X0=30;
+    if(t<.8)return{hx:X0,hy:lerp(-4,SURF+3,t/.8),dx:-.3,dy:-1,wig:.4};
+    if(t<2.0){const k=(t-.8)/1.2;return{hx:X0+Math.sin(t*2),hy:lerp(SURF+3,BOT-3,Math.pow(k,1.2)),dx:-.25,dy:-1,wig:1.2};}
+    if(t<3.0){const e=eout(clamp((t-2)/.7));return{hx:X0,hy:BOT-3,dx:lerp(-.25,-1,e),dy:lerp(-1,-.35,e),wig:.4};}
+    const u=t-3;return{hx:X0+u*9,hy:lerp(BOT-3,46,eout(clamp(u/1.6)))+Math.sin(t*3)*.8,dx:-1,dy:lerp(-.35,0,clamp(u/1.2)),wig:1.8};
+  },
+  render(g,t,p){
+    const[ux,uy,dx,dy]=upNormal(p.dx,p.dy);
+    const bx=Math.round(p.hx-dx*1.5),by=Math.round(p.hy-dy*1.5);
+    L(g,OX,OY,bx,by-2,LINE);
+    worm(g,p.hx,p.hy,p.dx,p.dy,p.wig,t);
+    g.fillStyle='#7f8a92';g.fillRect(bx-1,by-1,3,3);P(g,bx-1,by-1,'#c3ccd2');P(g,bx,by-2,'#a9b4bc');
+    P(g,p.hx+dx*4+ux*2,p.hy+dy*4+uy*2,HOOK);P(g,p.hx+dx*5+ux*2,p.hy+dy*5+uy*2,HOOK);
+  },
+  puffs(g,t){puff(g,30,t-2.0);}
+});
+
+const TEXAS=makeRig3({X0:32,
+  caps:['캐스팅! 총알 싱커가 웜 바로 앞에 붙어 있어요.','싱커와 웜이 한 몸처럼 빠르게 가라앉아요.','바닥에 닿으면 싱커가 바닥 느낌을 손끝에 전해줘요.',
+        '들었다 놨다, 바닥을 통통 뛰며 수초 사이를 지나가요.','바늘 끝이 웜 속에 숨어 있어 수초에 안 걸려요. 배스 접근!','수초에서 튀어나온 배스가 덥석!'],
+  starts:[0,.8,1.8,2.8,7.0,8.8],
+  pose(t){const X0=32;
+    if(t<.8)return{hx:X0,hy:lerp(-4,SURF+3,t/.8),dx:-.4,dy:-1,wig:.4};
+    if(t<1.8){const k=t-.8;return{hx:X0,hy:lerp(SURF+3,BOT-2,Math.pow(k,1.2)),dx:-.3,dy:-1,wig:.6};}
+    if(t<2.8){const e=eout(clamp((t-1.8)/.6));return{hx:X0,hy:BOT-2,dx:lerp(-.3,-1,e),dy:lerp(-1,-.1,e),wig:.4};}
+    const u=t-2.8,n=Math.floor(u/1.4),q=(u%1.4)/1.4;
+    const lift=q<.3?eout(q/.3)*9:Math.pow(1-(q-.3)/.7,1.3)*9;
+    return{hx:X0+(n+Math.min(q/.3,1))*5,hy:BOT-2-lift,dx:-1,dy:lift>1.5?.55:-.1,wig:lift>1.5?.9:.4,land:n>=1?u%1.4:undefined};
+  },
+  back(g,t){for(let x=46;x<=64;x+=2){const h=Math.round(9+hash(x,3)*12);
+    for(let y=0;y<h;y++){const ox=Math.round(Math.sin(t*1.4+y*.3+x*.7)*(y/h)*1.8);P(g,x+ox,BOT-1-y,(y+x)%3?'#3a7f43':'#57a15a');}}},
+  render(g,t,p){
+    const vx=OX-p.hx,vy=OY-p.hy,vl=Math.hypot(vx,vy),ux=vx/vl,uy=vy/vl;
+    L(g,OX,OY,p.hx,p.hy,LINE);
+    worm(g,p.hx,p.hy,p.dx,p.dy,p.wig,t);
+    const cx=Math.round(p.hx+ux*2.5),cy=Math.round(p.hy+uy*2.5);
+    g.fillStyle='#7f8a92';g.fillRect(cx-1,cy-1,3,3);P(g,cx-1,cy-1,'#c3ccd2');P(g,p.hx+ux*4.6,p.hy+uy*4.6,'#a9b4bc');
+  },
+  puffs(g,t,p){puff(g,32,t-1.8);if(p.land!==undefined)puff(g,p.hx,p.land);}
+});
+
+const CARO_SINK=["...o...","..ggg..",".gGggg.","gGgggkk",".gGggk.","..gkk.."];
+const CARO=makeRig3({X0:40,
+  caps:['캐스팅! 무거운 싱커와 웜 사이에 긴 줄(리더)이 있어요.','무거운 싱커가 먼저 바닥까지 쑥 내려가요.','리더가 길어서 웜은 한참 뒤에 천천히 따라 내려와요.',
+        '천천히 끌면 싱커가 바닥을 긁고, 웜은 뒤에서 둥실둥실 따라와요.','멈추면 웜이 천천히 가라앉아요. 배스 접근!','따라오던 웜을 배스가 덥석!'],
+  starts:[0,.8,1.8,3.6,7.0,8.8],
+  pose(t){const X0=40;
+    if(t<.8){const sy=lerp(-4,SURF+3,t/.8);return{sx:X0,sy,hx:X0-6,hy:sy-6,dx:-1,dy:-.4,wig:.5};}
+    if(t<1.8){const k=t-.8;return{sx:X0,sy:lerp(SURF+3,BOT,Math.pow(k,1.2)),hx:X0-10,hy:lerp(SURF-1,SURF+16,k),dx:-.6,dy:-.8,wig:.8};}
+    if(t<3.6){const e=eout((t-1.8)/1.8);return{sx:X0,sy:BOT,hx:lerp(X0-10,X0-26,e),hy:lerp(SURF+16,BOT-7,e)+Math.sin(t*2),dx:-1,dy:lerp(-.8,-.2,e),wig:1};}
+    if(t<7.0){const k=(t-3.6)/3.4,sx=X0+k*20;return{sx,sy:BOT,hx:sx-26+Math.sin(t*1.5),hy:BOT-8+Math.sin(t*2.2)*1.5,dx:-1,dy:-.15+Math.sin(t*3)*.2,wig:1.2,drag:true};}
+    const k=clamp((t-7)/1.8),sx=X0+20;return{sx,sy:BOT,hx:sx-26+k*2,hy:lerp(BOT-8,BOT-5,k),dx:-1,dy:-.1,wig:.8};
+  },
+  render(g,t,p,bite){
+    const sx=Math.round(p.sx),sy=Math.round(p.sy);
+    L(g,OX,OY,sx,sy-5,LINE);
+    const wx=sx-7,wy=sy-2;
+    L(g,sx,sy-4,sx-3,wy,LINE);
+    if(bite)L(g,wx,wy,p.hx,p.hy,LINE);
+    else Q(g,wx,wy,(wx+p.hx)/2,Math.min(BOT-1,(wy+p.hy)/2+3),p.hx,p.hy,LINE);
+    worm(g,p.hx,p.hy,p.dx,p.dy,p.wig,t);
+    sprite(g,CARO_SINK,SINK_PAL,sx-3,sy-5);
+    P(g,sx-4,wy,'#d9473f');P(g,sx-5,wy,'#e8eef2');P(g,sx-6,wy,'#9aa4ab');P(g,wx,wy,'#e8eef2');
+  },
+  puffs(g,t,p){puff(g,40,t-1.8);if(p.drag)puff(g,p.sx+3,(t*1.6)%.8);}
+});
+
+/* ---------- 04편: 하드베이트 ---------- */
+const LURES={
+  popper:{sp:["..kkkkkk.",".kRRWWWek","kRRWWWWWc",".kRRWWWWk","..kkkkkk."],pal:{k:'#2a2a2a',R:'#d8403a',W:'#f4f1e6',e:'#111111',c:'#3a1a1a'}},
+  minnow:{sp:["...kkkkkkkk..",".kBBBBBBBBBk.","kSSSSSSSSSeSk",".kWWWWWWWWWkL","...kkkkkkkk.L"],pal:{k:'#1e2a33',B:'#3b6fb0',S:'#d7e3ea',W:'#f2f5f7',e:'#111111',L:'#bfe0ee'}},
+  crank:{sp:["..kkkkkk....",".kOOOOOOkk..","kOOOOOOOeOk.","kYYYYYYYYYkL","kYYYYYYYYYkL",".kYYYYYYYkLL","..kkkkkkk..."],pal:{k:'#2b1a0a',O:'#e8792a',Y:'#f5c542',e:'#111111',L:'#bcd9e6'}},
+  vib:{sp:["..kkkkk...",".kGGGGGkk.","kGGGGGGeGk","kWWWWWWWWk",".kWWWWWkk.","..kkkk...."],pal:{k:'#1b2b1b',G:'#c9a43a',W:'#f5f0d8',e:'#111111'}}
+};
+Object.values(LURES).forEach(l=>{l.w=Math.max(...l.sp.map(r=>r.length));l.sp=l.sp.map(r=>r.padEnd(l.w,'.'));l.h=l.sp.length;});
+function drawLure(g,lu,p){
+  const x0=Math.round(p.x-lu.w/2+(p.shake||0)),y0=Math.round(p.y-lu.h/2+(p.wob||0));
+  sprite(g,lu.sp,lu.pal,x0,y0);
+  if(p.flash){P(g,x0+5,y0+2,'#ffffff');P(g,x0+6,y0+2,'#ffffff');P(g,x0+7,y0+2,'#ffffff');}
+  const tre=(x,y)=>{P(g,x,y,'#c9d2d8');P(g,x-1,y+1,'#c9d2d8');P(g,x+1,y+1,'#c9d2d8');};
+  tre(x0+3,y0+lu.h);tre(x0+lu.w-4,y0+lu.h);
+  return{nx:x0+lu.w,ny:Math.round(p.y)};
+}
+function band(g,y0,y1){for(let y=y0;y<=y1;y++)if(y%2===0)P(g,124,y,'#f2cf5b');P(g,123,y0,'#f2cf5b');P(g,125,y0,'#f2cf5b');P(g,123,y1,'#f2cf5b');P(g,125,y1,'#f2cf5b');}
+function ripple(g,x,dt){if(dt<0||dt>1)return;const r=Math.round(dt*14);if((Math.floor(dt*20))%2)return;P(g,x-r,SURF,'#ffffff');P(g,x+r,SURF,'#ffffff');}
+function popSpray(g,x,dt){if(dt<0||dt>.45)return;const s=Math.sin(dt/.45*Math.PI);for(let i=0;i<6;i++)P(g,x+1+i*(1+dt*6),SURF-2-(i%3+1)*s*1.6,'#ffffff');}
+function makeLureRig(cfg){
+  const lu=LURES[cfg.lure];
+  return{caps:cfg.caps,starts:cfg.starts,draw(g,t){
+    let cap=0;for(let i=0;i<cfg.starts.length;i++)if(t>=cfg.starts[i])cap=i;
+    let p,f=null,bite=false,tb=0;
+    if(t<8.8){p=cfg.pose(t);f=chase(t,p.x+lu.w/2-2,p.y);}
+    else{const tg=cfg.pose(8.8);tb=t-8.8;
+      const y=cfg.surface?tg.y-Math.max(0,Math.sin(tb*4))*5:tg.y-Math.sin(tb*3);
+      p={x:tg.x-tb*4,y};f={x:p.x+lu.w/2-2,y:p.y};bite=true;}
+    scene(g,t);
+    band(g,cfg.band[0],cfg.band[1]);
+    const nose=drawLure(g,lu,p);
+    L(g,OX,OY,nose.nx,nose.ny,LINE);
+    if(cfg.extra)cfg.extra(g,t,p,nose,bite);
+    if(f)fish(g,f.x,f.y,t,bite);
+    if(bite){bang(g,f.x-14,f.y-16);if(cfg.surface)splash(g,f.x-8,tb%.9);}
+    splash(g,cfg.X0,t-.75);
+    fade(g,(t-10.4)/.8);
+    return cap;
+  }};
+}
+
+const POPPER=makeLureRig({lure:'popper',X0:30,surface:true,band:[SURF-3,SURF+1],
+  caps:['캐스팅! 물 위에 떠 있는 루어예요.','물결이 잔잔해질 때까지 잠깐 기다려요.','로드를 톡 치면 컵 모양 입이 물을 \'퐁\' 하고 튀겨요.',
+        '소리와 물보라에 배스가 아래에서 올라와요.','수면이 \'펑\'! 배스가 물 위로 덮쳐요.'],
+  starts:[0,.8,2.0,7.0,8.8],
+  pose(t){const X0=30,Y=SURF-1;
+    if(t<.8)return{x:X0,y:lerp(-6,Y,eout(t/.8))};
+    if(t<2.0)return{x:X0,y:Y+(Math.sin(t*5)>0?0:1),rip:t-.8};
+    const u=t-2.0,n=Math.floor(u/1.2),q=u%1.2,step=Math.min(q/.14,1);
+    return{x:X0+(n+step)*5,y:Y+(q<.14?-1:(Math.sin(t*5)>0?0:1)),pop:q,rip:q};
+  },
+  extra(g,t,p,nose,bite){if(bite)return;if(p.rip!==undefined)ripple(g,Math.round(p.x),p.rip);if(p.pop!==undefined)popSpray(g,nose.nx,p.pop);}
+});
+
+const MINNOW=makeLureRig({lure:'minnow',X0:24,band:[SURF+6,SURF+14],
+  caps:['캐스팅! 날씬한 작은 물고기 모양이에요.','감기 시작하면 작은 립 덕분에 수면 바로 아래로 살짝 들어가요.',
+        '톡톡 저크하면 휙휙 달리고, 멈추면 그 자리에 멈칫. 다친 작은 물고기 흉내예요.','멈칫하는 순간을 노려 배스가 다가와요.','멈춘 미노우를 배스가 덥석!'],
+  starts:[0,.8,2.0,7.0,8.8],
+  pose(t){const X0=24,D=SURF+10;
+    if(t<.8)return{x:X0,y:lerp(-6,SURF,eout(t/.8))};
+    if(t<2.0){const k=eout((t-.8)/1.2);return{x:X0+k*10,y:lerp(SURF,D,k)};}
+    const u=t-2.0,n=Math.floor(u),q=u%1,dart=Math.min(q/.25,1),dir=n%2?1:-1;
+    return{x:X0+10+(n+dart)*6,y:D+(q<.25?dir*Math.sin(dart*Math.PI)*3:0)-Math.max(q-.25,0)*1.3,flash:q<.25&&Math.floor(t*14)%2===0};
+  }
+});
+
+const CRANK=makeLureRig({lure:'crank',X0:18,band:[SURF,BOT-23],
+  caps:['캐스팅! 크랭크베이트는 보통 물에 떠요.','감기 전에는 수면에 둥둥 떠 있어요.','감기 시작하면 큰 립이 물을 받아 비스듬히 쑥쑥 파고들어요.',
+        '정해진 깊이에 닿으면 그 깊이를 지키며 몸을 부르르 떨어요.','부르르 떨며 지나가는 크랭크를 배스가 쫓아와요.','지나가던 크랭크를 배스가 덥석!'],
+  starts:[0,.8,1.6,4.2,7.0,8.8],
+  pose(t){const X0=18,D=BOT-26;
+    if(t<.8)return{x:X0,y:lerp(-6,SURF-1,eout(t/.8))};
+    if(t<1.6)return{x:X0,y:SURF-1+(Math.sin(t*5)>0?0:1)};
+    const w=Math.floor(t*12)%2;
+    if(t<4.2){const k=(t-1.6)/2.6;return{x:lerp(X0,48,k),y:lerp(SURF-1,D,eout(k)),wob:w};}
+    return{x:48+(t-4.2)*8,y:D+Math.sin(t*2)*.8,wob:w};
+  }
+});
+
+const VIB=makeLureRig({lure:'vib',X0:30,band:[BOT-24,BOT-1],
+  caps:['캐스팅! 립이 없고 무거워서 물에 가라앉아요.','바닥까지 그대로 내려보내요.','바닥 도착.',
+        '로드를 쭉 들면 \'부르르\' 떨며 올라오고, 내리면 팔랑이며 가라앉아요.','진동과 소리에 멀리 있던 배스도 다가와요.','가라앉는 바이브를 배스가 덥석!'],
+  starts:[0,.8,2.4,3.0,7.0,8.8],
+  pose(t){const X0=30,Bt=BOT-4;
+    if(t<.8)return{x:X0,y:lerp(-6,SURF,eout(t/.8))};
+    if(t<2.4){const k=(t-.8)/1.6;return{x:X0+Math.sin(t*4)*1.5,y:lerp(SURF,Bt,k)};}
+    if(t<3.0)return{x:X0,y:Bt};
+    const u=t-3.0,n=Math.floor(u/1.6),q=(u%1.6)/1.6;
+    if(q<.3){const k=eout(q/.3);return{x:X0+(n+k)*6,y:lerp(Bt,Bt-18,k),buzz:true,shake:Math.floor(t*30)%2?1:-1,land:n>=1?u%1.6:undefined};}
+    const k=(q-.3)/.7;return{x:X0+(n+1)*6+Math.sin(t*4),y:lerp(Bt-18,Bt,k)};
+  },
+  extra(g,t,p){
+    puff(g,30,t-2.4);if(p.land!==undefined)puff(g,p.x,p.land);
+    if(p.buzz&&Math.floor(t*10)%2){const x=Math.round(p.x),y=Math.round(p.y);
+      for(const s of[-1,1]){const ex=x+s*8;P(g,ex,y-2,'#fff6c8');P(g,ex+s,y,'#fff6c8');P(g,ex,y+2,'#fff6c8');}}
+  }
+});
+
+/* 수심 지도 (네 루어 동시) */
+const MW=192,BG2=makeBg(MW);
+function drawMap(g,t){
+  scene(g,t,BG2);
+  const lane=(y,c)=>{for(let x=4;x<MW;x+=4)P(g,x,y,c);};
+  lane(SURF+10,'rgba(242,207,91,.45)');lane(BOT-26,'rgba(242,207,91,.45)');lane(BOT-6,'rgba(242,207,91,.45)');
+  const loop=(sp,off)=>((t*sp+off)%232)-20;
+  drawLure(g,LURES.popper,{x:loop(9,0),y:SURF-1+(Math.sin(t*5)>0?0:1)});
+  drawLure(g,LURES.minnow,{x:loop(15,70),y:SURF+10+Math.round(Math.sin(t*5)*2),flash:Math.floor(t*6)%3===0});
+  const s=loop(12,150);
+  drawLure(g,LURES.crank,{x:s,y:lerp(SURF-1,BOT-26,eout(clamp((s+20)/80))),wob:Math.floor(t*12)%2});
+  drawLure(g,LURES.vib,{x:loop(11,20),y:BOT-5-Math.abs(Math.sin(t*1.6))*14,shake:Math.floor(t*20)%2?1:0});
+  drawCat(g,0,SURF-14,'dende');drawCat(g,13,SURF-14,'boo');
+}
+
+/* ---------- 05편: 와이어베이트 ---------- */
+const WIRE='#c9d2d8',SILVER='#e9eef2';
+function skirt(g,x,y,cols,t,len){for(let i=1;i<=len;i++)for(let r=-1;r<=1;r++){const o=Math.round(Math.sin(t*10+i*.9+r)*(i/len)*1.2);P(g,x-i,y+r+o,cols[(i+r+3)%cols.length]);}}
+function makeWire(cfg){
+  return{caps:cfg.caps,starts:cfg.starts,draw(g,t){
+    let cap=0;for(let i=0;i<cfg.starts.length;i++)if(t>=cfg.starts[i])cap=i;
+    let p,f=null,bite=false,tb=0;
+    if(t<8.8){p=cfg.pose(t);f=chase(t,p.x+2,p.y);}
+    else{const tg=cfg.pose(8.8);tb=t-8.8;
+      const y=cfg.surface?tg.y-Math.max(0,Math.sin(tb*4))*5:tg.y-Math.sin(tb*3);
+      p=Object.assign({},tg,{x:tg.x-tb*4,y,stuck:false,spray:false});f={x:p.x+2,y:p.y};bite=true;}
+    scene(g,t);
+    if(cfg.back)cfg.back(g,t);
+    const tie=cfg.body(g,p,t);
+    L(g,OX,OY,tie[0],tie[1],LINE);
+    if(f)fish(g,f.x,f.y,t,bite);
+    if(bite){bang(g,f.x-14,f.y-16);if(cfg.surface)splash(g,f.x-8,tb%.9);}
+    splash(g,cfg.X0||20,t-.75);
+    fade(g,(t-10.4)/.8);
+    return cap;
+  }};
+}
+function headBall(g,x,y,c,eye){g.fillStyle=c;g.fillRect(x-1,y-1,3,3);P(g,x+1,y-1,'#ffffff');P(g,x+1,y,eye);}
+
+const SPIN=makeWire({
+  caps:['캐스팅! 와이어 위에는 블레이드, 아래에는 바늘이 달렸어요.','원하는 깊이까지 가라앉혀요.','꾸준히 감으면 블레이드가 빙글빙글 돌며 번쩍여요. 작은 물고기 떼처럼 보여요.',
+        '나뭇가지에 부딪혀도 와이어가 바늘을 막아줘서 툭 넘어가요.','툭 튀는 순간, 가지 밑에 숨어 있던 배스가 따라와요.','블레이드 뒤를 쫓던 배스가 덥석!'],
+  starts:[0,.8,2.0,5.0,7.0,8.8],
+  pose(t){const D=50;
+    if(t<.8)return{x:20,y:lerp(-6,SURF+2,eout(t/.8))};
+    if(t<2.0){const k=(t-.8)/1.2;return{x:20+k*3,y:lerp(SURF+2,D,eout(k))};}
+    if(t<5.0){const k=(t-2)/3;return{x:lerp(23,56,k),y:D+Math.sin(t*2)*.8};}
+    const x=56+(t-5)*8;return{x,y:D-8*Math.max(0,1-Math.abs(x-67)/6)+Math.sin(t*2)*.6};
+  },
+  back(g){const br='#5b4128',hi='#7a5a3a';for(let i=0;i<=24;i++){const x=52+i,y=Math.round(BOT-1-i*1.875);P(g,x,y,br);P(g,x,y+1,hi);P(g,x+1,y,br);}
+    for(let i=0;i<6;i++){P(g,64-i,58-i,'#5b4128');}for(let i=0;i<5;i++)P(g,72+i,44-Math.round(i*.6),'#5b4128');},
+  body(g,p,t){const x=Math.round(p.x),y=Math.round(p.y);
+    const A=[x+6,y-2];L(g,A[0],A[1],x+1,y,WIRE);L(g,A[0],A[1],x-3,y-8,WIRE);
+    const bx=x-6,by=y-9,w=Math.round(Math.abs(Math.cos(t*18))*3);
+    if(w===0){P(g,bx,by-1,SILVER);P(g,bx,by,SILVER);P(g,bx,by+1,SILVER);}
+    else{for(let d=-w;d<=w;d++)P(g,bx+d,by,SILVER);for(let d=-(w-1);d<=w-1;d++){P(g,bx+d,by-1,'#b9c4cc');P(g,bx+d,by+1,'#b9c4cc');}if(w===3)P(g,bx-1,by-1,'#ffffff');}
+    P(g,x-4,y-8,WIRE);
+    skirt(g,x,y,['#c8e04a','#f4f4e8','#9fbf2a'],t,8);
+    headBall(g,x+1,y,'#f1efe4','#c0392b');
+    P(g,x-6,y-2,WIRE);P(g,x-5,y-1,WIRE);
+    return A;}
+});
+
+const BUZZ=makeWire({surface:true,
+  caps:['캐스팅! 물 위를 지나가는 와이어베이트예요.','떨어지자마자 바로 감아요. 멈추면 가라앉거든요!','프로펠러가 수면을 부르르르 휘저으며 물보라와 거품 길을 만들어요.',
+        '요란한 소리와 거품을 보고 배스가 아래에서 쫓아와요.','수면이 폭발! 배스가 덮쳐요.'],
+  starts:[0,.8,1.6,7.0,8.8],
+  pose(t){
+    if(t<.8)return{x:20,y:lerp(-6,SURF+2,eout(t/.8))};
+    if(t<1.6){const k=(t-.8)/.8;return{x:20+k*4,y:SURF+2+Math.sin(k*Math.PI)*3};}
+    return{x:24+(t-1.6)*8,y:SURF+2,spray:true};
+  },
+  body(g,p,t){const x=Math.round(p.x),y=Math.round(p.y);
+    if(p.spray){for(let k=1;k<=12;k++){const bx=x-9-k*4;if(bx<14)break;if(hash(k,Math.floor(t*5)+k)>.35){P(g,bx,SURF+1,'#ffffff');P(g,bx+1,SURF,'#d6eff5');}}
+      for(let i=0;i<5;i++){if(hash(i,Math.floor(t*14))>.5)continue;P(g,x-6-i*1.5,SURF-2-((i+Math.floor(t*14))%3),'#ffffff');}}
+    const A=[x+6,y-3];L(g,A[0],A[1],x+1,y,WIRE);L(g,A[0],A[1],x-3,y-7,WIRE);
+    const cx=x-4,cy=y-7,f=Math.floor(t*20)%3;
+    for(let k=0;k<3;k++){const a=f*.7+k*2.094;P(g,cx+Math.round(Math.cos(a)*2),cy+Math.round(Math.sin(a)*2),SILVER);P(g,cx+Math.round(Math.cos(a)),cy+Math.round(Math.sin(a)),'#b9c4cc');}
+    P(g,cx,cy,WIRE);
+    skirt(g,x,y,['#222222','#3a5ad0','#111111'],t,7);
+    headBall(g,x+1,y,'#2b2b2b','#c0392b');
+    P(g,x-5,y-2,WIRE);P(g,x-4,y-1,WIRE);
+    return A;}
+});
+
+const CHAT=makeWire({
+  caps:['캐스팅! 육각 블레이드가 지그헤드 앞에 달려 있어요.','원하는 깊이까지 가라앉혀요.','감으면 블레이드가 좌우로 덜덜덜 떨려요. 진동이 멀리까지 퍼져요.',
+        '수초에 걸리면 톡 쳐서 끊어내요. 튕겨 나가는 순간이 기회!','수초를 빠져나온 루어에 배스가 따라붙어요.','덜덜 떨며 도망가는 루어를 배스가 덥석!'],
+  starts:[0,.8,2.0,5.0,7.0,8.8],
+  pose(t){const D=56;
+    if(t<.8)return{x:20,y:lerp(-6,SURF+2,eout(t/.8))};
+    if(t<2.0){const k=(t-.8)/1.2;return{x:20+k*3,y:lerp(SURF+2,D,eout(k))};}
+    if(t<5.0){const k=(t-2)/3;return{x:lerp(23,56,k),y:D+Math.sin(t*2)*.8,vib:true};}
+    if(t<5.8)return{x:56+(t-5)*4,y:D,stuck:true};
+    if(t<6.2){const k=eout((t-5.8)/.4);return{x:59.2+k*9,y:D-Math.sin(k*Math.PI)*5,vib:true};}
+    return{x:68.2+(t-6.2)*7,y:D+Math.sin(t*2)*.8,vib:true};
+  },
+  back(g,t){for(let x=54;x<=66;x+=2){const h=Math.round(18+hash(x,7)*10);
+    for(let y=0;y<h;y++){const ox=Math.round(Math.sin(t*1.4+y*.3+x*.7)*(y/h)*1.8);P(g,x+ox,BOT-1-y,(y+x)%3?'#3a7f43':'#57a15a');}}},
+  body(g,p,t){const x=Math.round(p.x),y=Math.round(p.y);
+    for(let i=8;i<=14;i++){const o=Math.round(Math.sin(t*12-i*.8)*(i-7)/7*1.5);P(g,x-i,y+o,'#9ab06a');P(g,x-i,y+1+o,'#7f9452');}
+    P(g,x-15,y-1+Math.round(Math.sin(t*12)),'#9ab06a');P(g,x-15,y+2+Math.round(Math.sin(t*12)),'#9ab06a');
+    skirt(g,x,y,['#6b7a3a','#c9a43a','#4f5a2a'],t,7);
+    headBall(g,x,y,'#4a5230','#d8b84a');
+    P(g,x-5,y-2,WIRE);P(g,x-4,y-1,WIRE);
+    const tilt=p.stuck?0:Math.floor(t*24)%2,bx=x+4;
+    for(let r=-2;r<=2;r++){const off=tilt?Math.round(r*.5):-Math.round(r*.5);P(g,bx+off,y+r,SILVER);if(Math.abs(r)<2)P(g,bx+off+1,y+r,'#b9c4cc');}
+    P(g,x+2,y,WIRE);P(g,x+6,y,WIRE);
+    if(p.vib&&Math.floor(t*10)%2){for(const s of[-1,1]){P(g,bx+3,y+s*4,'#fff6c8');P(g,bx+4,y+s*3,'#fff6c8');P(g,bx-1,y+s*5,'#fff6c8');}}
+    if(p.stuck){P(g,x+1,y-2,'#57a15a');P(g,x+2,y-3,'#3a7f43');P(g,x-2,y+2,'#57a15a');}
+    return[x+6,y];}
+});
+
+/* ---------- 06편: 러버지그 ---------- */
+function jigSkirt(g,x,y,a0,s,len,n,cols,t){
+  for(let j=-n;j<=n;j++){const a=a0+j*(.1+s*.22),ca=Math.cos(a),sa=Math.sin(a);
+    for(let i=1;i<=len;i++){const w=Math.sin(t*9+i*.8+j)*(i/len)*.6;P(g,x+ca*i-sa*w,y+sa*i+ca*w,cols[(j+n+i)%cols.length]);}}
+}
+function crawTail(g,x,y,a0,s,t,start,blen,col,col2,clen){
+  const ca=Math.cos(a0),sa=Math.sin(a0);
+  for(let i=start;i<=start+blen;i++)P(g,x+ca*i,y+sa*i,col);
+  const ex=x+ca*(start+blen),ey=y+sa*(start+blen);
+  for(const sg of[-1,1]){const a=a0+sg*(.35+s*.45+Math.sin(t*6)*.08),c2=Math.cos(a),s2=Math.sin(a);
+    for(let i=1;i<=clen;i++)P(g,ex+c2*i,ey+s2*i,i>clen-2?col2:col);
+    P(g,ex+c2*clen-s2*sg,ey+s2*clen+c2*sg,col2);}
+}
+const CRAY=["cc..........","c.c.........",".cbbbbbbbtt.","c.c.l.l.lttt","cc.........."];
+const CRAY_PAL={c:'#b0582a',b:'#8a4a28',t:'#6e3a1f',l:'#5a2e18'};
+function crayfish(g,t){const x0=Math.round(106+Math.sin(t*.7)*3),open=Math.floor(t*2)%3===0;
+  const rows=CRAY.map((r,i)=>open&&(i===1||i===3)?r.replace('c.c','c..'):r);
+  sprite(g,rows,CRAY_PAL,x0,BOT-5);
+  if(Math.floor(t*6)%2)P(g,x0+5,BOT-1,'#5a2e18');else P(g,x0+6,BOT-1,'#5a2e18');}
+function rockAt(g,cx,r,h){for(let dx=-r;dx<=r;dx++)for(let dy=0;dy<=h;dy++){if(dx*dx/(r*r)+dy*dy/(h*h)<=1){
+  const col=(dx<0&&dy>h*.4)?'#8d969b':(dx>r*.4||dy<1)?'#4b5358':'#6c757b';P(g,cx+dx,BOT-dy,col);}}}
+
+const RJ=makeWire({X0:44,
+  caps:['캐스팅! 바늘을 가리는 솔(위드가드)이 달려 있어요.','무거운 머리부터 돌무더기 틈으로 쑥 들어가요.','바닥에 닿으면 스커트가 활짝 퍼져요. 놀란 가재가 집게를 드는 모습이에요.',
+        '들어 올리면 스커트가 오므라들고, 내려놓으면 다시 확 퍼져요.','바닥에서 퍼졌다 오므라드는 모습에 큰 배스가 다가와요.','가재인 줄 알고 배스가 덥석!'],
+  starts:[0,.8,1.8,2.8,7.0,8.8],
+  pose(t){const X0=44,UP=-Math.PI/2-.4,REST=-Math.PI+.3;
+    if(t<.8)return{x:X0,y:lerp(-6,SURF+2,eout(t/.8)),a0:UP,s:.2};
+    if(t<1.8){const k=t-.8;return{x:X0,y:lerp(SURF+2,BOT-2,Math.pow(k,1.25)),a0:UP,s:.1};}
+    if(t<2.8){const e=eout(clamp((t-1.8)/.6));return{x:X0,y:BOT-2,a0:lerp(UP,REST,e),s:lerp(.1,1,e),land:t-1.8};}
+    const u=t-2.8,n=Math.floor(u/1.5),q=(u%1.5)/1.5,x=X0+(n+Math.min(q/.25,1))*4;
+    if(q<.25)return{x,y:BOT-2-eout(q/.25)*10,a0:-Math.PI+.7,s:.15};
+    if(q<.55){const k=(q-.25)/.3;return{x,y:BOT-12+k*k*10,a0:lerp(-Math.PI+.7,REST,k),s:.3};}
+    const k=(q-.55)/.45;return{x,y:BOT-2,a0:REST,s:k<.15?lerp(.3,1,k/.15):1-(k-.15)*.35+Math.sin(t*6)*.05,land:(q-.55)*1.5};
+  },
+  back(g,t){rockAt(g,34,4,3);rockAt(g,58,5,4);rockAt(g,66,3,2);rockAt(g,50,2,1);crayfish(g,t);},
+  body(g,p,t){const x=Math.round(p.x),y=Math.round(p.y);
+    if(p.land!==undefined)puff(g,x,p.land);
+    crawTail(g,x,y,p.a0,p.s,t,7,3,'#8a5a32','#b0723a',4);
+    jigSkirt(g,x,y,p.a0,p.s,7,3,['#7a4a2a','#c9762a','#3b2a1a'],t);
+    const ga=p.a0+.7;for(let i=1;i<=4;i++){P(g,x+Math.cos(ga)*i,y+Math.sin(ga)*i-1,'#1a1a1a');P(g,x+Math.cos(ga+.2)*i,y+Math.sin(ga+.2)*i-1,'#2a2a2a');}
+    headBall(g,x,y,'#3b2a1a','#d8b84a');
+    return[x+1,y-2];}
+});
+
+const SRJ=makeWire({X0:50,
+  caps:['캐스팅! 머리도 스커트도 작은 스몰러버지그예요.','가벼워서 천천히 하늘하늘 내려가요.','바닥에 닿으면 작은 스커트가 살포시 퍼져요.',
+        '로드 끝을 살살 흔들면 제자리에서 스커트 올이 바르르 떨려요.','예민해서 큰 루어를 안 무는 배스도 슬금슬금.','작고 조용한 먹이를 배스가 덥석!'],
+  starts:[0,.8,2.6,3.4,7.0,8.8],
+  pose(t){const X0=50,UP=-Math.PI/2-.3,REST=-Math.PI+.35;
+    if(t<.8)return{x:X0,y:lerp(-6,SURF+2,eout(t/.8)),a0:UP,s:.3};
+    if(t<2.6){const k=(t-.8)/1.8;return{x:X0+Math.sin(t*2.5)*2,y:lerp(SURF+2,BOT-2,k),a0:UP+Math.sin(t*3)*.15,s:.35+Math.sin(t*7)*.1};}
+    if(t<3.4){const e=eout(clamp((t-2.6)/.5));return{x:X0,y:BOT-2,a0:lerp(UP,REST,e),s:lerp(.35,.8,e),land:t-2.6};}
+    const j=Math.floor(t*8)%2;return{x:X0+j,y:BOT-2-(Math.floor(t*8)%4===0?1:0),a0:REST+Math.sin(t*5)*.08,s:.7+Math.sin(t*20)*.2};
+  },
+  body(g,p,t){const x=Math.round(p.x),y=Math.round(p.y);
+    if(p.land!==undefined)puff(g,x,p.land);
+    const ca=Math.cos(p.a0),sa=Math.sin(p.a0);
+    for(let i=4;i<=8;i++){const o=Math.sin(t*10-i)*.5*(i-4)/4;P(g,x+ca*i-sa*o,y+sa*i+ca*o,'#b8a06a');}
+    P(g,x+ca*9-sa,y+sa*9+ca,'#b8a06a');P(g,x+ca*9+sa,y+sa*9-ca,'#b8a06a');
+    jigSkirt(g,x,y,p.a0,p.s,5,2,['#5f6b34','#8a9a4a','#3e4622'],t);
+    g.fillStyle='#5f6b34';g.fillRect(x-1,y-1,2,2);P(g,x,y-1,'#d8b84a');
+    return[x,y-2];}
+});
+
+/* ---------- 덴데 & 부우 (developer.html의 16x16 스프라이트 그대로) ---------- */
+const CAT_COLORS={
+  dende:{dark:'#4a3728',mid:'#6b5240',light:'#ffffff',ear:'#d4a0a0',eye:'#4CAF50',nose:'#d4a0a0',pupil:'#1a1a1a',stripe:'#3d2b1f'},
+  boo:{dark:'#e8913a',mid:'#f0a852',light:'#ffffff',ear:'#e8a0a0',eye:'#8BC34A',nose:'#e8a0a0',pupil:'#1a1a1a',stripe:'#d07830'}
+};
+function catPixels(c){return[
+  [4,1,c.dark],[5,1,c.dark],[9,1,c.dark],[10,1,c.dark],
+  [3,2,c.dark],[4,2,c.ear],[5,2,c.dark],[9,2,c.dark],[10,2,c.ear],[11,2,c.dark],
+  [3,3,c.dark],[4,3,c.dark],[5,3,c.dark],[9,3,c.dark],[10,3,c.dark],[11,3,c.dark],
+  [4,3,c.dark],[5,3,c.mid],[6,3,c.mid],[7,3,c.dark],[8,3,c.mid],[9,3,c.dark],
+  [3,4,c.dark],[4,4,c.mid],[5,4,c.light],[6,4,c.mid],[7,4,c.light],[8,4,c.mid],[9,4,c.light],[10,4,c.mid],[11,4,c.dark],
+  [3,5,c.mid],[4,5,c.light],[5,5,c.eye],[6,5,c.light],[7,5,c.light],[8,5,c.light],[9,5,c.eye],[10,5,c.light],[11,5,c.mid],
+  [3,6,c.mid],[4,6,c.light],[5,6,c.pupil],[6,6,c.light],[7,6,c.nose],[8,6,c.light],[9,6,c.pupil],[10,6,c.light],[11,6,c.mid],
+  [4,7,c.light],[5,7,c.light],[6,7,c.light],[7,7,c.light],[8,7,c.light],[9,7,c.light],[10,7,c.light],
+  [3,8,c.dark],[4,8,c.mid],[5,8,c.light],[6,8,c.light],[7,8,c.light],[8,8,c.light],[9,8,c.light],[10,8,c.mid],[11,8,c.dark],
+  [2,9,c.dark],[3,9,c.mid],[4,9,c.light],[5,9,c.light],[6,9,c.light],[7,9,c.light],[8,9,c.light],[9,9,c.light],[10,9,c.mid],[11,9,c.dark],
+  [2,10,c.dark],[3,10,c.mid],[4,10,c.light],[5,10,c.light],[6,10,c.light],[7,10,c.light],[8,10,c.light],[9,10,c.light],[10,10,c.mid],[11,10,c.dark],
+  [2,11,c.dark],[3,11,c.mid],[4,11,c.mid],[5,11,c.light],[6,11,c.light],[7,11,c.light],[8,11,c.light],[9,11,c.mid],[10,11,c.mid],[11,11,c.dark],
+  [3,12,c.dark],[4,12,c.light],[5,12,c.light],[6,12,c.light],[7,12,c.light],[8,12,c.light],[9,12,c.light],[10,12,c.dark],[12,12,c.dark],
+  [3,13,c.light],[4,13,c.light],[5,13,c.light],[6,13,c.light],[7,13,c.light],[8,13,c.light],[9,13,c.light],[10,13,c.light],[11,13,c.dark],[12,13,c.dark],
+  [5,4,c.stripe],[7,4,c.stripe],[6,5,c.stripe],[8,5,c.stripe],[4,9,c.stripe],[6,9,c.stripe],[8,9,c.stripe],[5,10,c.stripe],[7,10,c.stripe]
+];}
+const CAT_PX={dende:catPixels(CAT_COLORS.dende),boo:catPixels(CAT_COLORS.boo)};
+function drawCat(g,ox,oy,type){for(const[x,y,c]of CAT_PX[type]){g.fillStyle=c;g.fillRect(ox+x,oy+y,1,1);}}
+const HOST_LINES={
+  ep1:['싱커가 어디 있는지만 봐도 반은 안 거야.','난 천천히 떨어지는 웜이 제일 좋아!'],
+  ep2:['셋 다 가운데에 바늘. 무게 위치만 달라.','물구나무 서는 거 나도 할 수 있어!'],
+  ep3:['무게랑 웜 사이 거리를 잘 봐.','수초 속에 숨는 건 내 특기야!'],
+  ep4:['깊이마다 쓰는 루어가 따로 있어.','퐁퐁 소리 나는 거 잡고 싶어!'],
+  ep5:['감기만 하면 되니까 엄마도 바로 할 수 있어.','반짝반짝 빙글빙글, 눈을 못 떼겠어!'],
+  ep6:['바닥에서 퍼졌다 오므라드는 게 가재랑 똑같지?','저 진짜 가재는 내가 잡을래!']
+};
+['dende','boo'].forEach(n=>{const g=document.getElementById('host-'+n).getContext('2d');g.imageSmoothingEnabled=false;drawCat(g,0,1,n);});
+
+/* ---------- 스테이지 연결 ---------- */
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setup(id,rig,ep,still){
+  const el=document.getElementById(id),cv=el.querySelector('canvas'),g=cv.getContext('2d');
+  g.imageSmoothingEnabled=false;
+  const stepsEl=el.querySelector('.steps'),capEl=el.querySelector('.cap-text');
+  const st={t:reduce?still:0,last:-1,g,rig,dots:[],capEl,ep,cat:(el.parentElement.querySelectorAll('.stage').length&&[...el.parentElement.querySelectorAll('.stage')].indexOf(el)%2)?'boo':'dende'};
+  rig.caps.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',`${i+1}단계: ${c}`);
+    b.addEventListener('click',()=>{st.t=rig.starts[i]+.01;render(st);});stepsEl.appendChild(b);st.dots.push(b);});
+  return st;
+}
+function render(st){
+  const cap=st.rig.draw(st.g,st.t);
+  const hop=(cap===st.rig.caps.length-1&&st.t<10.3&&Math.floor(st.t*6)%2)?-2:0;
+  drawCat(st.g,0,SURF-14+hop,st.cat);
+  if(cap!==st.last){st.last=cap;st.capEl.textContent=st.rig.caps[cap];st.dots.forEach((d,i)=>d.classList.toggle('on',i===cap));}
+}
+const stages=[
+  setup('st-free',FR,'ep1',3.9),setup('st-ds',DS,'ep1',4.0),
+  setup('st-wacky',WACKY,'ep2',2.5),setup('st-neko',NEKO,'ep2',4.0),setup('st-kaizer',KAIZER,'ep2',4.0),
+  setup('st-jig',JIG,'ep3',4.5),setup('st-texas',TEXAS,'ep3',3.4),setup('st-caro',CARO,'ep3',5.0),
+  setup('st-popper',POPPER,'ep4',2.05),setup('st-minnow',MINNOW,'ep4',2.1),setup('st-crank',CRANK,'ep4',5.0),setup('st-vib',VIB,'ep4',3.3),
+  setup('st-spin',SPIN,'ep5',4.0),setup('st-buzz',BUZZ,'ep5',4.0),setup('st-chat',CHAT,'ep5',5.4),
+  setup('st-rj',RJ,'ep6',2.6),setup('st-srj',SRJ,'ep6',4.0)
+];
+const mapCv=document.querySelector('#ep4 .map canvas'),mapG=mapCv.getContext('2d');mapG.imageSmoothingEnabled=false;
+let mapT=reduce?3:0;
+let current='ep1';
+function showEp(){
+  const h=decodeURIComponent((location.hash||'').replace('#',''));
+  const st=/^st-/.test(h)?document.getElementById(h):null, epOf=st&&st.closest('.episode');
+  current=epOf?epOf.id:(['ep1','ep2','ep3','ep4','ep5','ep6'].includes(h)?h:'ep1');
+  document.querySelectorAll('.stage.focus').forEach(e=>e.classList.remove('focus'));
+  if(st){st.classList.add('focus');requestAnimationFrame(()=>st.scrollIntoView({behavior:'smooth',block:'start'}));}
+  document.querySelectorAll('.episode').forEach(e=>e.hidden=e.id!==current);
+  document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.ep===current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+  stages.forEach(s=>{if(s.ep===current){s.t=reduce?s.t:0;render(s);}});
+  document.getElementById('say-dende').textContent=HOST_LINES[current][0];
+  document.getElementById('say-boo').textContent=HOST_LINES[current][1];
+}
+window.addEventListener('hashchange',showEp);
+showEp();
+
+let playing=!reduce,speed=1,prev=performance.now();
+const playBtn=document.getElementById('play'),slowBtn=document.getElementById('slow');
+const syncPlay=()=>{playBtn.textContent=playing?'❚❚ 일시정지':'▶ 재생';};
+playBtn.addEventListener('click',()=>{playing=!playing;syncPlay();});
+slowBtn.addEventListener('click',()=>{speed=speed===1?.45:1;slowBtn.setAttribute('aria-pressed',String(speed!==1));});
+document.getElementById('restart').addEventListener('click',()=>{stages.forEach(s=>{if(s.ep===current){s.t=0;render(s);}});playing=true;syncPlay();});
+syncPlay();
+function loop(now){
+  const dt=Math.min(.1,(now-prev)/1000);prev=now;
+  stages.forEach(s=>{if(s.ep!==current)return;if(playing)s.t=(s.t+dt*speed)%CYCLE;render(s);});
+  if(current==='ep4'){if(playing)mapT+=dt*speed;drawMap(mapG,mapT);}
+  requestAnimationFrame(loop);
+}
+stages.forEach(render);
+requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>
