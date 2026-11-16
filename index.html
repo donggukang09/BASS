@@ -409,7 +409,7 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 
 /* ── 장비 (디아블로 인벤토리) ── */
 .hbtns{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
-.lotabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.lotabs{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 10px}
 .lotabs::-webkit-scrollbar{display:none}
 .lot{flex:none;font-family:'Galmuri11',sans-serif;font-size:12px;color:#b9a98a;background:#16120d;border:2px solid #3b3021;padding:8px 10px;position:relative;white-space:nowrap}
 .lot b{font-family:'Press Start 2P',monospace;font-size:8px;color:#7a6a4a;margin-right:6px}
@@ -2482,7 +2482,7 @@ function vGear(){
   return head + `
   ${nm ? `<button class="mbanner" data-act="gearMaintTrip" data-id="${esc(nm.t.trip_id)}">${img('cat:dende', 2)}<span><b>🔧 정비 시간!</b> ${esc(nm.t.date.slice(5).replace('-', '.'))} 출조에 쓴 장비 ${nm.ids.length}개 — 라인 얼마나 남았어?</span></button>` : ''}
   <div class="lotabs">${list.map((s, i) => { const p = lineInfo(s).pct; return `<button class="lot ${s === st ? 'on' : ''}" data-act="gearSel" data-id="${esc(s.setup_id)}"><b>${roman(i + 1)}</b>${esc(s.name || s.setup_id)}${p != null && p <= 30 ? '<i>!</i>' : ''}</button>`; }).join('')}
-    <button class="lot add" data-act="gearNew">+</button></div>
+    <button class="lot add" data-act="gearNew">+ 세팅 추가</button></div>
   <div class="dpanel">
     <div class="dtitle"><div><span>${esc(st.name || st.setup_id)}</span><small>${esc([st.role, st.use].filter(Boolean).join(' · '))}</small></div><button class="dedit" data-act="gearEdit">✏</button></div>
     <div class="doll">
