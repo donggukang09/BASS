@@ -499,6 +499,21 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .swatches{display:flex;flex-wrap:wrap;gap:8px}
 .sw{width:30px;height:30px;border:2px solid #000;box-shadow:0 0 0 1px #4a3b28}
 .sw.on{box-shadow:0 0 0 3px #f7b731}
+.lbag{display:flex;align-items:center;gap:6px;background:#120e09;border:2px solid #4a3b28;padding:8px 10px;margin-bottom:10px;min-height:44px}
+.lbag span{font-size:8px;color:#c9a46a;margin-right:4px}.lbag em{font-style:normal;font-size:12px;color:#6a5a3e;flex:1}
+.lbag b{margin-left:auto;font-size:9px;color:#f7b731}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lgrid.cmp{grid-template-columns:repeat(3,1fr)}
+.lpick{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:4px;text-align:left;padding:8px;background:radial-gradient(#1e1912,#0a0806);border:2px solid color-mix(in srgb,var(--rc) 45%,#2a2318);color:#e8dcc0;opacity:.72;transition:transform .12s}
+.lpick.on{opacity:1;border-color:#f7b731;box-shadow:0 0 0 2px rgba(247,183,49,.25),inset 0 0 18px rgba(247,183,49,.18);transform:translateY(-2px)}
+.lpick b{font-family:'Galmuri11',sans-serif;font-size:13px;color:var(--rc);line-height:1.25}
+.lpick small{font-size:10.5px;color:#9a8a6a;line-height:1.3}
+.lpick .lwarn{color:#ff6a6a}
+.lart{display:flex;align-items:center;justify-content:space-between;min-height:58px}
+.lreel{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ldur{height:5px;background:#1a1a1a;border:1px solid #333}.ldur i{display:block;height:100%}
+.lchk{position:absolute;top:-6px;right:-6px;font-style:normal;font-size:9px;background:#f7b731;color:#000;padding:4px 5px;border:2px solid #000}
+.lpick.cmp{align-items:center;text-align:center;padding:6px 4px}.lpick.cmp .lart{min-height:40px;gap:4px;justify-content:center}.lpick.cmp b{font-size:11px}
 </style>
 </head>
 <body>
@@ -1069,7 +1084,7 @@ function vStart(){
     return { v: s.spot_id, label: s.name, sub: d != null ? (d < 1 ? Math.round(d * 1000) + 'm' : d.toFixed(1) + 'km') : '', d };
   }).sort((a, b) => (a.d ?? 1e9) - (b.d ?? 1e9));
   const use = usage('setup_id'), rank = { '메인':0, '서브':1, '접대':2 };
-  const setups = active('Setups').slice().sort((a, b) => (rank[a.role] ?? 3) - (rank[b.role] ?? 3) || (use[b.setup_id] || 0) - (use[a.setup_id] || 0)).map(setupLabel);
+  const setups = active('Setups').slice().sort((a, b) => (rank[a.role] ?? 3) - (rank[b.role] ?? 3) || (use[b.setup_id] || 0) - (use[a.setup_id] || 0));
   const w = sf.weather;
   return `<div class="head"><div><h1 class="t">출조 준비</h1><div class="sub pf" style="font-size:8px;margin-top:6px">PLAYER SELECT</div></div><button class="x" data-act="home">✕</button></div>
   <div class="card" style="display:flex;gap:10px;align-items:flex-end">${img('cat:boo', 3)}<div class="bubble" style="position:relative;opacity:1;white-space:normal;margin-bottom:18px">${w ? `오늘은 ${esc(w.weather)} ${w.air_temp}℃, ${esc(w.wind)}! 어디로 가?` : navigator.onLine ? '날씨 보는 중… 어디로 가?' : '오프라인이야! 날씨는 나중에 채우자'}</div></div>
@@ -1078,7 +1093,7 @@ function vStart(){
     ${sf.newSpot ? `<div class="inline"><input class="t" id="newSpotName" placeholder="포인트 이름"><button data-act="addSpot">추가</button></div><div class="sub" style="margin-top:6px">${pos ? '지금 위치가 좌표로 저장돼' : '위치를 못 잡으면 좌표 없이 저장돼'}</div>`
      : '<div class="chips" style="margin-top:8px"><button class="chip add" data-act="newSpot">+ 새 포인트</button></div>'}
   </div>
-  <div class="card"><div class="stitle">TACKLE <span>오늘 들고 온 세팅</span></div>${chips('sf', 'setups', setups, true)}</div>
+  <div class="card"><div class="stitle">LOADOUT <span>오늘 들고 갈 세팅</span></div>${loadoutPicker('sf', 'setups', setups, true)}</div>
   <div class="card"><div class="stitle">PARTY <span>동행</span></div>
     <div class="chips">${knownCompanions().map(n => `<button class="chip ${sf.companions.includes(n) ? 'on' : ''}" data-f="sf" data-k="companions" data-v="${esc(n)}" data-multi="1">${esc(n)}</button>`).join('')}
     ${sf.newComp ? '' : '<button class="chip add" data-act="newComp">+ 추가</button>'}</div>
@@ -1298,7 +1313,7 @@ function vCatch(){
   <div class="pad">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k => `<button data-key="${k}">${k}</button>`).join('')}</div>
   ${cf.live ? '' : `<label class="f">잡은 시간</label><input class="t" type="time" value="${esc(cf.time || '')}" data-in="cf.time">
   <label class="f">잡은 자리</label><div class="locrow"><span>${+cf.lat ? `📍 ${(+cf.lat).toFixed(5)}, ${(+cf.lng).toFixed(5)}` : '아직 없음 · 사진에 GPS가 있으면 자동'}</span><button class="chip add" data-act="pickLoc">${+cf.lat ? '다시 찍기' : '📍 지도에서 찍기'}</button></div>`}
-  <label class="f">세팅</label>${chips('cf', 'setup_id', setupIds.map(id => byId('Setups', id)).filter(Boolean).map(setupLabel))}
+  <label class="f">세팅</label>${loadoutPicker('cf', 'setup_id', setupIds.map(id => byId('Setups', id)).filter(Boolean), false, true)}
   <label class="f">루어</label>${chips('cf', 'lure_id', lo.list)}
   <div class="chips" style="margin-top:8px">${lo.more ? '<button class="chip add" data-act="allLures">더보기</button>' : ''}${cf.newLure ? '' : '<button class="chip add" data-act="newLure">+ 새 루어</button>'}</div>
   ${cf.newLure ? `<div class="inline"><input class="t" id="nl_name" placeholder="루어 이름 (예: 센코 4인치)"><input class="t" id="nl_color" placeholder="컬러" style="max-width:32%"><button data-act="addLure">추가</button></div>` : ''}
@@ -1603,14 +1618,14 @@ function openPast(){
 }
 function vPast(){
   const spots = active('Spots').map(s => ({ v: s.spot_id, label: s.name }));
-  const setups = active('Setups').map(setupLabel);
+  const setups = gearSetups();
   return `<div class="shead"><div><h1 class="t">지난 출조 추가</h1><div class="sub pf" style="font-size:8px;margin-top:6px">CONTINUE?</div></div><button class="x" data-act="closeSheet">✕</button></div>
   <div style="display:flex;gap:8px;align-items:flex-end;margin:6px 0 2px">${img('cat:dende', 3)}<div class="bubble tail" style="position:relative;opacity:1;white-space:normal;margin-bottom:18px">날짜랑 시간만 알려줘. 그날 날씨는 내가 찾아올게!</div></div>
   <label class="f">날짜</label><input class="t" type="date" max="${ymd()}" value="${esc(pf.date)}" data-in="pf.date">
   <div class="two"><div><label class="f">시작</label><input class="t" type="time" value="${esc(pf.start)}" data-in="pf.start"></div>
     <div><label class="f">종료</label><input class="t" type="time" value="${esc(pf.end)}" data-in="pf.end"></div></div>
   <label class="f">포인트</label>${chips('pf', 'spot_id', spots)}
-  <label class="f">들고 간 세팅</label>${chips('pf', 'setups', setups, true)}
+  <label class="f">들고 간 세팅</label>${loadoutPicker('pf', 'setups', setups, true)}
   <label class="f">동행 (쉼표로 구분)</label><input class="t" value="${esc(pf.companions)}" data-in="pf.companions">
   <label class="f">수온 (기억나면)</label><input class="t" inputmode="decimal" value="${esc(pf.water_temp)}" data-in="pf.water_temp">
   <label class="f">물색</label>${chips('pf', 'water_clarity', simple(opts('물색')))}
@@ -2677,6 +2692,29 @@ function loSave(){
   const id = gq.id || nextId('Setups', 'ST', 2);
   write('Setups', { setup_id: id, name: gq.name.trim(), role: gq.role, use: gq.use.trim(), active:'Y', ...(gq.id ? {} : { since: ymd() }) });
   gearSel = id; save('bl_gearSel', gearSel); hideSheet(); render(); say(gq.id ? '고쳤어!' : '새 세팅! 슬롯을 눌러서 장비를 끼워 봐', 'boo');
+}
+
+
+/* 세팅 고르기 — 장비창 카드 (출조 시작·지난 출조·조과 입력) */
+function loadoutPicker(f, k, list, multi, compact){
+  const form = forms()[f], cur = form[k], isOn = id => multi ? cur.includes(id) : cur === id;
+  if (!list.length) return `<div class="empty" style="padding:12px">${img('cat:boo', 3)}세팅이 없어! 장비 탭에서 만들어 줘</div>`;
+  const cards = list.map(st => {
+    const rod = byId('Tackle', st.rod_id), reel = byId('Tackle', st.reel_id), line = byId('Tackle', st.line_id), li = lineInfo(st), on = isOn(st.setup_id);
+    const rc = rod ? rarCol(rod) : '#4a3b28', low = li.pct != null && li.pct <= 30;
+    const rig = [st.default_rig, rigLine(st)].filter(Boolean).join(' · ');
+    return `<button class="lpick ${on ? 'on' : ''} ${compact ? 'cmp' : ''}" style="--rc:${rc}" data-f="${f}" data-k="${k}" data-v="${esc(st.setup_id)}" ${multi ? 'data-multi="1"' : ''}>
+      ${on ? '<i class="lchk pf">✓</i>' : ''}
+      <div class="lart"><span class="lrod">${rod ? iconImg(rod, compact ? 2 : 3) : ''}</span><span class="lreel">${reel ? iconImg(reel, compact ? 2 : 3) : ''}${line && !compact ? iconImg(line, 2, li.pct == null ? 7 : Math.round(li.pct / 100 * 7)) : ''}</span></div>
+      <b>${esc(st.name || st.setup_id)}</b>
+      ${compact ? '' : `<small>${esc(rig || st.use || st.role || '')}</small>
+      <div class="ldur"><i style="width:${li.pct ?? 0}%;background:${pctCol(li.pct)}"></i></div>
+      <small class="${low ? 'lwarn' : ''}">${line ? `${esc(line.spec1 || '')}lb · ` : ''}${li.pct == null ? '잔량 ?' : `잔량 ${li.pct}%`}${low ? ' ⚠' : ''}</small>`}</button>`;
+  }).join('');
+  if (compact || !multi) return `<div class="lgrid ${compact ? 'cmp' : ''}">${cards}</div>`;
+  const sel = list.filter(st => isOn(st.setup_id));
+  return `<div class="lbag"><span class="pf">BAG</span>${sel.length ? sel.map(st => { const r = byId('Tackle', st.rod_id); return r ? iconImg(r, 2) : ''; }).join('') : '<em>세팅을 눌러서 가방에 넣어!</em>'}<b class="pf">${sel.length}/${list.length}</b></div>
+    <div class="lgrid">${cards}</div>`;
 }
 
 /* ═════════ 입질 · 놓침 ═════════ */
