@@ -406,6 +406,95 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 #map .leaflet-bar a,#bmap .leaflet-bar a{background:var(--bg2)!important;color:var(--gold)!important;border-color:var(--line)!important;font-family:'Press Start 2P',monospace;font-size:14px}
 #map .leaflet-control-attribution,#bmap .leaflet-control-attribution{background:rgba(22,33,62,.8)!important;color:var(--sub)!important;font-size:9px}
 #map .leaflet-control-attribution a,#bmap .leaflet-control-attribution a{color:var(--sub)!important}
+
+/* ── 장비 (디아블로 인벤토리) ── */
+.hbtns{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+.lotabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.lotabs::-webkit-scrollbar{display:none}
+.lot{flex:none;font-family:'Galmuri11',sans-serif;font-size:12px;color:#b9a98a;background:#16120d;border:2px solid #3b3021;padding:8px 10px;position:relative;white-space:nowrap}
+.lot b{font-family:'Press Start 2P',monospace;font-size:8px;color:#7a6a4a;margin-right:6px}
+.lot.on{color:#f3e2b8;border-color:#c9a46a;background:#241c12;box-shadow:inset 0 0 12px rgba(201,164,106,.25)}
+.lot.on b{color:#c9a46a}.lot i{font-style:normal;color:#fff;background:var(--accent);font-size:10px;padding:0 4px;margin-left:5px}
+.lot.add{color:#c9a46a;min-width:40px}
+.dpanel{background:linear-gradient(#17130e,#0d0b08);border:3px solid #4a3b28;box-shadow:inset 0 0 0 2px #1c160f,inset 0 0 40px rgba(0,0,0,.8),0 6px 20px rgba(0,0,0,.4);padding:14px;margin:4px 0 14px;position:relative}
+.dpanel::before,.dpanel::after{content:'';position:absolute;width:10px;height:10px;background:#c9a46a;top:-3px;left:-3px;clip-path:polygon(0 0,100% 0,0 100%)}
+.dpanel::after{left:auto;right:-3px;clip-path:polygon(0 0,100% 0,100% 100%)}
+.dtitle{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #3b3021;padding-bottom:10px;margin-bottom:12px}
+.dtitle span{font-family:'Galmuri14','Galmuri11',sans-serif;font-size:18px;color:#f3e2b8;display:block}
+.dtitle small{font-size:12px;color:#8d7d5e}
+.dedit{width:34px;height:34px;border:2px solid #3b3021;background:#1c160f;color:#c9a46a}
+.doll{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:10px;align-items:stretch}
+.col2{display:grid;gap:10px}
+.slot{position:relative;min-height:96px;background:radial-gradient(#1e1912,#0a0806);border:2px solid var(--rc);box-shadow:inset 0 0 16px color-mix(in srgb,var(--rc) 35%,transparent),0 0 8px color-mix(in srgb,var(--rc) 25%,transparent);display:flex;align-items:center;justify-content:center}
+.slot.tall{min-height:202px}
+.slot.emp{border-style:dashed;box-shadow:none}
+.slot em,.rigslot em{position:absolute;left:5px;top:4px;font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#7a6a4a}
+.ghost{font-family:'Galmuri11',sans-serif;font-size:12px;color:#5a4d36}
+.hero2{display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,rgba(247,183,49,.12),transparent 65%)}
+.plate{margin-top:8px;font-size:8px;color:#c9a46a;border:1px solid #4a3b28;padding:5px 8px;background:#120e09}
+.rigslot{position:relative;width:100%;margin-top:10px;min-height:76px;background:radial-gradient(#1e1912,#0a0806);border:2px solid #6b5a3d;display:flex;align-items:center;gap:12px;padding:16px 12px 10px;text-align:left;color:#e8dcc0}
+.rigslot b{font-family:'Galmuri14','Galmuri11',sans-serif;font-size:15px;color:#8a8fff}
+.rigslot small{display:block;font-size:11px;color:#8d7d5e;margin-top:4px}
+.sockets{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.sk{font-size:11px;padding:3px 8px;border-radius:12px;border:1px dashed #4a3b28;color:#5a4d36}
+.sk.on{border:1px solid #6b5a3d;color:#e8dcc0;background:#221b12;box-shadow:inset 0 0 6px rgba(138,143,255,.3)}
+.tipbox{background:rgba(0,0,0,.88);border:1px solid #4a4a4a;outline:1px solid #111;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.55}
+.tl2{display:flex;gap:8px;align-items:baseline}.tl2 small{font-family:'Press Start 2P',monospace;font-size:7px;color:#6a6a6a;width:34px;flex:none}
+.tl2 span{font-family:'Galmuri11',sans-serif}
+.tset{color:#47d35a;margin-top:6px;font-family:'Galmuri11',sans-serif}
+.tdur{display:flex;align-items:center;gap:8px;margin-top:8px}.tdur small{font-size:11px;color:#9a9a9a;flex:none}
+.tdur b{font-family:'Press Start 2P',monospace;font-size:10px;min-width:38px;text-align:right}
+.durbar{flex:1;height:10px;background:#1a1a1a;border:1px solid #444}.durbar i{display:block;height:100%}
+.tblue{color:#8a8fff}.tred{color:#ff5a5a}.torg{color:#d8a050;margin-top:4px}.tgray{color:#8a8a8a;margin-top:4px;font-size:12px}.tw{color:#e8e8e8}
+.tipbox.big{text-align:center;padding:18px 14px;border-color:var(--rc)}
+.tipbox .ticon{margin-bottom:8px}.tipbox .tn{font-family:'Galmuri14','Galmuri11',sans-serif;font-size:19px}.tipbox .tt{color:#cfcfcf;margin-bottom:6px}
+.dpanel .btnrow .pbtn{margin:12px 0 0}
+.mbanner{width:100%;display:flex;align-items:center;gap:10px;background:#241c12;border:2px solid #c9a46a;color:#f3e2b8;padding:10px 12px;margin:0 0 12px;text-align:left;font-size:13px}
+.mbanner b{color:#f7b731;margin-right:4px}
+.stash .skind{font-family:'Galmuri11',sans-serif;font-size:12px;color:var(--sub);margin:10px 0 6px}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.scell{position:relative;aspect-ratio:1;background:radial-gradient(#1e1912,#0a0806);border:2px solid var(--rc);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px}
+.scell span{font-size:9.5px;line-height:1.2;color:var(--rc);max-height:2.4em;overflow:hidden;text-align:center;word-break:keep-all}
+.scell.idle{opacity:.7}
+.scell.add{--rc:#3b3021;border-style:dashed;color:#c9a46a;font-size:20px}
+.scell .eq{position:absolute;top:2px;right:3px;font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#000;background:#f7b731;padding:2px 3px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:11px}
+.mrow .meta{font-size:13px}
+.chip.rar{color:var(--rc);border-color:color-mix(in srgb,var(--rc) 50%,transparent)}
+.chip.rar.on{background:color-mix(in srgb,var(--rc) 22%,#000);color:var(--rc)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.elist{display:grid;gap:8px;margin-top:12px}
+.erow{display:flex;align-items:center;gap:12px;background:#120e09;border:2px solid color-mix(in srgb,var(--rc) 60%,#000);padding:10px;text-align:left}
+.erow.on{border-color:var(--rc);box-shadow:inset 0 0 12px color-mix(in srgb,var(--rc) 30%,transparent)}
+.erow b{display:block;font-family:'Galmuri11',sans-serif;font-size:14px}.erow small{font-size:11px;color:#8d7d5e}
+.erow.add,.erow.off{--rc:#4a3b28;justify-content:center;color:#c9a46a;border-style:dashed}
+.mcard{background:#120e09;border:2px solid #3b3021;padding:12px;margin:10px 0}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}.mh b{font-family:'Galmuri11',sans-serif;color:#f3e2b8}.mh small{font-size:11px}
+.mrange{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mrange input{flex:1;accent-color:#f7b731;height:28px}
+.mrange b{font-family:'Press Start 2P',monospace;font-size:11px;min-width:44px;text-align:right}
+.mcard .chips{margin-bottom:8px}
+/* ── 입질 ── */
+.biterow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:-4px 0 12px}
+.bbtn{font-family:'Galmuri11',sans-serif;font-size:15px;padding:12px;background:var(--card);border:2px solid #f7b731;color:#f7b731;clip-path:var(--notch)}
+.bbtn.miss{border-color:var(--accent);color:var(--accent)}
+.bbtn:active{transform:translateY(2px)}
+.row.brow{padding:8px 10px;opacity:.85}.brow .bk{width:44px;text-align:center;font-size:20px}.brow .meta{font-size:13px}
+/* ── 시즌 결산 ── */
+.sbanner{width:100%;display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#3a1d2e,#16213e);border:2px solid var(--gold);padding:10px 14px;margin:8px 0;text-align:left}
+.sbanner span{font-size:8px;color:var(--accent)}.sbanner b{flex:1;font-family:'Galmuri11',sans-serif;color:var(--gold);font-size:14px}
+.shero{position:relative;text-align:center;padding:26px 10px 10px;background:radial-gradient(circle at 50% 70%,rgba(247,183,49,.18),transparent 60%);margin-bottom:6px}
+.stitle2{font-size:20px;color:var(--gold);text-shadow:0 0 18px rgba(247,183,49,.55);margin-bottom:18px}
+.spodium{display:flex;align-items:flex-end;justify-content:center;gap:18px}
+.trophy{font-size:58px;filter:drop-shadow(0 0 14px rgba(247,183,49,.6));animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.awards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aw{display:flex;gap:8px;align-items:flex-start;background:rgba(247,183,49,.07);border:1px solid rgba(247,183,49,.35);border-radius:10px;padding:10px}
+.aw i{font-style:normal;font-size:24px;line-height:1}
+.aw small{display:block;font-size:11px;color:var(--sub)}
+.aw b{display:block;font-family:'Galmuri14','Galmuri11',sans-serif;color:var(--gold);font-size:15px;word-break:keep-all;margin:2px 0}
+.aw span{font-size:11px;color:#c8c8d8}
+.sbig{width:100%;border-radius:10px;display:block}
 </style>
 </head>
 <body>
@@ -426,7 +515,7 @@ const LEAFLET = 'https://unpkg.com/leaflet@1.9.4/dist/';
 const NAVER_KEY = 'j82bqa2fnv';   // 네이버 클라우드 Maps Client ID (등록 도메인에서만 동작)
 const LS = { data:'bl_data', queue:'bl_queue', trip:'bl_trip', last:'bl_last', map:'bl_map' };
 const KEY = { Trips:'trip_id', Catches:'catch_id', Spots:'spot_id', Lures:'lure_id', Photos:'photo_id',
-              Tackle:'tackle_id', Setups:'setup_id', Options:'option_id' };
+              Tackle:'tackle_id', Setups:'setup_id', Options:'option_id', Maint:'maint_id', Bites:'bite_id' };
 const MAX_TRIES = 5;
 
 /* ═════════ 유틸 ═════════ */
@@ -551,7 +640,7 @@ const SPR = {};
 function spr(name, s){
   const k = name + '@' + s; if (SPR[k]) return SPR[k];
   const [kind, arg, opt] = name.split(':');
-  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10] }[kind];
+  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispool:[14,11], irig:[16,16] }[kind];
   const cv = document.createElement('canvas'); cv.width = size[0] * s; cv.height = size[1] * s;
   const ctx = cv.getContext('2d');
   const p = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect(x * s, y * s, s, s); };
@@ -562,6 +651,10 @@ function spr(name, s){
   if (kind === 'tent') drawTent(p);
   if (kind === 'fire') drawFire(p, +arg);
   if (kind === 'rod') drawRod(p);
+  if (kind === 'irod') drawIRod(p);
+  if (kind === 'ireel') rowsDraw(p, IREEL, { K:'#1d1f24', S:'#9aa3ad', W:'#e8edf2', L:'#5c6670', H:'#3a3f46', O:'#c9a46a' });
+  if (kind === 'ispool') drawISpool(p, +arg, '#' + opt);
+  if (kind === 'irig') rowsDraw(p, IRIG, { w:'#cfe7ee', G:'#8d969e', g:'#c3ccd2', s:'#e8eef2', p:'#d65d97' });
   if (kind === 'moon' || kind === 'sun') drawOrb(p, kind === 'moon');
   return SPR[k] = cv.toDataURL();
 }
@@ -832,10 +925,10 @@ function chips(f, k, list, multi){
     return `<button class="chip ${on ? 'on' : ''}" data-f="${f}" data-k="${k}" data-v="${esc(o.v)}" ${multi ? 'data-multi="1"' : ''}>${esc(o.label ?? o.v)}${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</button>`;
   }).join('')}</div>`;
 }
-const forms = () => ({ sf, cf, ef, mf, td, pf });
+const forms = () => ({ sf, cf, ef, mf, td, pf, gq });
 const simple = arr => arr.map(v => ({ v }));
 function lureName(id){ const l = byId('Lures', id); return l ? [l.brand, l.name].filter(Boolean).join(' ') : ''; }
-function setupLabel(s){ const line = byId('Tackle', s.line_id); return { v: s.setup_id, label: s.name || s.setup_id, sub: line && line.spec1 ? line.spec1 + 'lb' : '' }; }
+function setupLabel(s){ const line = byId('Tackle', s.line_id); return { v: s.setup_id, label: s.name || s.setup_id, sub: [line && line.spec1 ? line.spec1 + 'lb' : '', s.line_pct !== '' && s.line_pct != null ? s.line_pct + '%' : '', s.default_rig].filter(Boolean).join(' · ') }; }
 function spotName(id){ const s = byId('Spots', id); return s ? s.name : '포인트 미정'; }
 function tripCatches(id){ return rows('Catches').filter(c => c.trip_id === id).sort((a, b) => (a.time || '').localeCompare(b.time || '')); }
 function usage(field){ const m = {}; rows('Catches').forEach(c => { if (c[field]) m[c[field]] = (m[c[field]] || 0) + 1; }); return m; }
@@ -903,7 +996,7 @@ async function boot(){
 }
 function vSettings(){
   const failed = queue.filter(o => (o.tries || 0) >= MAX_TRIES);
-  return `<div class="head"><div><h1 class="t">관리</h1><div class="sub">데이터 · 전송 상태</div></div>${syncBar()}</div>
+  return `<div class="head"><div><h1 class="t">관리</h1><div class="sub">데이터 · 전송 상태</div></div><div class="hbtns">${syncBar()}<button class="x" data-act="tabGear">✕</button></div></div>
   <div class="card"><div class="stitle">DATA</div>
     <button class="pbtn small" data-act="refresh">서버에서 새로고침</button>
     <div class="sub">세팅·루어·선택지를 시트에서 직접 고쳤다면 새로고침하면 반영돼.</div>
@@ -927,7 +1020,9 @@ function vHome(){
   return `<div class="head"><div><div class="logo pf">BASS <em>LOG</em></div><div class="tag">덴데 & 부우의 배스 조행기</div></div>${syncBar()}</div>
   ${scene()}
   <button class="pbtn start-btn" data-act="start"><b>🎣 출조 시작</b><span class="pf blink" style="font-size:8px">PRESS START</span></button>
+  ${(() => { const nm = needMaint(); return nm ? `<button class="mbanner" data-act="gearMaintTrip" data-id="${esc(nm.t.trip_id)}">${img('cat:dende', 2)}<span><b>🔧 정비 시간!</b> ${esc(nm.t.date.slice(5).replace('-', '.'))} 출조 장비 ${nm.ids.length}개 정비했어?</span></button>` : ''; })()}
   <div class="card" id="fcCard">${vForecast()}</div>
+  ${[11, 12, 1, 2].includes(new Date().getMonth() + 1) && seasonYears().length ? `<button class="sbanner" data-act="season"><span class="pf">SEASON</span><b>🏆 ${seasonYears()[0]} 시즌 결산</b>${img('cat:boo', 2)}</button>` : ''}
   <button class="pbtn small dark" data-act="pastTrip">+ 지난 출조 추가</button>
   ${photoCount ? `<button class="pbtn small dark" data-act="upPhotos">📷 사진 ${photoCount}장 업로드 <span class="sub">(와이파이에서)</span></button>` : ''}
   <div class="card"><div class="stitle">RECORD</div>
@@ -1137,7 +1232,7 @@ function elapsed(t){
 function vTrip(){
   const t = curTrip();
   if (!t) { trip = null; save(LS.trip, null); view = 'home'; return vHome(); }
-  const cs = tripCatches(t.trip_id), max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0);
+  const cs = tripCatches(t.trip_id), max = cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0), bs = tripBites(t.trip_id), br = biteRate(cs, bs);
   return `<div class="head"><div><div class="sub">${esc(t.date)} · ${esc(spotName(t.spot_id))}</div><h1 class="t">${esc(t.start)} ~ <span class="pf blink" style="font-size:10px;color:var(--accent)">LIVE</span></h1></div>${syncBar()}</div>
   ${scene(true, 'FISHING...')}
   <div class="stats"><div class="stat"><b>${cs.length}</b><span>마릿수</span></div>
@@ -1146,8 +1241,9 @@ function vTrip(){
   <div class="card" id="recoCard">${vReco(tripSrc(), true)}</div>
   <div class="card"><div class="stitle">TODAY'S SHOT <span>언제든 넣고 바꿀 수 있어</span></div><div class="kshots">${kslot(t.trip_id, 'scene')}${kslot(t.trip_id, 'selfie')}</div></div>
   <button class="pbtn catch-btn" data-act="catch">${img('bass', 4)}<b>잡았다!</b><span class="pf blink">TAP!</span></button>
-  <div class="card"><div class="stitle">CATCH LOG <span>${cs.length}수</span></div>
-    <div class="list">${cs.length ? cs.slice().reverse().map(c => `
+  <div class="biterow"><button class="bbtn" data-act="bite" data-k="입질">💥 입질</button><button class="bbtn miss" data-act="bite" data-k="놓침">💨 놓침</button></div>
+  <div class="card"><div class="stitle">CATCH LOG <span>${cs.length}수${bs.length ? ` · 입질 ${br.bi} · 놓침 ${br.mi}` : ''}</span></div>
+    <div class="list">${cs.length || bs.length ? [...cs.map(c => ({ c, t: c.time || '' })), ...bs.map(b => ({ b, t: b.time || '' }))].sort((x, y) => y.t.localeCompare(x.t)).map(({ c, b }) => b ? biteRow(b, 'delBite') : `
       <div class="row" data-act="editCatch" data-id="${esc(c.catch_id)}">
         <div class="len t${tier(c.length_cm)}">${esc(c.length_cm)}<small>cm</small></div>
         <div class="meta"><b>${esc(c.time)}</b> · ${esc(lureName(c.lure_id) || '루어 미정')} · ${esc(c.rig || '')}${c.action ? ' · ' + esc(c.action) : ''}${c.memo ? `<br>📝 ${esc(c.memo)}` : ''}</div>
@@ -1167,7 +1263,8 @@ function openCatch(id, tripId){
   if (id) { const c = byId('Catches', id); cf = { ...c, length: c.length_cm || '', photo: null, more: false, allLures: false, newLure: false, edit: true }; }
   else {
     const setup_id = today.includes(last.setup_id) ? last.setup_id : today[0] || '', st = byId('Setups', setup_id);
-    cf = { catch_id:'', setup_id, lure_id: last.lure_id || '', rig: last.rig || (st && st.default_rig) || '', action: last.action || '',
+    const same = last.setup_id === setup_id;
+    cf = { catch_id:'', setup_id, lure_id: (same && last.lure_id) || (st && st.rig_lure_id) || last.lure_id || '', rig: (same && last.rig) || (st && st.default_rig) || last.rig || '', action: last.action || '',
       structure:'', depth: last.depth || '', weight_g:'', color:'', memo:'', released:'Y', length:'', photo:null, more:false, allLures:false, newLure:false, edit:false };
     if (cf.lure_id && !byId('Lures', cf.lure_id)) cf.lure_id = '';
   }
@@ -1774,9 +1871,12 @@ async function makeCard(tid){
   return { cv, warn };
 }
 async function showCard(tid){
+  const t = byId('Trips', tid);
+  return showMadeCard(() => makeCard(tid), `BASS_${t.date}_${spotName(t.spot_id)}.png`.replace(/\s/g, ''));
+}
+async function showMadeCard(maker, name){
   say('카드 그리는 중…', 'boo');
-  let r; try { r = await makeCard(tid); } catch (e) { return say('카드를 못 만들었어: ' + e.message, 'dende'); }
-  const t = byId('Trips', tid), name = `BASS_${t.date}_${spotName(t.spot_id)}.png`.replace(/\s/g, '');
+  let r; try { r = await maker(); } catch (e) { return say('카드를 못 만들었어: ' + e.message, 'dende'); }
   r.cv.toBlob(blob => {
     const url = URL.createObjectURL(blob), file = new File([blob], name, { type: 'image/png' });
     const canShare = navigator.canShare && navigator.canShare({ files: [file] });
@@ -1852,7 +1952,7 @@ function vBrief(){
     ['💧', t.water_temp !== '' && t.water_temp != null ? '수온 ' + t.water_temp + '℃' : ''], ['👁', t.water_clarity], ['📏', t.water_level]].filter(x => x[1]);
   const rigs = groupCount(cs, c => c.rig), lures = groupCount(cs, c => c.lure_id).filter(x => byId('Lures', x.k));
   const setups = (t.setup_ids || '').split(',').map(id => byId('Setups', id)).filter(Boolean);
-  const geo = cs.some(c => +c.lat && +c.lng);
+  const geo = cs.some(c => +c.lat && +c.lng), bbr = biteRate(cs, tripBites(t.trip_id));
   // 타임라인
   let tl = '';
   if (times.length && a != null) {
@@ -1881,7 +1981,9 @@ function vBrief(){
       <div><b>${fmtDur(dur)}</b><span>낚시 시간</span></div></div>
     ${fun ? `<div class="funline">${fun}</div>` : ''}
     ${n && dur > 0 ? `<div class="sub" style="text-align:center;margin-top:8px">시간당 ${(n / (dur / 60)).toFixed(1)}수${first != null && first >= 0 ? ` · 첫 수까지 ${first}분` : ''}</div>` : ''}
+    ${bbr.bi + bbr.mi ? `<div class="sub" style="text-align:center;margin-top:6px">💥 입질 ${bbr.bi} · 💨 놓침 ${bbr.mi}${bbr.land != null ? ` · 랜딩률 ${bbr.land}%` : ''}${bbr.conv != null ? ` · 입질→조과 ${bbr.conv}%` : ''}</div>` : ''}
   </div>
+  ${setups.length ? `<button class="mbanner" data-act="gearMaintTrip" data-id="${esc(t.trip_id)}">${img('cat:dende', 2)}<span><b>🔧 정비하기</b> 오늘 쓴 장비 ${setups.length}개 — 라인 잔량 기록</span></button>` : ''}
 
   <div class="card"><div class="talk">
     <div class="tk">${img('cat:dende', 3)}<div class="bubble tail">${esc(dl)}</div></div>
@@ -1958,6 +2060,9 @@ function vDetail(){
     <div class="sub">찍은 시각으로 가장 가까운 조과에 자동으로 붙여줘. 틀린 것만 고치면 돼.</div>
     ${cs.some(c => +c.lat) ? `<button class="link" data-act="mapTrip" data-id="${esc(tdId)}">🗺 이 출조 지도로 보기</button>` : ''}
   </div>
+  ${(() => { const bs = tripBites(tdId), br = biteRate(cs, bs); return `<div class="card"><div class="stitle">BITES <span>입질 ${br.bi} · 놓침 ${br.mi}${br.land != null && br.mi ? ` · 랜딩률 ${br.land}%` : ''}</span></div>
+    ${bs.length ? `<div class="list">${bs.map(b => biteRow(b, 'delBite')).join('')}</div>` : '<div class="sub">못 건 입질이나 놓친 고기도 남겨 두면 패턴이 보여.</div>'}
+    <div class="biterow" style="margin-top:10px"><button class="bbtn" data-act="biteT" data-k="입질">+ 💥 입질</button><button class="bbtn miss" data-act="biteT" data-k="놓침">+ 💨 놓침</button></div></div>`; })()}
   <div class="card"><div class="stitle">REVIEW <span>후기</span></div>
     <label class="f">한 줄 평</label><input class="t" value="${esc(td.summary)}" placeholder="예: 아침 피딩 짧고 해 뜨고 끝" data-in="td.summary">
     <label class="f">후기</label><textarea class="t" placeholder="오늘 어땠어? 블로그 쓸 때 그대로 쓰여" data-in="td.review">${esc(td.review)}</textarea>
@@ -2136,7 +2241,8 @@ function vStats(){
   const avg = cs.length ? Math.round(cs.reduce((s, c) => s + (+c.length_cm || 0), 0) / cs.length) : 0;
   const zero = trips.filter(t => !cs.some(c => c.trip_id === t.trip_id)).length;
   const head = `<div class="head"><div><h1 class="t">기록판</h1><div class="sub pf" style="font-size:8px;margin-top:6px">HIGH SCORE</div></div></div>
-    ${chipsRaw('statsP', statsP, [{ v:'all', label:'전체' }, { v:'year', label:'올해' }, { v:'90', label:'최근 90일' }])}`;
+    ${chipsRaw('statsP', statsP, [{ v:'all', label:'전체' }, { v:'year', label:'올해' }, { v:'90', label:'최근 90일' }])}
+    ${seasonYears().length ? `<button class="sbanner" data-act="season"><span class="pf">SEASON</span><b>🏆 ${seasonYears()[0]} 시즌 결산 보기</b>${img('cat:boo', 2)}</button>` : ''}`;
   if (!cs.length) return head + `<div class="card"><div class="empty">${img('cat:boo:sleep', 4)}${trips.length ? '이 기간엔 아직 잡은 고기가 없어…' : '아직 기록이 없어 zzZ'}<br>잡을수록 패턴이 보여!</div></div>`;
   const notes = patternNotes(trips, cs);
   const rig = groupCount(cs, c => c.rig).slice(0, 8);
@@ -2166,6 +2272,12 @@ function vStats(){
   <div class="card"><div class="stitle">TIME <span>시간대별</span></div>${hbars(tods, x => x.k, x => x.n, x => x.n ? `${x.n}수 · 평균 ${x.avg}cm` : '0', x => x.n ? '' : 'dim')}</div>
   <div class="card"><div class="stitle">MONTH <span>월별 마릿수</span></div>${cols(months)}</div>
   <div class="card"><div class="stitle">SIZE <span>사이즈 분포 (cm)</span></div>${cols(sizes, x => x.a >= 40 ? 't3' : '')}</div>
+  ${(() => { const ids = new Set(trips.map(t => t.trip_id)), bs = rows('Bites').filter(b => ids.has(b.trip_id)); if (!bs.length) return '';
+    const rl = [...new Set([...cs.map(c => c.rig), ...bs.map(b => b.rig)].filter(Boolean))].map(r => { const x = biteRate(cs.filter(c => c.rig === r), bs.filter(b => b.rig === r)); return { k: r, n: cs.filter(c => c.rig === r).length + x.bi + x.mi, ...x }; })
+      .filter(x => x.n >= 3).sort((a, b) => b.conv - a.conv); const all = biteRate(cs, bs);
+    return `<div class="card"><div class="stitle">BITE <span>입질 → 조과율</span></div>
+      <div class="sub" style="margin-bottom:10px">전체 입질 ${all.bi} · 놓침 ${all.mi} · 랜딩률 ${all.land ?? '-'}% · 입질→조과 ${all.conv ?? '-'}%</div>
+      ${rl.length ? hbars(rl, x => x.k, x => x.conv, x => `${x.conv}% (${x.n}번 중)`) : '<div class="small-note">리그별로 3번 이상 쌓이면 보여줄게.</div>'}</div>`; })()}
   ${setup.length ? `<div class="card"><div class="stitle">TACKLE <span>세팅별</span></div>${hbars(setup, x => byId('Setups', x.k).name, x => x.n, x => `${x.n}수 · 최대 ${x.max}cm`)}</div>` : ''}
   <footer>DEVELOPED BY DONGGU KANG<br>DENDE & BOO FOREVER</footer>`;
 }
@@ -2174,20 +2286,430 @@ function chipsRaw(key, cur, list){
   return `<div class="chips" style="margin-bottom:4px">${list.map(o => `<button class="chip ${cur === o.v ? 'on' : ''}" data-act="raw" data-k="${key}" data-v="${o.v}">${esc(o.label)}</button>`).join('')}</div>`;
 }
 
+/* ═════════ 장비 — 디아블로 인벤토리 ═════════ */
+const RARITY = { '일반':'#d6d6d6', '마법':'#8a8fff', '희귀':'#f3e35a', '세트':'#47d35a', '전설':'#ff9638' };
+const RAR_ORDER = ['일반', '마법', '희귀', '세트', '전설'];
+const RAR_DEF = { R01:'전설', R02:'전설', R03:'희귀', R04:'희귀', R05:'마법', R06:'일반', RL01:'전설', RL02:'전설', RL03:'희귀', RL04:'마법', RL05:'마법',
+  LN01:'마법', LN02:'희귀', LN03:'마법', LN04:'마법', LN05:'일반' };
+const rarOf = it => it ? (it.rarity || RAR_DEF[it.tackle_id] || '일반') : '일반';
+const rarCol = it => RARITY[rarOf(it)];
+const itemName = it => it ? [it.brand, it.model].filter(Boolean).join(' ') || it.tackle_id : '';
+const SLOT_KIND = { rod_id:'로드', reel_id:'릴', line_id:'라인' };
+const KIND_PREFIX = { '로드':'R', '릴':'RL', '라인':'LN' };
+const KIND_TYPES = { '로드':['베이트', '스피닝'], '릴':['베이트', '스피닝'], '라인':['카본', '나일론', '합사'] };
+const KIND_SPEC = { '로드':'스펙 (예: 6\'6" ML)', '릴':'기어비 (예: 7.1)', '라인':'굵기 lb' };
+const SINKERS = ['없음', '0.9', '1.8', '2.7', '3.5', '5', '7', '10', '14', '21', '28'];
+const HOOKS = ['#2', '#1', '1/0', '2/0', '3/0', '4/0', '5/0'];
+const MAINT_TASKS = ['세척', '오일·그리스', '드랙 점검', '가이드 점검', '라인 교체'];
+let gearSel = load('bl_gearSel', ''), gq = null;
+
+const roman = n => ['I','II','III','IV','V','VI','VII','VIII','IX','X'][n - 1] || String(n);
+const lineCol = it => !it ? '#9fe3ef' : /red|레드/i.test(it.model + it.brand) ? '#e05555' : /black|블랙/i.test(it.model + it.brand) ? '#8a8aa0' : /합사|pe/i.test(it.type + it.model) ? '#7fd36b' : '#9fe3ef';
+const pctCol = p => p == null ? '#666' : p <= 30 ? '#e94560' : p <= 60 ? '#f7b731' : '#5fd068';
+const items = kind => active('Tackle').filter(t => t.kind === kind).sort((a, b) => RAR_ORDER.indexOf(rarOf(b)) - RAR_ORDER.indexOf(rarOf(a)) || a.tackle_id.localeCompare(b.tackle_id));
+function gearSetups(){ return active('Setups').slice().sort((a, b) => (+a.slot || 99) - (+b.slot || 99) || a.setup_id.localeCompare(b.setup_id)); }
+function curGear(){ const l = gearSetups(); return l.find(s => s.setup_id === gearSel) || l[0]; }
+function setupTrips(id, since){ return rows('Trips').filter(t => (t.setup_ids || '').split(',').includes(id) && (!since || (t.date || '') >= since)); }
+function lineInfo(st){
+  const pct = st.line_pct === '' || st.line_pct == null ? null : +st.line_pct, since = st.line_since || '';
+  return { pct, since, trips: since ? setupTrips(st.setup_id, since).length : null,
+    days: since ? Math.max(0, Math.floor((new Date(ymd() + 'T00:00:00') - new Date(since + 'T00:00:00')) / 864e5)) : null };
+}
+function itemStats(tid){
+  const sids = rows('Setups').filter(s => [s.rod_id, s.reel_id, s.line_id].includes(tid)).map(s => s.setup_id);
+  const cs = rows('Catches').filter(c => sids.includes(c.setup_id));
+  const ts = rows('Trips').filter(t => (t.setup_ids || '').split(',').some(x => sids.includes(x)));
+  return { n: cs.length, max: cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0), trips: ts.length, on: active('Setups').filter(s => [s.rod_id, s.reel_id, s.line_id].includes(tid)) };
+}
+function setupStats(id){
+  const cs = rows('Catches').filter(c => c.setup_id === id);
+  return { n: cs.length, max: cs.reduce((m, c) => Math.max(m, +c.length_cm || 0), 0), trips: setupTrips(id).length };
+}
+function setBonus(st){
+  const rod = byId('Tackle', st.rod_id), reel = byId('Tackle', st.reel_id);
+  if (!rod || !reel || !rod.brand || rod.brand !== reel.brand) return '';
+  const fx = { '시마노':'캐스팅 거리 +15%', '다이와':'감도 +15%', '메가배스':'멋 +30%', '테무':'가성비 +50%', '알리':'운 +20%' }[rod.brand] || '손맛 +10%';
+  return `${rod.brand} 세트 (2/2) — ${fx}`;
+}
+function rigLine(st){
+  const l = byId('Lures', st.rig_lure_id);
+  return [st.rig_sinker && st.rig_sinker !== '없음' ? `${st.rig_sinker}g` : '', st.rig_hook, lureName(st.rig_lure_id) || st.rig_worm].filter(Boolean).join(' / ') + (l && l.color ? ` (${l.color})` : '');
+}
+function needMaint(){
+  const t = tripsDesc().find(x => x.status !== '진행중' && x.end);
+  if (!t || !t.setup_ids) return null;
+  const days = (new Date(ymd() + 'T00:00:00') - new Date(t.date + 'T00:00:00')) / 864e5;
+  if (days > 3) return null;
+  const ids = t.setup_ids.split(',').filter(id => byId('Setups', id));
+  const done = rows('Maint').some(m => ids.includes(m.setup_id) && (m.date || '') >= t.date && m.kind !== '장착 변경' && m.kind !== '채비 묶기');
+  return done || !ids.length ? null : { t, ids };
+}
+
+// 아이템 도트 (16px 안팎)
+const IREEL = ['....KKKKKKK.....','..KKSSSSSSSKK...','.KSSSWSSSSSSSK..','.KSSLLLLLLLSSK..','KSSLLLLLLLLLSSK.','KSSLLLLLLLLLSSKH','KSSLLLLLLLLLSSHH',
+  '.KSSLLLLLLLSSKHO','.KSSSSSSSSSSSK.O','..KKSSSSSSSKK...','....KKKKKKK.....'];
+const IRIG = ['.......w........','.......w........','......GG........','.....GgGG.......','.....GGGG.......','......GG........','.......w........',
+  '.......ss.......','......pppp......','.....pppppp.....','....pppppppp....','...ppp.pp.ppp...','..pp...pp...pp..','.......p........','......pp........','.......p........'];
+function drawIRod(p){
+  for (let i = 0; i < 16; i++) { const x = i, y = 15 - i, c = i < 4 ? '#c9a46a' : i < 6 ? '#9aa3ad' : i < 15 ? '#4a6fa5' : '#f0f0f0'; p(x, y, c); if (i < 6) p(x + 1, y, i < 4 ? '#a8854e' : '#6f7882'); }
+  [8, 11, 14].forEach(i => p(i, 14 - i, '#d8dee6'));
+}
+function drawISpool(p, fill, col){
+  const K = '#1d1f24', M = '#9aa3ad', C = '#3a3f46';
+  for (let x = 2; x <= 11; x++) { p(x, 0, K); p(x, 10, K); }
+  for (let x = 1; x <= 12; x++) { p(x, 1, M); p(x, 9, M); } p(0, 1, K); p(13, 1, K); p(0, 9, K); p(13, 9, K);
+  for (let y = 2; y <= 8; y++) { p(1, y, K); p(12, y, K); for (let x = 2; x <= 11; x++) p(x, y, (8 - y) < fill ? col : C); }
+  if (fill > 0) for (let y = 9 - fill; y <= 8; y += 2) p(4 + (y % 3), y, 'rgba(255,255,255,.35)');
+}
+
+/* ── 화면 ── */
+function vGear(){
+  const list = gearSetups(), st = curGear();
+  const head = `<div class="head"><div><h1 class="t">장비</h1><div class="sub pf" style="font-size:8px;margin-top:6px">INVENTORY</div></div>
+    <div class="hbtns"><button class="sync" data-act="settings">⚙ 관리</button>${syncBar()}</div></div>`;
+  if (!st) return head + `<div class="card"><div class="empty">${img('cat:boo', 4)}아직 세팅이 없어!<br><button class="pbtn small" data-act="gearNew" style="margin-top:12px">+ 세팅 만들기</button></div></div>`;
+  const rod = byId('Tackle', st.rod_id), reel = byId('Tackle', st.reel_id), line = byId('Tackle', st.line_id);
+  const li = lineInfo(st), ss = setupStats(st.setup_id), sb = setBonus(st), nm = needMaint();
+  const slot = (k, it, sprite, tag) => `<button class="slot ${k === 'rod_id' ? 'tall' : ''} ${it ? '' : 'emp'}" data-act="gearSlot" data-k="${k}" style="--rc:${it ? rarCol(it) : '#3a3326'}">
+      ${it ? sprite : `<span class="ghost">${SLOT_KIND[k]}</span>`}<em>${tag}</em></button>`;
+  const fill = li.pct == null ? 7 : Math.round(li.pct / 100 * 7);
+  const lowList = list.filter(s => { const p = lineInfo(s).pct; return p != null && p <= 30; });
+  const ml = rows('Maint').slice().sort((a, b) => (b.maint_id || '').localeCompare(a.maint_id || '')).slice(0, 8);
+  return head + `
+  ${nm ? `<button class="mbanner" data-act="gearMaintTrip" data-id="${esc(nm.t.trip_id)}">${img('cat:dende', 2)}<span><b>🔧 정비 시간!</b> ${esc(nm.t.date.slice(5).replace('-', '.'))} 출조에 쓴 장비 ${nm.ids.length}개 — 라인 얼마나 남았어?</span></button>` : ''}
+  <div class="lotabs">${list.map((s, i) => { const p = lineInfo(s).pct; return `<button class="lot ${s === st ? 'on' : ''}" data-act="gearSel" data-id="${esc(s.setup_id)}"><b>${roman(i + 1)}</b>${esc(s.name || s.setup_id)}${p != null && p <= 30 ? '<i>!</i>' : ''}</button>`; }).join('')}
+    <button class="lot add" data-act="gearNew">+</button></div>
+  <div class="dpanel">
+    <div class="dtitle"><div><span>${esc(st.name || st.setup_id)}</span><small>${esc([st.role, st.use].filter(Boolean).join(' · '))}</small></div><button class="dedit" data-act="gearEdit">✏</button></div>
+    <div class="doll">
+      ${slot('rod_id', rod, img('irod', 4), 'ROD')}
+      <div class="hero2">${img('cat:dende', 5)}<div class="plate pf">LV.${Math.min(99, 1 + ss.n)}</div></div>
+      <div class="col2">
+        ${slot('reel_id', reel, img('ireel', 4), 'REEL')}
+        ${slot('line_id', line, img(`ispool:${fill}:${lineCol(line).slice(1)}`, 4), 'LINE')}
+      </div>
+    </div>
+    <button class="rigslot" data-act="gearRig"><em>RIG</em>${st.default_rig ? `${img('irig', 3)}<div><b>${esc(st.default_rig)}</b>
+      <div class="sockets">${[st.rig_sinker && st.rig_sinker !== '없음' ? `⚫ ${esc(st.rig_sinker)}g` : '', st.rig_hook ? `🪝 ${esc(st.rig_hook)}` : '', lureName(st.rig_lure_id) || st.rig_worm ? `🪱 ${esc(lureName(st.rig_lure_id) || st.rig_worm)}` : '']
+        .map(x => `<span class="sk ${x ? 'on' : ''}">${x || '빈 소켓'}</span>`).join('')}</div>${st.rig_note ? `<small>${esc(st.rig_note)}</small>` : ''}</div>`
+      : `<span class="ghost">채비를 미리 묶어 둬! (리그 · 싱커 · 바늘 · 웜)</span>`}</button>
+    <div class="tipbox">
+      ${[['ROD', rod], ['REEL', reel], ['LINE', line]].map(([k, it]) => `<div class="tl2"><small>${k}</small><span style="color:${it ? rarCol(it) : '#666'}">${it ? esc(itemName(it)) + (k === 'LINE' && it.spec1 ? ` ${esc(it.spec1)}lb` : '') : '— 비어 있음 —'}</span></div>`).join('')}
+      ${sb ? `<div class="tset">✦ ${esc(sb)}</div>` : ''}
+      <div class="tdur"><small>LINE 내구도</small><div class="durbar"><i style="width:${li.pct ?? 0}%;background:${pctCol(li.pct)}"></i></div><b style="color:${pctCol(li.pct)}">${li.pct == null ? '?' : li.pct + '%'}</b></div>
+      <div class="tblue">${li.since ? `감은 지 ${li.days}일 · 출조 ${li.trips}회` : '감은 날 기록 없음 — 정비에서 "라인 교체"를 누르면 세기 시작해'}</div>
+      ${li.pct != null && li.pct <= 30 ? '<div class="tred">⚠ 라인이 얼마 안 남았어! 교체 추천</div>' : li.trips >= 10 ? '<div class="tred">⚠ 출조 10회 넘게 썼어 — 상태 확인해 봐</div>' : ''}
+      <div class="tblue">출조 +${ss.trips} · 조과 +${ss.n}${ss.max ? ` · 최대 ${ss.max}cm` : ''}</div>
+      ${reel && reel.notes ? `<div class="torg">${esc(reel.notes)}</div>` : ''}
+    </div>
+    <div class="btnrow"><button class="pbtn" data-act="gearMaint">🔧 정비</button><button class="pbtn dark" data-act="gearRig">🪝 채비 묶기</button></div>
+  </div>
+  ${lowList.length && !(lowList.length === 1 && lowList[0] === st) ? `<div class="sub" style="color:var(--accent);margin:-4px 4px 12px">⚠ 라인 부족: ${lowList.map(s => esc(s.name)).join(', ')}</div>` : ''}
+  <div class="card stash"><div class="stitle">STASH <span>보관함 · 눌러서 보기</span></div>
+    ${['로드', '릴', '라인'].map(k => `<div class="skind">${k}</div><div class="sgrid">${items(k).map(it => {
+      const on = [st.rod_id, st.reel_id, st.line_id].includes(it.tackle_id), anyOn = active('Setups').some(s => [s.rod_id, s.reel_id, s.line_id].includes(it.tackle_id));
+      const sp = k === '로드' ? img('irod', 2) : k === '릴' ? img('ireel', 2) : img(`ispool:7:${lineCol(it).slice(1)}`, 2);
+      return `<button class="scell ${anyOn ? '' : 'idle'}" style="--rc:${rarCol(it)}" data-act="itemOpen" data-id="${esc(it.tackle_id)}">${sp}${on ? '<i class="eq">E</i>' : ''}<span>${esc((it.model || '').length <= 4 ? itemName(it) : it.model)}${k === '라인' && it.spec1 ? ` ${esc(it.spec1)}lb` : ''}</span></button>`;
+    }).join('')}<button class="scell add" data-act="itemNew" data-k="${k}">+</button></div>`).join('')}
+    <div class="legend">${RAR_ORDER.map(r => `<span style="color:${RARITY[r]}">■ ${r}</span>`).join('')}</div>
+  </div>
+  <div class="card"><div class="stitle">MAINTENANCE <span>정비 기록</span></div>
+    <div class="list">${ml.length ? ml.map(m => `<div class="row mrow"><div class="meta"><b>${esc((m.date || '').slice(5).replace('-', '.'))}</b> · ${esc((byId('Setups', m.setup_id) || {}).name || m.setup_id || '')}<br>
+      <span class="sub">${esc(m.kind || '')}${m.line_pct !== '' && m.line_pct != null ? ` · 라인 ${esc(m.line_pct)}%` : ''}${m.memo ? ` · ${esc(m.memo)}` : ''}</span></div></div>`).join('')
+      : `<div class="empty" style="padding:14px">${img('cat:boo', 3)}낚시 다녀와서 정비하면 여기 쌓여!</div>`}</div></div>
+  <footer>DEVELOPED BY DONGGU KANG<br>DENDE & BOO FOREVER</footer>`;
+}
+
+/* ── 시트: 아이템 ── */
+function openItem(id, kind){
+  const it = id ? byId('Tackle', id) : null;
+  gq = it ? { mode:'item', id, edit:false, kind: it.kind, brand: it.brand || '', model: it.model || '', type: it.type || '', spec1: it.spec1 || '', rarity: rarOf(it), notes: it.notes || '', since: it.since || '', price: it.price || '' }
+    : { mode:'item', id:'', edit:true, kind: kind || '로드', brand:'', model:'', type: (KIND_TYPES[kind || '로드'] || [])[0] || '', spec1:'', rarity:'일반', notes:'', since: ymd(), price:'' };
+  showSheet(vItem);
+}
+function vItem(){
+  const it = gq.id ? byId('Tackle', gq.id) : null;
+  if (!gq.edit && it) {
+    const s = itemStats(it.tackle_id);
+    return `<div class="shead"><div><h1 class="t">아이템</h1><div class="sub pf" style="font-size:8px;margin-top:6px">${esc(it.tackle_id)}</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    <div class="tipbox big" style="--rc:${rarCol(it)}">
+      <div class="ticon">${it.kind === '로드' ? img('irod', 5) : it.kind === '릴' ? img('ireel', 5) : img(`ispool:7:${lineCol(it).slice(1)}`, 5)}</div>
+      <div class="tn" style="color:${rarCol(it)}">${esc(itemName(it))}</div>
+      <div class="tt">${esc(rarOf(it))} ${esc(it.kind)}${it.type ? ' · ' + esc(it.type) : ''}</div>
+      ${it.spec1 ? `<div class="tw">${it.kind === '라인' ? '굵기' : it.kind === '릴' ? '기어비' : '스펙'}: ${esc(it.spec1)}${it.kind === '라인' ? 'lb' : ''}</div>` : ''}
+      <div class="tblue">출조 +${s.trips} · 조과 +${s.n}${s.max ? ` · 최대 ${s.max}cm` : ''}</div>
+      <div class="tblue">${s.on.length ? '장착: ' + s.on.map(x => esc(x.name || x.setup_id)).join(', ') : '보관함에 있음'}</div>
+      ${it.notes ? `<div class="torg">${esc(it.notes)}</div>` : ''}
+      ${it.since || it.price ? `<div class="tgray">${it.since ? '획득 ' + esc(it.since) : ''}${it.price ? ' · ' + esc(it.price) + '원' : ''}</div>` : ''}
+    </div>
+    <div class="btnrow"><button class="pbtn" data-act="itemEdit">✏ 수정</button><button class="pbtn ghost" data-act="itemDrop">창고에서 빼기</button></div>`;
+  }
+  return `<div class="shead"><div><h1 class="t">${gq.id ? '아이템 수정' : '새 아이템'}</h1><div class="sub pf" style="font-size:8px;margin-top:6px">${gq.id ? 'EDIT' : 'NEW LOOT!'}</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    ${gq.id ? '' : `<label class="f">종류</label>${chips('gq', 'kind', simple(['로드', '릴', '라인']))}`}
+    <label class="f">브랜드</label><input class="t" value="${esc(gq.brand)}" placeholder="예: 시마노" data-in="gq.brand">
+    <label class="f">모델</label><input class="t" value="${esc(gq.model)}" placeholder="예: 조디아스 166ML" data-in="gq.model">
+    <label class="f">타입</label>${chips('gq', 'type', simple(KIND_TYPES[gq.kind] || []))}
+    <label class="f">${esc(KIND_SPEC[gq.kind] || '스펙')}</label><input class="t" value="${esc(gq.spec1)}" ${gq.kind === '라인' ? 'inputmode="decimal"' : ''} data-in="gq.spec1">
+    <label class="f">등급</label><div class="chips">${RAR_ORDER.map(r => `<button class="chip rar ${gq.rarity === r ? 'on' : ''}" style="--rc:${RARITY[r]}" data-f="gq" data-k="rarity" data-v="${r}">${r}</button>`).join('')}</div>
+    <label class="f">메모 (특징·주의점)</label><input class="t" value="${esc(gq.notes)}" placeholder="예: 스풀 틈 있음 → 14lb 이상" data-in="gq.notes">
+    <div class="two"><div><label class="f">구입일</label><input class="t" type="date" value="${esc(gq.since)}" data-in="gq.since"></div>
+      <div><label class="f">가격 (원)</label><input class="t" inputmode="numeric" value="${esc(gq.price)}" data-in="gq.price"></div></div>
+    <div class="saveBar"><button class="pbtn" data-act="itemSave">저장</button></div>`;
+}
+function itemSave(){
+  if (!gq.model.trim() && !gq.brand.trim()) return say('이름을 알려줘!', 'boo');
+  const id = gq.id || nextId('Tackle', KIND_PREFIX[gq.kind], 2);
+  write('Tackle', { tackle_id: id, kind: gq.kind, brand: gq.brand.trim(), model: gq.model.trim(), type: gq.type, spec1: gq.spec1.trim(), rarity: gq.rarity,
+    notes: gq.notes.trim(), since: gq.since, price: gq.price.trim(), active:'Y' });
+  const isNew = !gq.id; gq.id = id; gq.edit = false; rerenderSheet(); render();
+  say(isNew ? `${gq.rarity} 아이템 획득! ✨` : '고쳤어!', isNew ? 'boo' : 'dende');
+}
+
+/* ── 시트: 장착 ── */
+function openEquip(k){ gq = { mode:'equip', k, fresh: 'true' }; showSheet(vEquip); }
+function vEquip(){
+  const st = curGear(), kind = SLOT_KIND[gq.k], cur = st[gq.k];
+  return `<div class="shead"><div><h1 class="t">${kind} 장착</h1><div class="sub pf" style="font-size:8px;margin-top:6px">EQUIP · ${esc(st.name)}</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    ${gq.k === 'line_id' ? `<label class="f">라인을 바꿀 때</label>${chips('gq', 'fresh', [{ v: true, label:'새로 감았어 (100%부터)' }, { v: false, label:'감긴 채로 옮겨' }].map(o => ({ ...o, v: String(o.v) })))}` : ''}
+    <div class="elist">${items(kind).map(it => { const on = active('Setups').filter(s => s[gq.k] === it.tackle_id && s !== st);
+      return `<button class="erow ${cur === it.tackle_id ? 'on' : ''}" style="--rc:${rarCol(it)}" data-act="equipItem" data-id="${esc(it.tackle_id)}">
+        ${kind === '로드' ? img('irod', 3) : kind === '릴' ? img('ireel', 3) : img(`ispool:7:${lineCol(it).slice(1)}`, 3)}
+        <div><b style="color:${rarCol(it)}">${esc(itemName(it))}${kind === '라인' && it.spec1 ? ` ${esc(it.spec1)}lb` : ''}</b><small>${esc(rarOf(it))}${cur === it.tackle_id ? ' · 장착 중' : on.length ? ' · ' + on.map(s => esc(s.name)).join(', ') + '에도 장착' : ''}</small></div></button>`; }).join('')}
+      <button class="erow add" data-act="itemNew" data-k="${kind}">+ 새 ${kind} 추가</button>
+      ${cur ? '<button class="erow off" data-act="equipItem" data-id="">장착 해제</button>' : ''}</div>`;
+}
+function equipItem(id){
+  const st = curGear(), k = gq.k, old = byId('Tackle', st[k]), it = byId('Tackle', id);
+  if (st[k] === id && !(k === 'line_id' && gq.fresh === 'true')) return hideSheet();
+  const row = { setup_id: st.setup_id, [k]: id };
+  const fresh = k === 'line_id' && id && String(gq.fresh) !== 'false';
+  if (fresh) { row.line_pct = '100'; row.line_since = ymd(); }
+  write('Setups', row);
+  write('Maint', { maint_id: 'M' + stamp(), date: ymd(), setup_id: st.setup_id, tackle_id: id, kind: k === 'line_id' ? (fresh ? '라인 교체' : '라인 장착') : '장착 변경',
+    line_pct: fresh ? '100' : '', memo: `${old ? itemName(old) : '빈 슬롯'} → ${it ? itemName(it) : '해제'}` });
+  hideSheet(); render(); say(it ? `${itemName(it)} 장착! ✨` : '장착 해제했어', 'boo');
+}
+
+/* ── 시트: 정비 ── */
+function openMaint(ids){
+  const list = (ids && ids.length ? ids : [curGear().setup_id]).filter(id => byId('Setups', id));
+  gq = { mode:'maint', ids: list, it: {} };
+  list.forEach(id => { const p = lineInfo(byId('Setups', id)).pct; gq.it[id] = { pct: p == null ? 100 : p, orig: p, tasks: [], memo:'' }; });
+  showSheet(vMaint);
+}
+function vMaint(){
+  const rest = gearSetups().filter(s => !gq.ids.includes(s.setup_id));
+  return `<div class="shead"><div><h1 class="t">정비</h1><div class="sub pf" style="font-size:8px;margin-top:6px">REPAIR</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    <div style="display:flex;gap:8px;align-items:flex-end;margin:8px 0 6px">${img('cat:dende', 3)}<div class="bubble tail" style="position:relative;opacity:1;white-space:normal;margin-bottom:18px">스풀 보고 대충 몇 % 남았는지 밀어줘. 한 일도 눌러 두면 기록돼!</div></div>
+    ${gq.ids.map(id => { const st = byId('Setups', id), x = gq.it[id], line = byId('Tackle', st.line_id);
+      return `<div class="mcard"><div class="mh"><b>${esc(st.name)}</b><small style="color:${line ? rarCol(line) : '#888'}">${line ? esc(itemName(line)) + (line.spec1 ? ` ${esc(line.spec1)}lb` : '') : '라인 없음'}</small></div>
+        <div class="mrange">${img(`ispool:${Math.round(x.pct / 100 * 7)}:${lineCol(line).slice(1)}`, 3, 'msp', `data-mtimg="${esc(id)}"`)}
+          <input type="range" min="0" max="100" step="5" value="${x.pct}" data-mt="${esc(id)}">
+          <b data-mtv="${esc(id)}" style="color:${pctCol(x.pct)}">${x.pct}%</b></div>
+        <div class="chips">${MAINT_TASKS.map(tk => `<button class="chip ${x.tasks.includes(tk) ? 'on' : ''}" data-act="mtTask" data-id="${esc(id)}" data-v="${tk}">${tk}</button>`).join('')}</div>
+        <input class="t" placeholder="메모 (예: 레벨와인더 소리 남)" value="${esc(x.memo)}" data-mtm="${esc(id)}"></div>`; }).join('')}
+    ${rest.length ? `<div class="chips" style="margin-top:6px">${rest.map(s => `<button class="chip add" data-act="mtAdd" data-id="${esc(s.setup_id)}">+ ${esc(s.name)}</button>`).join('')}</div>` : ''}
+    <div class="saveBar"><button class="pbtn" data-act="mtSave">정비 완료</button></div>`;
+}
+function mtSave(){
+  let n = 0;
+  gq.ids.forEach((id, i) => {
+    const x = gq.it[id], swap = x.tasks.includes('라인 교체'), pct = swap ? 100 : x.pct;
+    if (!swap && !x.tasks.length && !x.memo.trim() && x.pct === x.orig) return;
+    const row = { setup_id: id, line_pct: String(pct) }; if (swap) row.line_since = ymd();
+    write('Setups', row);
+    write('Maint', { maint_id: 'M' + stamp() + i, date: ymd(), setup_id: id, tackle_id: byId('Setups', id).line_id || '', kind: x.tasks.join(', ') || '라인 체크', line_pct: String(pct), memo: x.memo.trim() });
+    n++;
+  });
+  hideSheet(); render(); say(n ? `정비 끝! 장비 ${n}개 기록했어 🔧` : '바뀐 게 없어서 그냥 닫았어', 'dende');
+}
+
+/* ── 시트: 채비 묶기 ── */
+function openRig(){
+  const st = curGear();
+  gq = { mode:'rig', rig: st.default_rig || '', sinker: st.rig_sinker || '', hook: st.rig_hook || '', worm: st.rig_worm || '', lure_id: st.rig_lure_id || '', note: st.rig_note || '', newLure:false };
+  showSheet(vRig);
+}
+function vRig(){
+  const st = curGear(), lures = active('Lures');
+  return `<div class="shead"><div><h1 class="t">채비 묶기</h1><div class="sub pf" style="font-size:8px;margin-top:6px">SOCKET · ${esc(st.name)}</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    <label class="f">리그${rigHref(gq.rig) ? ` <a class="rigLink" href="${rigHref(gq.rig)}" target="_blank" rel="noopener">📖 ${esc(gq.rig)} 도감</a>` : ''}</label>${chips('gq', 'rig', simple(opts('리그')))}
+    <label class="f">⚫ 싱커 (g)</label>${chips('gq', 'sinker', simple(SINKERS))}<input class="t" style="margin-top:8px" placeholder="직접 입력 (예: 5.3)" value="${SINKERS.includes(gq.sinker) ? '' : esc(gq.sinker)}" data-in="gq.sinker" inputmode="decimal">
+    <label class="f">🪝 바늘</label>${chips('gq', 'hook', simple(HOOKS))}<input class="t" style="margin-top:8px" placeholder="직접 입력 (예: 와키 #1)" value="${HOOKS.includes(gq.hook) ? '' : esc(gq.hook)}" data-in="gq.hook">
+    <label class="f">🪱 웜 종류</label>${chips('gq', 'worm', simple(opts('웜종류')))}
+    <label class="f">웜·루어 (브랜드)</label>${chips('gq', 'lure_id', lures.map(l => ({ v: l.lure_id, label: lureName(l.lure_id), sub: l.color })))}
+    ${gq.newLure ? `<div class="inline"><input class="t" id="rl_brand" placeholder="브랜드" style="max-width:32%"><input class="t" id="rl_name" placeholder="이름 (예: 호그 3.5인치)"><button data-act="rigAddLure">추가</button></div>`
+      : '<div class="chips" style="margin-top:8px"><button class="chip add" data-act="rigNewLure">+ 새 웜·루어</button></div>'}
+    <label class="f">메모</label><input class="t" value="${esc(gq.note)}" placeholder="예: 페그 고정, 수초용" data-in="gq.note">
+    <div class="saveBar"><button class="pbtn" data-act="rigSave">채비 장착</button></div>`;
+}
+function rigSave(){
+  const st = curGear();
+  write('Setups', { setup_id: st.setup_id, default_rig: gq.rig, rig_sinker: gq.sinker, rig_hook: gq.hook, rig_worm: gq.worm, rig_lure_id: gq.lure_id, rig_note: gq.note.trim() });
+  const s2 = byId('Setups', st.setup_id);
+  write('Maint', { maint_id: 'M' + stamp(), date: ymd(), setup_id: st.setup_id, kind:'채비 묶기', memo: [gq.rig, rigLine(s2)].filter(Boolean).join(' · ') });
+  hideSheet(); render(); say(`${gq.rig || '채비'} 장착 완료! 출조 때 이 세팅 고르면 자동으로 들어가`, 'dende');
+}
+
+/* ── 시트: 세팅(로드아웃) ── */
+function openLoadout(isNew){
+  const st = curGear();
+  gq = isNew || !st ? { mode:'lo', id:'', name:'', role:'메인', use:'' } : { mode:'lo', id: st.setup_id, name: st.name || '', role: st.role || '', use: st.use || '' };
+  showSheet(vLoadout);
+}
+function vLoadout(){
+  return `<div class="shead"><div><h1 class="t">${gq.id ? '세팅 정보' : '새 세팅'}</h1><div class="sub pf" style="font-size:8px;margin-top:6px">LOADOUT</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    <label class="f">이름</label><input class="t" value="${esc(gq.name)}" placeholder="예: 오로치 텍사스" data-in="gq.name">
+    <label class="f">역할</label>${chips('gq', 'role', simple(opts('세팅역할').length ? opts('세팅역할') : ['메인', '서브', '접대']))}
+    <label class="f">용도</label><input class="t" value="${esc(gq.use)}" placeholder="예: 커버 공략, 헤비 텍사스" data-in="gq.use">
+    ${gq.id ? '<button class="pbtn small ghost" style="margin-top:16px" data-act="loDrop">이 세팅 해체 (기록은 남아)</button>' : ''}
+    <div class="saveBar"><button class="pbtn" data-act="loSave">저장</button></div>`;
+}
+function loSave(){
+  if (!gq.name.trim()) return say('이름을 지어줘!', 'boo');
+  const id = gq.id || nextId('Setups', 'ST', 2);
+  write('Setups', { setup_id: id, name: gq.name.trim(), role: gq.role, use: gq.use.trim(), active:'Y', ...(gq.id ? {} : { since: ymd() }) });
+  gearSel = id; save('bl_gearSel', gearSel); hideSheet(); render(); say(gq.id ? '고쳤어!' : '새 세팅! 슬롯을 눌러서 장비를 끼워 봐', 'boo');
+}
+
+/* ═════════ 입질 · 놓침 ═════════ */
+const tripBites = id => rows('Bites').filter(b => b.trip_id === id).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+function addBite(kind, tripId, live){
+  const t = byId('Trips', tripId); if (!t) return;
+  const today = (t.setup_ids || '').split(',').filter(Boolean), sid = today.includes(last.setup_id) ? last.setup_id : today[0] || '', st = byId('Setups', sid);
+  const row = { bite_id: 'B' + stamp() + Math.random().toString(36).slice(2, 4), trip_id: t.trip_id, time: live ? hm() : '', kind, setup_id: sid,
+    rig: live ? (last.rig || (st && st.default_rig) || '') : '', lure_id: live ? (last.lure_id || (st && st.rig_lure_id) || '') : '', lat:'', lng:'' };
+  if (live && pos) { row.lat = pos.lat.toFixed(6); row.lng = pos.lng.toFixed(6); }
+  write('Bites', row); render();
+  if (live) say(kind === '입질' ? '왔다…! 다음엔 걸자' : '으아아 아깝다!!', kind === '입질' ? 'dende' : 'boo');
+}
+function biteRate(cs, bs){
+  const mi = bs.filter(b => b.kind === '놓침').length, bi = bs.filter(b => b.kind === '입질').length, n = cs.length;
+  return { bi, mi, land: n + mi ? Math.round(n / (n + mi) * 100) : null, conv: n + mi + bi ? Math.round(n / (n + mi + bi) * 100) : null };
+}
+function biteRow(b, delAct){
+  return `<div class="row brow"><div class="bk">${b.kind === '놓침' ? '💨' : '💥'}</div>
+    <div class="meta"><b>${esc(b.time || '시간 미정')}</b> ${esc(b.kind)}${b.rig ? ' · ' + esc(b.rig) : ''}${b.lure_id ? ' · ' + esc(lureName(b.lure_id)) : ''}</div>
+    <button class="camb" data-act="${delAct}" data-id="${esc(b.bite_id)}">✕</button></div>`;
+}
+
+/* ═════════ 시즌 결산 ═════════ */
+let seasonY = '';
+function seasonYears(){ return [...new Set(rows('Trips').map(t => (t.date || '').slice(0, 4)).filter(Boolean))].sort().reverse(); }
+function seasonData(y){
+  const trips = rows('Trips').filter(t => (t.date || '').startsWith(y)), ids = new Set(trips.map(t => t.trip_id));
+  const cs = rows('Catches').filter(c => ids.has(c.trip_id)), bs = rows('Bites').filter(b => ids.has(b.trip_id));
+  const max = cs.slice().sort((a, b) => (+b.length_cm || 0) - (+a.length_cm || 0))[0];
+  const sum = cs.reduce((s, c) => s + (+c.length_cm || 0), 0);
+  const zero = trips.filter(t => !cs.some(c => c.trip_id === t.trip_id)).length;
+  const per = trips.map(t => { const c = cs.filter(x => x.trip_id === t.trip_id); return { t, n: c.length, max: c.reduce((m, x) => Math.max(m, +x.length_cm || 0), 0) }; })
+    .sort((a, b) => b.n - a.n || b.max - a.max);
+  const spot = groupCount(trips.map(t => ({ ...t, length_cm: 0 })), t => t.spot_id)[0];
+  const rig = groupCount(cs, c => c.rig)[0], lure = groupCount(cs, c => c.lure_id).filter(x => byId('Lures', x.k))[0];
+  const setup = groupCount(cs, c => c.setup_id).filter(x => byId('Setups', x.k))[0], td = groupCount(cs, c => tod(c.time))[0];
+  const big = cs.filter(c => +c.length_cm >= 40).length;
+  const months = Array.from({ length: 12 }, (_, i) => ({ label: String(i + 1), n: cs.filter(c => +catchDate(c).slice(5, 7) === i + 1).length }));
+  const prev = String(+y - 1), pTrips = rows('Trips').filter(t => (t.date || '').startsWith(prev)), pIds = new Set(pTrips.map(t => t.trip_id));
+  const pN = rows('Catches').filter(c => pIds.has(c.trip_id)).length;
+  return { y, trips, cs, bs, max, sum, zero, per, spot, rig, lure, setup, td, big, months, prev: pTrips.length ? { trips: pTrips.length, n: pN } : null, br: biteRate(cs, bs) };
+}
+function seasonAwards(d){
+  const A = [], pct = (a, b) => Math.round(a / b * 100);
+  if (d.max) A.push(['🏆', '올해의 대물', `${d.max.length_cm}cm`, [catchDate(d.max).slice(5).replace('-', '.'), lureName(d.max.lure_id), d.max.rig].filter(Boolean).join(' · ')]);
+  if (d.rig) A.push(['🪝', 'MVP 리그', d.rig.k, `${d.rig.n}수 · 전체의 ${pct(d.rig.n, d.cs.length)}%`]);
+  if (d.lure) A.push(['🪱', 'MVP 루어', lureName(d.lure.k), `${d.lure.n}수 · 평균 ${d.lure.avg}cm`]);
+  if (d.setup) { const st = byId('Setups', d.setup.k), rod = byId('Tackle', st.rod_id); A.push(['⚔', '최강 장비', st.name, `${d.setup.n}수 · 최대 ${d.setup.max}cm`, rod ? rarCol(rod) : '']); }
+  if (d.spot) A.push(['📍', '최애 포인트', spotName(d.spot.k), `${d.spot.n}회 출조`]);
+  if (d.per[0] && d.per[0].n) { const b = d.per[0]; A.push(['🔥', '베스트 출조', `${b.t.date.slice(5).replace('-', '.')} ${b.n}수`, `${spotName(b.t.spot_id)}${b.max ? ' · 최대 ' + b.max + 'cm' : ''}`, '', b.t.trip_id]); }
+  if (d.td && d.td.n >= 2) A.push(['⏰', '골든 타임', d.td.k, `${d.td.n}수 · 평균 ${d.td.avg}cm`]);
+  if (d.big) A.push(['💪', '40업 클럽', `${d.big}마리`, '대물 사냥꾼 인증']);
+  if (d.br.mi) A.push(['😿', '놓친 고기', `${d.br.mi}마리`, d.br.land != null ? `랜딩률 ${d.br.land}%` : '']);
+  if (d.zero) A.push(['😴', '꽝 클럽', `${d.zero}회`, `출조 ${d.trips.length}회 중 · 그래도 다시 감`]);
+  return A;
+}
+function seasonTalk(d){
+  const n = d.cs.length, goal = Math.max(10, Math.ceil(n * 1.3 / 5) * 5);
+  const dl = !n ? `${d.y}년엔 아직 손맛을 못 봤어… 내년엔 꼭 잡자` : d.prev ? (n >= d.prev.n ? `작년보다 ${n - d.prev.n}수 더 잡았어. 내년 목표는 ${goal}수!` : `작년보단 ${d.prev.n - n}수 적지만… 내년엔 ${goal}수 가자`) : `${d.y}년 ${n}수. 내년 목표는 ${goal}수야`;
+  const bl = d.max && +d.max.length_cm >= 40 ? `${d.max.length_cm}cm 진짜 컸어!! 내년엔 50업 가자!!` : d.max ? `최대 ${d.max.length_cm}cm! 내년엔 40업 잡아줘!!` : '내년엔 나도 데려가!!';
+  return [dl, bl];
+}
+function vSeason(){
+  const ys = seasonYears(); if (!seasonY || !ys.includes(seasonY)) seasonY = ys[0] || ymd().slice(0, 4);
+  const d = seasonData(seasonY), aw = seasonAwards(d), [dl, bl] = seasonTalk(d), n = d.cs.length;
+  const maxPh = d.max ? photosOf(d.max.catch_id)[0] : null;
+  const head = `<div class="head"><div><div class="sub pf" style="font-size:8px">SEASON REVIEW</div><h1 class="t">${esc(seasonY)} 시즌 결산</h1></div><button class="x" data-act="tabStats">✕</button></div>
+    ${ys.length > 1 ? chipsRaw('seasonY', seasonY, ys.map(y => ({ v: y, label: y + '년' }))) : ''}`;
+  if (!d.trips.length) return head + `<div class="card"><div class="empty">${img('cat:boo:sleep', 4)}${esc(seasonY)}년 출조 기록이 없어 zzZ</div></div>`;
+  return head + `
+  <div class="shero"><div class="sstars"></div><div class="stitle2 pf blink">${n ? 'SEASON CLEAR!' : 'SEASON OVER…'}</div>
+    <div class="spodium">${img('cat:dende', 4)}<div class="trophy">🏆</div>${img('cat:boo', 4)}</div></div>
+  <div class="card"><div class="stitle">TOTAL</div>
+    <div class="bigscore"><div><b>${d.trips.length}</b><span>출조</span></div><div><b class="gold">${n}</b><span>마릿수</span></div>
+      <div><b class="${d.max && +d.max.length_cm >= 40 ? 'red' : 'gold'}">${d.max ? d.max.length_cm : '-'}</b><span>최대 cm</span></div></div>
+    ${n ? `<div class="funline">올해 잡은 배스를 한 줄로 이으면 <b>${(d.sum / 100).toFixed(1)}m</b> — 부우 <b>${Math.round(d.sum / 45)}마리</b> 길이!</div>` : ''}
+    <div class="sub" style="text-align:center;margin-top:8px">출조당 ${(n / d.trips.length).toFixed(1)}수${d.bs.length ? ` · 입질 ${d.br.bi} · 놓침 ${d.br.mi}` : ''}${d.prev ? ` · 작년 ${d.prev.trips}회 ${d.prev.n}수` : ''}</div></div>
+  ${maxPh ? `<div class="card"><div class="stitle">BIGGEST <span>올해의 대물</span></div><img class="sbig" src="${maxPh.src}" ${imgFallback(maxPh)} alt="" data-act="photos" data-id="${esc(d.max.catch_id)}"></div>` : ''}
+  <div class="card"><div class="stitle">AWARDS <span>시상식</span></div>
+    <div class="awards">${aw.map(([ic, ti, v, sub, col, tid]) => `<div class="aw" ${tid ? `data-act="openBrief" data-id="${esc(tid)}"` : ''}><i>${ic}</i><div><small>${esc(ti)}</small><b ${col ? `style="color:${col}"` : ''}>${esc(v)}</b><span>${esc(sub || '')}</span></div></div>`).join('')}</div></div>
+  ${n ? `<div class="card"><div class="stitle">MONTH <span>월별 마릿수</span></div>${cols(d.months)}</div>` : ''}
+  <div class="card"><div class="stitle">TOP 3 <span>베스트 출조</span></div><div class="list">${d.per.slice(0, 3).map((x, i) => `
+    <div class="row" data-act="openBrief" data-id="${esc(x.t.trip_id)}"><div class="len">${['🥇', '🥈', '🥉'][i]}</div>
+      <div class="meta"><b>${esc(x.t.date)} · ${esc(spotName(x.t.spot_id))}</b><br>${x.n}수${x.max ? ` · <span class="t${tier(x.max)}">최대 ${x.max}cm</span>` : ''}${x.t.summary ? ' · ' + esc(x.t.summary) : ''}</div></div>`).join('')}</div></div>
+  <div class="card"><div class="talk">
+    <div class="tk">${img('cat:dende', 3)}<div class="bubble tail">${esc(dl)}</div></div>
+    <div class="tk r">${img('cat:boo', 3)}<div class="bubble tail">${esc(bl)}</div></div></div></div>
+  <button class="pbtn" data-act="seasonCard">🖼 결산 카드 만들기</button>
+  <footer>DEVELOPED BY DONGGU KANG<br>DENDE & BOO FOREVER</footer>`;
+}
+async function makeSeasonCard(y){
+  const d = seasonData(y), aw = seasonAwards(d).slice(0, 6), [dl] = seasonTalk(d), n = d.cs.length;
+  try { await Promise.all(['36px "Press Start 2P"', '30px Galmuri11', '30px Galmuri14', '30px "Pretendard Variable"'].map(f => document.fonts.load(f))); } catch (e) {}
+  const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#1a1a2e'); bg.addColorStop(1, '#10162c'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  for (let i = 0; i < 110; i++) { ctx.fillStyle = `rgba(255,255,255,${0.2 + Math.random() * 0.6})`; const z = Math.random() > .8 ? 3 : 2; ctx.fillRect(Math.random() * W, Math.random() * H, z, z); }
+  ctx.font = '34px "Press Start 2P"'; ctx.fillStyle = '#fff'; ctx.fillText('BASS', 60, 92); ctx.fillStyle = '#f7b731'; ctx.fillText('LOG', 60 + ctx.measureText('BASS ').width, 92);
+  ctx.textAlign = 'right'; ctx.font = '30px "Press Start 2P"'; ctx.fillStyle = '#e94560'; ctx.fillText(y, W - 60, 92); ctx.textAlign = 'center';
+  ctx.font = '58px "Press Start 2P"'; ctx.fillStyle = '#f7b731'; ctx.fillText(n ? 'SEASON CLEAR!' : 'SEASON OVER', W / 2, 210);
+  ctx.imageSmoothingEnabled = false;
+  const de = await loadImg(spr('cat:dende', 8)), bo = await loadImg(spr('cat:boo', 8));
+  ctx.drawImage(de, W / 2 - 260, 250); ctx.drawImage(bo, W / 2 + 132, 250);
+  ctx.font = '120px sans-serif'; ctx.fillText('🏆', W / 2, 360);
+  [[String(d.trips.length), '출조', '#fff'], [String(n), '마릿수', '#f7b731'], [d.max ? d.max.length_cm : '-', '최대 cm', d.max && +d.max.length_cm >= 40 ? '#e94560' : '#f7b731']].forEach(([v, l, c], i) => {
+    const cx = 60 + 160 + i * 320; ctx.font = '62px "Press Start 2P"'; ctx.fillStyle = c; ctx.fillText(v, cx, 500);
+    ctx.font = '26px "Pretendard Variable"'; ctx.fillStyle = '#a0a0b8'; ctx.fillText(l, cx, 548);
+  });
+  ctx.textAlign = 'left';
+  aw.forEach(([ic, ti, v, sub, col], i) => {
+    const x = 60 + (i % 2) * 490, yy = 590 + Math.floor(i / 2) * 150, w = 470, h = 132;
+    ctx.fillStyle = 'rgba(247,183,49,.08)'; rrect(ctx, x, yy, w, h, 14); ctx.fill(); ctx.strokeStyle = 'rgba(247,183,49,.45)'; ctx.lineWidth = 2; rrect(ctx, x, yy, w, h, 14); ctx.stroke();
+    ctx.font = '50px sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(ic, x + 22, yy + 82);
+    ctx.font = '22px Galmuri11'; ctx.fillStyle = '#a0a0b8'; ctx.fillText(ti, x + 100, yy + 40);
+    ctx.font = '34px Galmuri14, Galmuri11'; ctx.fillStyle = col || '#f7b731'; ctx.fillText(fitText(ctx, v, w - 120), x + 100, yy + 82);
+    ctx.font = '21px "Pretendard Variable"'; ctx.fillStyle = '#c8c8d8'; ctx.fillText(fitText(ctx, sub || '', w - 120), x + 100, yy + 114);
+  });
+  const mx = Math.max(...d.months.map(m => m.n), 1), by = 1180;
+  d.months.forEach((m, i) => { const bw = 62, x = 60 + i * 80, hh = m.n / mx * 90; ctx.fillStyle = m.n ? '#f7b731' : 'rgba(255,255,255,.1)'; ctx.fillRect(x, by - hh, bw, Math.max(hh, 3));
+    ctx.font = '18px "Press Start 2P"'; ctx.fillStyle = '#6a6a8a'; ctx.textAlign = 'center'; ctx.fillText(String(i + 1), x + bw / 2, by + 30); ctx.textAlign = 'left'; });
+  ctx.font = '28px Galmuri11'; ctx.fillStyle = '#f7b731'; ctx.textAlign = 'center'; ctx.fillText(fitText(ctx, '덴데: ' + dl, 960), W / 2, 1270);
+  ctx.font = '15px "Press Start 2P"'; ctx.fillStyle = '#4a4a6a'; ctx.fillText('DEVELOPED BY DONGGU KANG · DENDE & BOO', W / 2, 1318);
+  return { cv, warn: '' };
+}
+function fitText(ctx, s, w){ s = String(s); if (ctx.measureText(s).width <= w) return s; while (s.length > 1 && ctx.measureText(s + '…').width > w) s = s.slice(0, -1); return s + '…'; }
+
 /* ═════════ 하단 탭 · 렌더 ═════════ */
 function vNav(){
-  const tab = view === 'map' ? 'map' : view === 'settings' ? 'settings' : view === 'stats' ? 'stats' : 'home';
+  const tab = view === 'map' ? 'map' : (view === 'settings' || view === 'gear') ? 'gear' : (view === 'stats' || view === 'season') ? 'stats' : 'home';
   return `<button class="${tab === 'home' ? 'on' : ''}" data-act="tabHome"><i>${trip ? '🎣' : '⛺'}</i>${trip ? '출조중' : '홈'}</button>
     <button class="${tab === 'stats' ? 'on' : ''}" data-act="tabStats"><i>📊</i>기록</button>
     <button class="${tab === 'map' ? 'on' : ''}" data-act="tabMap"><i>🗺</i>지도</button>
-    <button data-act="tabGuide"><i>📖</i>도감</button>
-    <button class="${tab === 'settings' ? 'on' : ''}" data-act="settings"><i>⚙</i>관리</button>`;
+    <button class="${tab === 'gear' ? 'on' : ''}" data-act="tabGear"><i>⚔</i>장비</button>
+    <button data-act="tabGuide"><i>📖</i>도감</button>`;
 }
 function render(){
   destroyMap();
   const app = $('#app'), top = window.scrollY;
   app.className = view === 'map' ? 'full' : (view === 'start' || view === 'detail') ? 'nonav' : '';
-  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'brief' ? vBrief() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : vHome();
+  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'brief' ? vBrief() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : view === 'gear' ? vGear() : view === 'season' ? vSeason() : vHome();
   const nav = $('#nav'); nav.className = (view === 'start' || view === 'loading' || view === 'detail') ? 'hide' : ''; nav.innerHTML = vNav();
   if (view === 'start' || view === 'trip' || view === 'detail' || view === 'brief') window.scrollTo(0, top);
   if (view === 'map') initMap();
@@ -2210,7 +2732,9 @@ document.addEventListener('click', async e => {
   if (el.dataset.f) {
     const f = el.dataset.f, k = el.dataset.k, v = el.dataset.v, form = forms()[f];
     if (el.dataset.multi) form[k] = form[k].includes(v) ? form[k].filter(x => x !== v) : [...form[k], v];
-    else form[k] = form[k] === v && k !== 'setup_id' && k !== 'released' ? '' : v;
+    else form[k] = form[k] === v && k !== 'setup_id' && k !== 'released' && !(f === 'gq' && ['fresh', 'kind', 'rarity'].includes(k)) ? '' : v;
+    if (f === 'gq' && k === 'kind') gq.type = (KIND_TYPES[v] || [''])[0];
+    if (f === 'cf' && k === 'setup_id') { const st = byId('Setups', v); if (st && st.rig_lure_id && byId('Lures', st.rig_lure_id)) cf.lure_id = st.rig_lure_id; }
     if (f === 'cf' && k === 'setup_id') { const st = byId('Setups', v); if (st && st.default_rig) cf.rig = st.default_rig; }
     if (f === 'cf' && k === 'lure_id') { const l = byId('Lures', cf.lure_id); if (l && l.default_rig) cf.rig = l.default_rig; }
     if (f === 'sf' && k === 'spot_id') loadWeather();
@@ -2262,7 +2786,8 @@ document.addEventListener('click', async e => {
     case 'bpSet': bp.items[+el.dataset.i].catch_id = el.dataset.v; rerenderSheet(); break;
     case 'bpSave': bpSave(); break;
     case 'tabStats': view = 'stats'; render(); window.scrollTo(0, 0); break;
-    case 'raw': if (el.dataset.k === 'statsP') { statsP = el.dataset.v; save('bl_statsP', statsP); render(); } break;
+    case 'raw': if (el.dataset.k === 'statsP') { statsP = el.dataset.v; save('bl_statsP', statsP); render(); }
+      if (el.dataset.k === 'seasonY') { seasonY = el.dataset.v; render(); } break;
     case 'closeSheet': hideSheet(); break;
     case 'allLures': cf.allLures = true; rerenderSheet(); break;
     case 'newLure': cf.newLure = true; rerenderSheet(); $('#nl_name').focus(); break;
@@ -2287,6 +2812,37 @@ document.addEventListener('click', async e => {
     case 'vwPrev': vw.i = (vw.i - 1 + vw.list.length) % vw.list.length; drawViewer(); break;
     case 'vwNext': vw.i = (vw.i + 1) % vw.list.length; drawViewer(); break;
     case 'tabGuide': location.href = 'rigs.html'; break;
+    case 'tabGear': view = 'gear'; render(); window.scrollTo(0, 0); break;
+    case 'gearSel': gearSel = el.dataset.id; save('bl_gearSel', gearSel); render(); break;
+    case 'gearNew': openLoadout(true); break;
+    case 'gearEdit': openLoadout(false); break;
+    case 'gearSlot': openEquip(el.dataset.k); break;
+    case 'gearMaint': openMaint(); break;
+    case 'gearMaintTrip': { const t = byId('Trips', el.dataset.id); openMaint(t ? (t.setup_ids || '').split(',').filter(Boolean) : null); break; }
+    case 'gearRig': openRig(); break;
+    case 'itemOpen': openItem(el.dataset.id); break;
+    case 'itemNew': openItem(null, el.dataset.k); break;
+    case 'itemEdit': gq.edit = true; rerenderSheet(); break;
+    case 'itemSave': itemSave(); break;
+    case 'itemDrop': if (confirmTap('itemDrop')) { write('Tackle', { tackle_id: gq.id, active:'N' }); hideSheet(); render(); say('창고에서 뺐어 (기록은 남아)', 'dende'); } break;
+    case 'equipItem': equipItem(el.dataset.id); break;
+    case 'mtTask': { const x = gq.it[el.dataset.id], v = el.dataset.v; x.tasks = x.tasks.includes(v) ? x.tasks.filter(t => t !== v) : [...x.tasks, v]; if (v === '라인 교체' && x.tasks.includes(v)) x.pct = 100; rerenderSheet(); break; }
+    case 'mtAdd': { const id = el.dataset.id, p = lineInfo(byId('Setups', id)).pct; gq.ids.push(id); gq.it[id] = { pct: p == null ? 100 : p, orig: p, tasks: [], memo:'' }; rerenderSheet(); break; }
+    case 'mtSave': mtSave(); break;
+    case 'rigSave': rigSave(); break;
+    case 'rigNewLure': gq.newLure = true; rerenderSheet(); $('#rl_name').focus(); break;
+    case 'rigAddLure': {
+      const brand = $('#rl_brand').value.trim(), name = $('#rl_name').value.trim(); if (!name) return say('이름 알려줘!', 'dende');
+      const id = nextId('Lures', 'L', 3); write('Lures', { lure_id: id, category:'소프트', brand, name, worm_type: gq.worm, default_rig: gq.rig, active:'Y' });
+      gq.lure_id = id; gq.newLure = false; rerenderSheet(); break;
+    }
+    case 'loSave': loSave(); break;
+    case 'loDrop': if (confirmTap('loDrop')) { write('Setups', { setup_id: gq.id, active:'N' }); gearSel = ''; hideSheet(); render(); say('세팅을 해체했어', 'dende'); } break;
+    case 'bite': addBite(el.dataset.k, trip && trip.trip_id, true); break;
+    case 'biteT': addBite(el.dataset.k, tdId, false); break;
+    case 'delBite': if (confirmTap('delBite' + el.dataset.id)) { remove('Bites', el.dataset.id); render(); } break;
+    case 'season': view = 'season'; render(); window.scrollTo(0, 0); break;
+    case 'seasonCard': showMadeCard(() => makeSeasonCard(seasonY), `BASS_${seasonY}_SEASON.png`); break;
     case 'recoToggle': recoOpen = !recoOpen; { const rc = $('#recoCard'); if (rc) rc.innerHTML = vReco(tripSrc(), true); } break;
     case 'pastTrip': openPast(); break;
     case 'savePast': savePast(); break;
@@ -2315,7 +2871,11 @@ document.addEventListener('click', async e => {
   }
 });
 document.addEventListener('input', e => {
-  const p = e.target.dataset && e.target.dataset.in; if (!p) return;
+  const ds = e.target.dataset || {};
+  if (ds.mt && gq && gq.it) { const x = gq.it[ds.mt], v = +e.target.value; x.pct = v; const lb = document.querySelector(`[data-mtv="${ds.mt}"]`); if (lb) { lb.textContent = v + '%'; lb.style.color = pctCol(v); }
+    const im = document.querySelector(`[data-mtimg="${ds.mt}"]`), st = byId('Setups', ds.mt); if (im) im.src = spr(`ispool:${Math.round(v / 100 * 7)}:${lineCol(byId('Tackle', st.line_id)).slice(1)}`, 3); return; }
+  if (ds.mtm && gq && gq.it) { gq.it[ds.mtm].memo = e.target.value; return; }
+  const p = ds.in; if (!p) return;
   const [f, k] = p.split('.'); forms()[f][k] = e.target.value;
   if (p === 'sf.water_temp') { const rc = $('#recoCard'); if (rc) rc.innerHTML = vReco(startSrc()); }
 });
