@@ -1,9 +1,9 @@
 /* BASS LOG 서비스 워커 — 신호 없는 저수지에서도 앱이 열리게
    DEVELOPED BY DONGGU KANG */
-const CACHE = 'bass-log-v17';
+const CACHE = 'bass-log-v18';
 const TILES = 'bass-log-tiles';
 const MAX_TILES = 1500;
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './rigs.html'];
+const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './rigs.html', './home.jpg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
