@@ -534,6 +534,19 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .stage.photo.compact{height:170px}
 .stage.photo .tb{color:#fff;background:rgba(0,0,0,.45);padding:5px 7px;border-radius:4px}
 .stage.photo .cat.hot{position:absolute;display:block;cursor:pointer;z-index:3}
+.slot .sname,.aslot .sname{position:absolute;left:3px;right:3px;bottom:4px;font-family:'Galmuri11',sans-serif;font-size:10.5px;line-height:1.2;text-align:center;word-break:keep-all;text-shadow:0 1px 0 #000,0 0 4px #000}
+.slot.tall .sname{font-size:11.5px}
+.slot{padding-bottom:20px}
+.accrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.aslot{position:relative;min-height:76px;background:radial-gradient(#1e1912,#0a0806);border:2px solid var(--rc);display:flex;align-items:center;justify-content:center;padding:14px 4px 20px}
+.aslot.emp{border-style:dashed}.aslot.emp img{opacity:.5}
+.aslot em{position:absolute;left:5px;top:4px;font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#7a6a4a}
+.aslot .sname{color:var(--rc)}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.acell{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;background:radial-gradient(#1e1912,#0a0806);border:2px solid color-mix(in srgb,var(--rc) 55%,#000)}
+.acell span{font-family:'Galmuri11',sans-serif;font-size:11.5px;color:var(--rc)}
+.acell.on{border-color:var(--rc);box-shadow:inset 0 0 14px color-mix(in srgb,var(--rc) 35%,transparent)}
+.acell .eq{position:absolute;top:2px;right:3px;font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#000;background:#f7b731;padding:2px 3px}
 </style>
 </head>
 <body>
@@ -679,7 +692,7 @@ const SPR = {};
 function spr(name, s){
   const k = name + '@' + s; if (SPR[k]) return SPR[k];
   const [kind, arg, opt] = name.split(':');
-  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispin:[16,12], grod:[18,18], greel:[16,13], me:[20,25], ispool:[14,11], irig:[16,16] }[kind];
+  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispin:[16,12], grod:[18,18], greel:[16,13], me:[20,25], ispool:[14,11], irig:[16,16], acc: ({ hat:[18,11], eye:[18,8], boots:[16,13] })[arg] }[kind];
   const cv = document.createElement('canvas'); cv.width = size[0] * s; cv.height = size[1] * s;
   const ctx = cv.getContext('2d');
   const p = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect(x * s, y * s, s, s); };
@@ -695,6 +708,7 @@ function spr(name, s){
     rowsDraw(p, kind === 'ispin' ? ISPIN : IREEL, { K:'#1d1f24', S: c, W: shade(c, 1.5), L: kind === 'ispin' ? '#d8dee6' : shade(c, .55), H:'#3a3f46', O:'#c9a46a' }); }
   if (kind === 'ispool') drawISpool(p, +arg, '#' + opt);
   if (kind === 'me') drawMe(p, arg || '');
+  if (kind === 'acc') { const [i, c] = String(opt).split('.'); drawAcc(p, arg, +i, c ? '#' + c : '#a89060'); }
   if (kind === 'grod') drawGRod(p, +arg, +opt[0], opt[1] === 's');
   if (kind === 'greel') drawGReel(p, +arg, +opt[0], opt[1] === 's');
   if (kind === 'irig') rowsDraw(p, IRIG, { w:'#cfe7ee', G:'#8d969e', g:'#c3ccd2', s:'#e8eef2', p:'#d65d97' });
@@ -2514,7 +2528,7 @@ function vGear(){
   const rod = byId('Tackle', st.rod_id), reel = byId('Tackle', st.reel_id), line = byId('Tackle', st.line_id);
   const li = lineInfo(st), ss = setupStats(st.setup_id), sb = setBonus(st), nm = needMaint(), PL = playerLv(), me = myChar();
   const slot = (k, it, sprite, tag) => `<button class="slot ${k === 'rod_id' ? 'tall' : ''} ${it ? '' : 'emp'}" data-act="gearSlot" data-k="${k}" style="--rc:${it ? rarCol(it) : '#3a3326'}">
-      ${it ? sprite : `<span class="ghost">${SLOT_KIND[k]}</span>`}<em>${tag}</em></button>`;
+      ${it ? sprite : `<span class="ghost">${SLOT_KIND[k]}</span>`}<em>${tag}</em>${it ? `<span class="sname" style="color:${rarCol(it)}">${esc((it.model || '').length <= 4 ? itemName(it) : it.model)}${k === 'line_id' && it.spec1 ? ` ${esc(it.spec1)}lb` : ''}</span>` : ''}</button>`;
   const fill = li.pct == null ? 7 : Math.round(li.pct / 100 * 7);
   const lowList = list.filter(s => { const p = lineInfo(s).pct; return p != null && p <= 30; });
   const ml = rows('Maint').slice().sort((a, b) => (b.maint_id || '').localeCompare(a.maint_id || '')).slice(0, 8);
@@ -2535,6 +2549,7 @@ function vGear(){
         ${slot('line_id', line, img(`ispool:${fill}:${iconCol(line).slice(1)}`, 4), 'LINE')}
       </div>
     </div>
+    ${vAccRow(me)}
     <button class="rigslot" data-act="gearRig"><em>RIG</em>${st.default_rig ? `${img('irig', 3)}<div><b>${esc(st.default_rig)}</b>
       <div class="sockets">${[st.rig_sinker && st.rig_sinker !== '없음' ? `⚫ ${esc(st.rig_sinker)}g` : '', st.rig_hook ? `🪝 ${esc(st.rig_hook)}` : '', lureName(st.rig_lure_id) || st.rig_worm ? `🪱 ${esc(lureName(st.rig_lure_id) || st.rig_worm)}` : '']
         .map(x => `<span class="sk ${x ? 'on' : ''}">${x || '빈 소켓'}</span>`).join('')}</div>${st.rig_note ? `<small>${esc(st.rig_note)}</small>` : ''}</div>`
@@ -2749,14 +2764,14 @@ const CH_OPT = {
   skin:  { label:'피부', list:[['밝은', '#f5d0b0'], ['보통', '#e8b48a'], ['구릿빛', '#c98c5e'], ['진한', '#8d5a3b']] },
   hair:  { label:'머리', list:[['짧은 머리'], ['스포츠'], ['긴 머리'], ['파마'], ['민머리']] },
   hairC: { label:'머리 색', list:[['검정', '#1e1a18'], ['갈색', '#5a3a22'], ['회색', '#9a9a9a'], ['금발', '#d9b45a'], ['빨강', '#9c3a24']] },
-  hat:   { label:'모자', list:[['없음'], ['버킷햇'], ['캡'], ['비니'], ['밀짚모자'], ['캠프캡']] },
+  hat:   { label:'모자', list:[['없음'], ['버킷햇'], ['캡'], ['비니'], ['밀짚모자'], ['캠프캡'], ['썬캡']] },
   hatC:  { label:'모자 색', list:[['카키', '#a89060'], ['검정', '#2a2a30'], ['네이비', '#2e3a5a'], ['빨강', '#b8323a'], ['올리브', '#5b6b3a'], ['흰색', '#e8e8e8'], ['베이지', '#d9ccb0']] },
-  eye:   { label:'눈', list:[['맨눈'], ['안경'], ['선글라스'], ['편광 고글']] },
+  eye:   { label:'눈', list:[['없음'], ['안경'], ['선글라스'], ['편광 선글라스']] },
   beard: { label:'수염', list:[['없음'], ['콧수염'], ['턱수염'], ['덥수룩'], ['수염 자국']] },
   vest:  { label:'조끼', list:[['올리브', '#5b6b3a'], ['카키', '#a89060'], ['네이비', '#2e3a5a'], ['오렌지', '#d9732e'], ['빨강', '#a83232'], ['검정', '#26262c'], ['회색 후드티', '#c4c4c8']] },
   shirt: { label:'셔츠', list:[['흰색', '#e6e6e6'], ['회색', '#8a8f98'], ['파랑', '#3d6fb0'], ['검정', '#2a2a30'], ['체크', '#b84a3a']] },
   pants: { label:'바지', list:[['네이비', '#2b3550'], ['카키', '#8a7a55'], ['검정', '#1e1e24'], ['청바지', '#3f5f8f']] },
-  boots: { label:'신발', list:[['갈색 부츠', '#5a3a22'], ['검정 부츠', '#1a1a1e'], ['초록 장화', '#2f6a3a'], ['노란 장화', '#d9b43a']] },
+  boots: { label:'신발', list:[['갈색 부츠', '#5a3a22'], ['검정 부츠', '#1a1a1e'], ['초록 장화', '#2f6a3a'], ['노란 장화', '#d9b43a'], ['발목 장화', '#2b3a2b'], ['무릎 장화', '#3a4a3a'], ['크록스', '#7fd36b'], ['운동화', '#f0f0f0'], ['등산화', '#7a5a3a']] },
 };
 const CH_KEYS = Object.keys(CH_OPT);
 const CH_DEF = { skin:1, hair:0, hairC:0, hat:1, hatC:0, eye:0, beard:0, vest:0, shirt:0, pants:0, boots:0, name:'' };
@@ -2782,7 +2797,13 @@ function drawMe(p, key){
   else { set(7, 16, V2); set(12, 16, V2); set(7, 17, V2); set(12, 17, V2); set(8, 15, V3); set(11, 15, V3); }   // 포켓
   for (let y = 15; y <= 17; y++) { set(5, y, V); set(14, y, V); } set(5, 18, S); set(14, 18, S);       // 팔·손
   row(19, 7, 12, P); row(20, 7, 8, P); row(20, 11, 12, P); row(21, 7, 8, P); row(21, 11, 12, P);
-  row(22, 6, 8, B); row(22, 11, 13, B); row(23, 6, 8, shade(B, .7)); row(23, 11, 13, shade(B, .7));
+  const shoe = SHOE_STYLE[c.boots] || 'boot', BD = shade(B, .7);
+  if (shoe === 'knee') { row(20, 7, 8, shade(B, 1.25)); row(20, 11, 12, shade(B, 1.25)); row(21, 7, 8, B); row(21, 11, 12, B); }
+  if (shoe === 'ankle' || shoe === 'hike') { row(21, 7, 8, B); row(21, 11, 12, B); }
+  row(22, 6, 8, B); row(22, 11, 13, B); row(23, 6, 8, BD); row(23, 11, 13, BD);
+  if (shoe === 'crocs') { set(7, 22, shade(B, .6)); set(12, 22, shade(B, .6)); row(23, 6, 8, '#e8e8e8'); row(23, 11, 13, '#e8e8e8'); }
+  if (shoe === 'sneaker') { set(7, 22, '#e94560'); set(12, 22, '#e94560'); row(23, 6, 8, '#a0a0aa'); row(23, 11, 13, '#a0a0aa'); }
+  if (shoe === 'hike') { set(7, 21, '#e8c56a'); set(12, 21, '#e8c56a'); row(23, 6, 8, '#1a1a1a'); row(23, 11, 13, '#1a1a1a'); }
   // 머리 (큰 얼굴)
   row(3, 6, 13, S); row(4, 5, 14, S); for (let y = 5; y <= 11; y++) row(y, 4, 15, S); row(12, 5, 14, S); row(13, 6, 13, S);
   set(4, 11, S2); set(15, 11, S2); row(13, 7, 12, S2);
@@ -2816,6 +2837,7 @@ function drawMe(p, key){
   if (c.hat === 3) { set(9, 0, '#f4f4f4'); set(10, 0, '#f4f4f4'); set(9, -0, '#f4f4f4'); row(1, 6, 13, C); row(2, 5, 14, C); row(3, 4, 15, C); row(4, 4, 15, C); row(5, 4, 15, x => x % 2 ? shade(C, 1.25) : C2); row(6, 4, 15, x => x % 2 ? shade(C, 1.25) : C2); }
   if (c.hat === 4) { const ST = '#e3c46e', ST2 = '#c9a850'; row(1, 7, 12, ST); row(2, 6, 13, x => x % 2 ? ST : ST2); row(3, 5, 14, x => x % 2 ? ST2 : ST); row(4, 5, 14, C); row(5, 1, 18, ST2); row(6, 2, 17, x => x < 4 || x > 15 ? ST2 : g[6][x]); }
   if (c.hat === 5) { row(1, 6, 13, C); for (let y = 2; y <= 4; y++) row(y, 5, 14, x => x === 7 || x === 12 ? shade(C, .88) : C); set(9, 1, shade(C, .8)); set(10, 1, shade(C, .8)); row(5, 4, 15, C2); row(6, 5, 14, x => x === 5 || x === 14 ? g[6][x] : shade(C, .55)); [4, 15].forEach(x => set(x, 6, H)); }
+  if (c.hat === 6) { row(4, 4, 15, C); row(5, 5, 14, C2); set(6, 4, shade(C, 1.25)); }
   // 외곽선
   const OL = '#1a1420';
   for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) {
@@ -2823,6 +2845,77 @@ function drawMe(p, key){
     if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const yy = y + dy, xx = x + dx; return yy >= 0 && yy < Hh && xx >= 0 && xx < W && g[yy][xx] && g[yy][xx] !== 'OL'; })) g[y][x] = 'OL';
   }
   for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) if (g[y][x]) p(x, y, g[y][x] === 'OL' ? OL : g[y][x]);
+}
+
+/* ═════════ 악세사리 (모자·선글라스·신발) — 캐릭터에 장착 ═════════ */
+const ACC = {
+  hat:   { tag:'HEAD', label:'모자', meta:[['일반', '맨머리의 자유'], ['마법', '햇빛 차단 +10'], ['일반', '멋 +5'], ['마법', '겨울 보온 +15'], ['희귀', '여름 감성 +20'], ['희귀', '캠핑 감성 +15'], ['마법', '시원함 +10 · 정수리 주의']] },
+  eye:   { tag:'EYES', label:'선글라스', meta:[['일반', '맨눈으로 승부'], ['일반', '시력 보정'], ['마법', '눈부심 -20'], ['전설', '물속이 보인다! 사이트 피싱 +30']] },
+  boots: { tag:'FEET', label:'신발', meta:[['일반', '튼튼한 기본기'], ['일반', '어디든 무난'], ['마법', '진흙 OK'], ['마법', '눈에 확 띔'], ['마법', '발목까지 방수'], ['희귀', '무릎까지 웨이딩 가능'], ['세트', '통풍 최고 · 미끄럼 주의'], ['일반', '이동 속도 +10'], ['희귀', '바위 지형 +20']] },
+};
+const SHOE_STYLE = ['boot', 'boot', 'knee', 'knee', 'ankle', 'knee', 'crocs', 'sneaker', 'hike'];
+function gridSprite(p, W, H, paint){
+  const g = Array.from({ length: H }, () => Array(W).fill(null)), set = (x, y, c) => { if (x >= 0 && x < W && y >= 0 && y < H) g[y][x] = c; };
+  const row = (y, a, b, c) => { for (let x = a; x <= b; x++) set(x, y, typeof c === 'function' ? c(x) : c); };
+  paint(set, row);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!g[y][x] && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const v = (g[y + dy] || [])[x + dx]; return v && v !== 'OL'; })) g[y][x] = 'OL';
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (g[y][x]) p(x, y, g[y][x] === 'OL' ? '#141018' : g[y][x]);
+}
+function drawAcc(p, type, i, col){
+  if (type === 'hat') gridSprite(p, 18, 11, (set, row) => {
+    const C = col, D = shade(col, .7), L = shade(col, 1.25);
+    if (i === 0) { row(5, 5, 12, '#3a3a44'); [[6, 3], [7, 4], [10, 6], [11, 7]].forEach(([x, y]) => set(x, y, '#5a5a66')); return; }
+    if (i === 1) { row(2, 6, 11, C); for (let y = 3; y <= 5; y++) row(y, 5, 12, C); row(6, 2, 15, D); row(7, 3, 14, D); set(7, 3, L); set(8, 3, L); }
+    if (i === 2) { row(2, 6, 9, C); row(3, 5, 10, C); for (let y = 4; y <= 6; y++) row(y, 4, 11, C); row(6, 11, 16, D); row(7, 12, 16, D); set(7, 1, D); set(6, 3, L); }
+    if (i === 3) { set(8, 0, '#f4f4f4'); set(9, 0, '#f4f4f4'); set(8, 1, '#e0e0e0'); set(9, 1, '#e0e0e0'); row(2, 6, 11, C); row(3, 5, 12, C); for (let y = 4; y <= 6; y++) row(y, 4, 13, C); row(7, 4, 13, x => x % 2 ? L : D); row(8, 4, 13, x => x % 2 ? L : D); }
+    if (i === 4) { const S = '#e3c46e', S2 = '#c9a850'; row(2, 6, 11, S); row(3, 5, 12, x => x % 2 ? S : S2); row(4, 5, 12, C); row(5, 1, 16, S2); row(6, 0, 17, S); row(7, 1, 16, S2); }
+    if (i === 5) { for (let y = 2; y <= 5; y++) row(y, 5, 12, x => x === 7 || x === 10 ? shade(C, .88) : C); row(6, 3, 14, D); row(7, 4, 13, shade(C, .55)); }
+    if (i === 6) { row(4, 4, 13, C); row(5, 4, 13, C); set(6, 4, L); row(6, 6, 15, D); row(7, 8, 16, D); }
+  });
+  if (type === 'eye') gridSprite(p, 18, 8, (set, row) => {
+    const F = i === 1 ? '#4a4a56' : '#141418';
+    const lens = i === 0 ? null : i === 1 ? ['#d8eef4', '#bfe0ea', '#ffffff'] : i === 2 ? ['#262632', '#141418', '#6a6a88'] : ['#2a8fd9', '#1a5fb0', '#9ff0ff'];
+    if (i === 0) { row(3, 3, 14, '#3a3a44'); set(4, 2, '#5a5a66'); set(13, 4, '#5a5a66'); return; }
+    [[1, 7], [10, 16]].forEach(([a, b]) => { row(1, a, b, F); row(5, a, b, F); for (let y = 2; y <= 4; y++) { set(a, y, F); set(b, y, F); row(y, a + 1, b - 1, y === 4 ? lens[1] : lens[0]); } set(a + 1, 2, lens[2]); set(a + 2, 2, lens[2]); });
+    row(2, 8, 9, F); set(0, 1, F); set(17, 1, F);
+    if (i === 3) { set(5, 3, '#c86bff'); set(14, 3, '#c86bff'); }
+  });
+  if (type === 'boots') gridSprite(p, 16, 13, (set, row) => {
+    const B = (CH_OPT.boots.list[i] || CH_OPT.boots.list[0])[1], D = shade(B, .7), L = shade(B, 1.3), st = SHOE_STYLE[i] || 'boot';
+    const top = { knee: 0, boot: 3, ankle: 5, hike: 4 }[st];
+    if (top != null) { for (let y = top; y <= 8; y++) row(y, 3, 7, B); row(top, 3, 7, L); set(4, top + 1, L); }
+    if (st === 'crocs') { row(5, 3, 4, D); row(6, 3, 5, D); for (let y = 7; y <= 10; y++) row(y, 2, 12, B); row(7, 2, 11, B); [[5, 8], [8, 8], [10, 9], [7, 10]].forEach(([x, y]) => set(x, y, shade(B, .6))); row(11, 2, 12, '#e8e8e8'); return; }
+    if (st === 'sneaker') { for (let y = 6; y <= 10; y++) row(y, 3, y < 8 ? 8 : 13, B); row(6, 3, 7, B); [5, 6, 7].forEach(x => set(x, 7, '#888')); row(9, 5, 11, '#e94560'); row(11, 2, 14, '#c8c8d0'); row(12, 2, 14, '#9a9aa6'); return; }
+    for (let y = 9; y <= 10; y++) row(y, 3, 13, B); row(8, 8, 11, B); set(12, 9, L);
+    row(11, 2, 14, st === 'hike' ? '#2a2a2a' : D); if (st === 'hike') { row(12, 2, 14, '#1a1a1a'); [5, 6, 7].forEach((x, k) => set(x, 5 + k, '#e8c56a')); }
+  });
+}
+function accName(k, i){ return ((CH_OPT[k].list[i] || CH_OPT[k].list[0])[0]); }
+function accImg(k, i, sc, c){
+  if (k === 'hat') return img(`acc:hat:${i}.${(CH_OPT.hatC.list[(c || myChar()).hatC] || CH_OPT.hatC.list[0])[1].slice(1)}`, sc);
+  return img(`acc:${k}:${i}`, sc);
+}
+function vAccRow(me){
+  return `<div class="accrow">${['hat', 'eye', 'boots'].map(k => { const i = +me[k] || 0, [rar] = ACC[k].meta[i] || ['일반'], empty = (k !== 'boots' && i === 0);
+    return `<button class="aslot ${empty ? 'emp' : ''}" data-act="accSlot" data-k="${k}" style="--rc:${empty ? '#3a3326' : RARITY[rar]}"><em>${ACC[k].tag}</em>
+      ${accImg(k, i, 3, me)}<span class="sname">${empty ? ACC[k].label + ' 없음' : esc(accName(k, i))}</span></button>`; }).join('')}</div>`;
+}
+let accK = 'hat';
+function openAcc(k){ accK = k; chq = { ...myChar() }; showSheet(vAcc); }
+function vAcc(){
+  const k = accK, A = ACC[k], cur = +chq[k] || 0;
+  return `<div class="shead"><div><h1 class="t">${A.label}</h1><div class="sub pf" style="font-size:8px;margin-top:6px">ACCESSORY · ${A.tag}</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    <div class="chprev"><div class="chstage">${meImg(6, chq)}</div>
+      <div class="tipbox big" style="margin:4px 0 0;--rc:${RARITY[A.meta[cur][0]]};width:100%"><div class="tn" style="color:${RARITY[A.meta[cur][0]]}">${esc(accName(k, cur))}</div>
+        <div class="tt">${esc(A.meta[cur][0])} 악세사리 · ${A.label}</div><div class="tblue">${esc(A.meta[cur][1])}</div></div></div>
+    <div class="agrid">${CH_OPT[k].list.map((o, i) => `<button class="acell ${cur === i ? 'on' : ''}" style="--rc:${RARITY[A.meta[i][0]]}" data-act="accEquip" data-v="${i}">
+      ${accImg(k, i, 3, chq)}<span>${esc(o[0])}</span>${cur === i ? '<i class="eq">E</i>' : ''}</button>`).join('')}</div>
+    ${k === 'hat' && cur ? `<label class="f">모자 색</label><div class="chips">${CH_OPT.hatC.list.map(([nm, cc], i) => `<button class="chip ${+chq.hatC === i ? 'on' : ''}" data-act="accColor" data-v="${i}"><i class="dot" style="background:${cc}"></i>${esc(nm)}</button>`).join('')}</div>` : ''}`;
+}
+function accSave(msg){
+  const c = { ...chq }; save('bl_char', c);
+  write('Options', { option_id:'CHAR', group:'캐릭터', value: JSON.stringify(c), order:'0', active:'Y' });
+  rerenderSheet(); render(); if (msg) say(msg, 'boo');
 }
 
 /* 레벨: 출조·조과·대물·정비가 경험치 */
@@ -3113,6 +3206,9 @@ document.addEventListener('click', async e => {
     case 'charSet': chq[el.dataset.k] = +el.dataset.v; rerenderSheet(); break;
     case 'charRandom': CH_KEYS.forEach(k => chq[k] = Math.floor(Math.random() * CH_OPT[k].list.length)); rerenderSheet(); break;
     case 'charSave': charSave(); break;
+    case 'accSlot': openAcc(el.dataset.k); break;
+    case 'accEquip': { const i = +el.dataset.v; chq[accK] = i; const [rar, fx] = ACC[accK].meta[i]; accSave(`${accName(accK, i)} 장착! ${fx}`); break; }
+    case 'accColor': chq.hatC = +el.dataset.v; accSave(); break;
     case 'charPhoto': Object.assign(chq, CH_PHOTO); rerenderSheet(); break;
     case 'itemReroll': gq.seed = Math.floor(Math.random() * 1e9); rerenderSheet(); break;
     case 'itemDrop': if (confirmTap('itemDrop')) { write('Tackle', { tackle_id: gq.id, active:'N' }); hideSheet(); render(); say('창고에서 뺐어 (기록은 남아)', 'dende'); } break;
