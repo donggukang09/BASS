@@ -530,12 +530,10 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .hero-me>img,.chstage>img:nth-child(2),.pbar>img{animation:mebob 1.8s steps(2) infinite}
 @keyframes mebob{50%{transform:translateY(-2px)}}
 .heldrod{right:-14px;top:40px}
-.stage.photo{height:300px;background:#1a1a2e url(home.jpg) center 42%/cover no-repeat;border-color:var(--gold);box-shadow:0 0 22px rgba(247,183,49,.18)}
-.stage.photo.compact{height:170px;background-position:center 32%}
+.stage.photo{height:300px;background-color:#1a1a2e;background-size:cover;background-repeat:no-repeat;transition:background-image .6s;border-color:var(--gold);box-shadow:0 0 22px rgba(247,183,49,.18)}
+.stage.photo.compact{height:170px}
 .stage.photo .tb{color:#fff;background:rgba(0,0,0,.45);padding:5px 7px;border-radius:4px}
 .stage.photo .cat.hot{position:absolute;display:block;cursor:pointer;z-index:3}
-.stage.photo .cat.dende{left:22%;top:12%;width:34%;height:70%}
-.stage.photo .cat.boo{left:56%;top:32%;width:34%;height:62%}
 </style>
 </head>
 <body>
@@ -989,14 +987,28 @@ function timeInfo(){
   if (h >= 19 && h < 21) return ['time-evening', 'EVENING', true];
   return ['time-night', 'NIGHT', true];
 }
+// 시간대별 메인 사진: 아침(5~11시) · 낮(11~18시) · 밤(18~5시)
+const HOME_SHOTS = {
+  morning: { pos:'center 40%', cpos:'center 28%', dende:[18, 2, 38, 80], boo:[57, 20, 32, 66] },
+  day:     { pos:'center 40%', cpos:'center 25%', dende:[28, 2, 36, 74], boo:[68, 32, 30, 50] },
+  night:   { pos:'center 45%', cpos:'center 35%', dende:[12, 22, 34, 46], boo:[50, 40, 34, 48] },
+};
+function homeShot(){ const h = new Date().getHours(); return h >= 5 && h < 11 ? 'morning' : h >= 11 && h < 18 ? 'day' : 'night'; }
 function scene(compact, badge){
-  const [, label] = timeInfo();
-  return `<div class="stage photo ${compact ? 'compact' : ''}" id="stage">
+  const [, label] = timeInfo(), k = homeShot(), H = HOME_SHOTS[k];
+  const hs = ([l, t, w, h]) => `left:${l}%;top:${t}%;width:${w}%;height:${h}%`;
+  return `<div class="stage photo ${compact ? 'compact' : ''}" id="stage" data-shot="${k}" style="background-image:url(home-${k}.jpg);background-position:${compact ? H.cpos : H.pos}">
     <div class="tb pf">${badge || label}</div>
-    <span class="cat dende hot" data-cat="dende"></span><span class="cat boo hot" data-cat="boo"></span>
+    <span class="cat dende hot" data-cat="dende" style="${hs(H.dende)}"></span><span class="cat boo hot" data-cat="boo" style="${hs(H.boo)}"></span>
     <div class="bubble tail" id="sb-boo"></div><div class="bubble tail" id="sb-dende"></div>
   </div>`;
 }
+setInterval(() => {   // 시간대가 바뀌면 메인 사진도 바꿈
+  const st = document.getElementById('stage'), k = homeShot(); if (!st || st.dataset.shot === k) return;
+  const H = HOME_SHOTS[k], hs = ([l, t, w, h]) => `left:${l}%;top:${t}%;width:${w}%;height:${h}%`;
+  st.dataset.shot = k; st.style.backgroundImage = `url(home-${k}.jpg)`; st.style.backgroundPosition = st.classList.contains('compact') ? H.cpos : H.pos;
+  const d = st.querySelector('.cat.dende'), b = st.querySelector('.cat.boo'); if (d) d.style.cssText = hs(H.dende); if (b) b.style.cssText = hs(H.boo);
+}, 60000);
 function catTalk(name, msg){
   const st = $('#stage'); if (!st) return;
   const el = st.querySelector(`.cat.${name}`), b = $('#sb-' + name);
