@@ -547,6 +547,25 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .acell span{font-family:'Galmuri11',sans-serif;font-size:11.5px;color:var(--rc)}
 .acell.on{border-color:var(--rc);box-shadow:inset 0 0 14px color-mix(in srgb,var(--rc) 35%,transparent)}
 .acell .eq{position:absolute;top:2px;right:3px;font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#000;background:#f7b731;padding:2px 3px}
+#measure{position:fixed;inset:0;z-index:9000;background:#0a0a14;display:none;flex-direction:column}
+#measure.show{display:flex}
+.mtop{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;border-bottom:2px solid #2a2a44}
+.mtop b{font-family:'Galmuri11',sans-serif;font-size:15px;color:#f7b731}
+.mwrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px}
+#mCv{touch-action:none;display:block}
+#mLoupe{position:absolute;top:10px;display:none;width:132px;height:132px;border:3px solid #f7b731;border-radius:50%;box-shadow:0 4px 18px rgba(0,0,0,.7);pointer-events:none}
+.mbot{padding:10px 14px calc(14px + env(safe-area-inset-bottom));border-top:2px solid #2a2a44}
+.mres{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#mOut{font-family:'Galmuri11',sans-serif;color:#e8e8f0;font-size:15px}#mOut b{font-family:'Press Start 2P',monospace;font-size:26px;color:#f7b731;margin-right:4px}
+#mOut small{color:#ff7a7a;font-size:12px}
+.mres label{font-size:12px;color:#a0a0b8;display:flex;align-items:center;gap:4px}
+.mres input{width:58px;background:#16213e;border:2px solid #3dd9ff;color:#3dd9ff;font-size:15px;padding:4px 6px;text-align:right}
+#mOk:disabled{opacity:.4}
+.measrow{display:flex;gap:8px;margin-top:10px}
+.mbtn{flex:1;text-align:center;font-family:'Galmuri11',sans-serif;font-size:14px;padding:11px 8px;background:#0f3460;border:2px solid #3dd9ff;color:#bff3ff;cursor:pointer}
+.mbtn.ghost{background:transparent;border-color:#4a4a6a;color:#c8c8d8}
+#measure .btnrow{display:grid;grid-template-columns:.8fr 1fr 1.3fr;gap:8px}#measure .btnrow .pbtn{margin:0;font-size:14px;padding:12px 6px}
+#mAutoBtn:disabled{opacity:.5}
 </style>
 </head>
 <body>
@@ -1349,6 +1368,9 @@ function vCatch(){
   <div class="lenWrap">${img('cat:dende', 3, '', 'style="flex:none"')}<div class="lenBox ${cf.length ? (len >= 40 ? 't3' : '') : 'empty'}">${esc(cf.length || '0')}<small>cm</small></div>
     <div class="bubble tail" style="left:4px;top:-30px">${esc(lenLine(len))}</div></div>
   <div class="pad">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k => `<button data-key="${k}">${k}</button>`).join('')}</div>
+  <div class="measrow"><label class="mbtn">📏 사진으로 재기<input type="file" accept="image/*" capture="environment" id="measIn" hidden></label>
+    ${cf.photo ? '<button class="mbtn ghost" data-act="measPhoto">이 사진으로 재기</button>' : ''}</div>
+  <div class="small-note" style="margin-top:6px">10cm 물체를 배스 몸에 바짝 붙여서 같이 찍으면 🤖 자동으로 재줘</div>
   ${cf.live ? '' : `<label class="f">잡은 시간</label><input class="t" type="time" value="${esc(cf.time || '')}" data-in="cf.time">
   <label class="f">잡은 자리</label><div class="locrow"><span>${+cf.lat ? `📍 ${(+cf.lat).toFixed(5)}, ${(+cf.lng).toFixed(5)}` : '아직 없음 · 사진에 GPS가 있으면 자동'}</span><button class="chip add" data-act="pickLoc">${+cf.lat ? '다시 찍기' : '📍 지도에서 찍기'}</button></div>`}
   <label class="f">세팅</label>${loadoutPicker('cf', 'setup_id', setupIds.map(id => byId('Setups', id)).filter(Boolean), false, true)}
@@ -2950,6 +2972,111 @@ function charSave(){
   hideSheet(); render(); say(`${c.name || '앵글러'}, 반가워! 같이 런커 잡자!`, 'boo');
 }
 
+/* ═════════ 사진으로 길이 재기 — 10cm 기준 물체와 비율 계산 ═════════ */
+let MS = null;   // { img, pts:[{x,y}] (이미지 좌표), drag, scale, ox, oy }
+function openMeasure(src, auto = true){
+  const im = new Image();
+  im.onload = () => {
+    MS = { img: im, src, pts: [], drag: -1, ref: load('bl_refcm', 10), msg: '' };
+    let ov = $('#measure');
+    if (!ov) { ov = document.createElement('div'); ov.id = 'measure'; document.body.appendChild(ov); }
+    ov.innerHTML = `<div class="mtop"><b id="mStep"></b><button class="x" data-act="measClose">✕</button></div>
+      <div class="mwrap"><canvas id="mCv"></canvas><canvas id="mLoupe" width="132" height="132"></canvas></div>
+      <div class="mbot"><div class="mres"><span id="mOut">— cm</span><label>기준 <input id="mRef" type="number" inputmode="decimal" step="0.5" value="${MS.ref}">cm</label></div>
+        <div class="btnrow"><button class="pbtn dark" data-act="measAuto" id="mAutoBtn">🤖 자동</button><button class="pbtn ghost" data-act="measUndo">↶ 한 점 지우기</button><button class="pbtn" data-act="measOk" id="mOk" disabled>이 길이로 기록</button></div></div>`;
+    ov.classList.add('show');
+    const cv = $('#mCv');
+    cv.addEventListener('pointerdown', measDown); cv.addEventListener('pointermove', measMove);
+    cv.addEventListener('pointerup', measUp); cv.addEventListener('pointercancel', measUp);
+    $('#mRef').addEventListener('input', e => { MS.ref = parseFloat(e.target.value) || 0; save('bl_refcm', MS.ref); measDraw(); });
+    measFit(); measDraw();
+    if (auto) measAuto();
+  };
+  im.src = src;
+}
+function measFit(){
+  const cv = $('#mCv'), wrap = cv.parentElement, W = wrap.clientWidth, H = wrap.clientHeight, dpr = window.devicePixelRatio || 1;
+  const s = Math.min(W / MS.img.width, H / MS.img.height);
+  cv.style.width = MS.img.width * s + 'px'; cv.style.height = MS.img.height * s + 'px';
+  cv.width = Math.round(MS.img.width * s * dpr); cv.height = Math.round(MS.img.height * s * dpr);
+  MS.scale = s; MS.dpr = dpr;
+}
+const measDist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+function measLen(){
+  const p = MS.pts; if (p.length < 4 || !MS.ref) return null;
+  const r = measDist(p[0], p[1]); if (r < 5) return null;
+  return Math.round(measDist(p[2], p[3]) / r * MS.ref * 2) / 2;     // 0.5cm 단위
+}
+function measDraw(){
+  const cv = $('#mCv'); if (!cv) return;
+  const ctx = cv.getContext('2d'), k = MS.scale * MS.dpr;
+  ctx.drawImage(MS.img, 0, 0, cv.width, cv.height);
+  const seg = (a, b, col, label) => {
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 6 * MS.dpr; ctx.beginPath(); ctx.moveTo(a.x * k, a.y * k); ctx.lineTo(b.x * k, b.y * k); ctx.stroke();
+    ctx.strokeStyle = col; ctx.lineWidth = 3 * MS.dpr; ctx.stroke();
+    if (label) { ctx.font = `${13 * MS.dpr}px Galmuri11, sans-serif`; const mx = (a.x + b.x) / 2 * k, my = (a.y + b.y) / 2 * k - 10 * MS.dpr;
+      const w = ctx.measureText(label).width + 12 * MS.dpr; ctx.fillStyle = 'rgba(0,0,0,.75)'; ctx.fillRect(mx - w / 2, my - 16 * MS.dpr, w, 20 * MS.dpr); ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.fillText(label, mx, my); }
+  };
+  const p = MS.pts, L = measLen();
+  if (p.length >= 2) seg(p[0], p[1], '#3dd9ff', `기준 ${MS.ref}cm`);
+  if (p.length >= 4) seg(p[2], p[3], '#f7b731', L ? `${L}cm` : '');
+  p.forEach((pt, i) => { const c = i < 2 ? '#3dd9ff' : '#f7b731';
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(pt.x * k, pt.y * k, 9 * MS.dpr, 0, 7); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(pt.x * k, pt.y * k, 6 * MS.dpr, 0, 7); ctx.fill(); });
+  const steps = ['① 10cm 기준 물체의 한쪽 끝을 눌러줘', '② 기준 물체의 반대쪽 끝!', '③ 배스 입 끝을 눌러줘', '④ 꼬리 끝까지! (꼬리 접어서 가장 긴 곳)', '점을 끌어서 미세 조정할 수 있어'];
+  $('#mStep').textContent = MS.busy ? '🤖 덴데가 사진 보면서 재는 중…' : MS.msg && p.length === 4 ? MS.msg : steps[Math.min(p.length, 4)];
+  const short = p.length >= 2 && measDist(p[0], p[1]) * MS.scale < 40;
+  $('#mOut').innerHTML = L ? `<b>${L}</b> cm` : short ? '<small>기준이 너무 작게 찍혔어 — 더 가까이서 찍어줘</small>' : '— cm';
+  $('#mOk').disabled = !L;
+}
+async function measAuto(){
+  if (!MS || MS.busy) return;
+  if (!navigator.onLine) { MS.msg = ''; measDraw(); return say('인터넷이 없어서 자동은 안 돼 — 직접 4번 눌러줘', 'dende'); }
+  MS.busy = true; MS.msg = ''; const btn = $('#mAutoBtn'); if (btn) btn.disabled = true; measDraw();
+  const cur = MS;
+  try {
+    const r = await apiPost({ action:'measure', mime:'image/jpeg', data: cur.src.split(',')[1], ref: cur.ref });
+    if (MS !== cur) return;
+    if (!r.ok) throw new Error(r.error || '자동 측정 실패');
+    const P = r.points || {}, conv = v => Array.isArray(v) && v.length === 2 && v.every(n => isFinite(n)) ? { x: v[0] / 1000 * cur.img.width, y: v[1] / 1000 * cur.img.height } : null;
+    const pts = [conv(P.ref_a), conv(P.ref_b), conv(P.nose), conv(P.tail)];
+    if (pts.some(x => !x)) {
+      cur.pts = pts[0] && pts[1] ? pts.slice(0, 2) : [];
+      cur.msg = ''; say(pts[0] && pts[1] ? '기준은 찾았는데 배스 끝을 못 찾았어 — 입 끝, 꼬리 끝을 눌러줘' : '자동으로는 못 찾았어 — 직접 눌러줘' + (P.note ? ` (${P.note})` : ''), 'dende');
+    } else {
+      cur.pts = pts; const conf = +P.confidence;
+      cur.msg = `🤖 자동으로 쟀어${conf ? ` (확신 ${Math.round(conf * 100)}%)` : ''} — 틀린 점은 끌어서 고쳐`;
+      say(`${measLen()}cm 나왔어!${P.note ? ' ' + P.note : ''}`, 'dende');
+    }
+  } catch (err) { if (MS === cur) say('자동 측정 실패: ' + err.message + ' — 직접 눌러줘', 'dende'); }
+  finally { if (MS === cur) { cur.busy = false; const b = $('#mAutoBtn'); if (b) b.disabled = false; measDraw(); } }
+}
+function measPt(e){ const r = e.target.getBoundingClientRect(); return { x: (e.clientX - r.left) / MS.scale, y: (e.clientY - r.top) / MS.scale }; }
+function measDown(e){
+  e.preventDefault(); if (MS.busy) return; e.target.setPointerCapture(e.pointerId);
+  const q = measPt(e), near = MS.pts.findIndex(p => measDist(p, q) * MS.scale < 26);
+  if (near >= 0) MS.drag = near;
+  else if (MS.pts.length < 4) { MS.pts.push(q); MS.drag = MS.pts.length - 1; }
+  else return;
+  measDraw(); measLoupe(MS.pts[MS.drag], e);
+}
+function measMove(e){
+  if (MS.drag < 0) return; e.preventDefault();
+  const q = measPt(e); q.x = Math.max(0, Math.min(MS.img.width, q.x)); q.y = Math.max(0, Math.min(MS.img.height, q.y));
+  MS.pts[MS.drag] = q; measDraw(); measLoupe(q, e);
+}
+function measUp(){ MS.drag = -1; $('#mLoupe').style.display = 'none'; }
+function measLoupe(pt, e){       // 손가락에 가려지는 부분을 3배 확대해서 보여줌
+  const lp = $('#mLoupe'), ctx = lp.getContext('2d'), z = 3, sz = 132, src = sz / z / MS.scale;
+  ctx.imageSmoothingEnabled = false; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, sz, sz);
+  ctx.drawImage(MS.img, pt.x - src / 2, pt.y - src / 2, src, src, 0, 0, sz, sz);
+  ctx.strokeStyle = MS.drag < 2 ? '#3dd9ff' : '#f7b731'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(sz / 2, 0); ctx.lineTo(sz / 2, sz); ctx.moveTo(0, sz / 2); ctx.lineTo(sz, sz / 2); ctx.stroke();
+  const r = e.target.getBoundingClientRect(), left = e.clientX - r.left < r.width / 2;
+  lp.style.display = 'block'; lp.style.left = left ? 'auto' : '8px'; lp.style.right = left ? '8px' : 'auto';
+}
+function measClose(){ const ov = $('#measure'); if (ov) { ov.classList.remove('show'); ov.innerHTML = ''; } MS = null; }
+
 /* ═════════ 입질 · 놓침 ═════════ */
 const tripBites = id => rows('Bites').filter(b => b.trip_id === id).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 function addBite(kind, tripId, live){
@@ -3206,6 +3333,11 @@ document.addEventListener('click', async e => {
     case 'charSet': chq[el.dataset.k] = +el.dataset.v; rerenderSheet(); break;
     case 'charRandom': CH_KEYS.forEach(k => chq[k] = Math.floor(Math.random() * CH_OPT[k].list.length)); rerenderSheet(); break;
     case 'charSave': charSave(); break;
+    case 'measPhoto': if (cf && cf.photo) openMeasure(cf.photo); break;
+    case 'measClose': measClose(); break;
+    case 'measUndo': if (MS) { MS.pts.pop(); MS.msg = ''; measDraw(); } break;
+    case 'measAuto': measAuto(); break;
+    case 'measOk': { const L = MS && measLen(); if (!L) break; cf.length = String(L); measClose(); rerenderSheet(); say(`${L}cm! ${lenLine(L)}`, 'dende'); break; }
     case 'accSlot': openAcc(el.dataset.k); break;
     case 'accEquip': { const i = +el.dataset.v; chq[accK] = i; const [rar, fx] = ACC[accK].meta[i]; accSave(`${accName(accK, i)} 장착! ${fx}`); break; }
     case 'accColor': chq.hatC = +el.dataset.v; accSave(); break;
@@ -3269,12 +3401,15 @@ document.addEventListener('input', e => {
 document.addEventListener('change', async e => {
   if (e.target.dataset && e.target.dataset.kind && e.target.files[0]) { const f = e.target.files[0], d = e.target.dataset; e.target.value = ''; return setKindPhoto(d.trip, d.kind, f); }
   if (e.target.id === 'bulkIn' && e.target.files.length) { const fs = [...e.target.files]; e.target.value = ''; return onBulk(fs); }
-  if (e.target.id !== 'photoIn' || !e.target.files[0]) return;
+  if (!['photoIn', 'measIn'].includes(e.target.id) || !e.target.files[0]) return;
+  const isMeas = e.target.id === 'measIn';
   try {
     const f = e.target.files[0], info = await exifInfo(f);
     cf.photo = await resizeImage(f);
+    e.target.value = '';
     if (!cf.live && !+cf.lat && info && info.lat) { cf.lat = info.lat.toFixed(6); cf.lng = info.lng.toFixed(6); say('사진 위치로 자리 찍었어!', 'dende'); }
     rerenderSheet();
+    if (isMeas) openMeasure(cf.photo);
   } catch (err) { say(err.message, 'dende'); }
 });
 window.addEventListener('online', () => { updateSync(); flush(); });
