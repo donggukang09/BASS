@@ -647,6 +647,34 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .vrow>div{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.vrow b{font-size:15px;color:#f3e2b8}.vrow canvas,.vrow img{vertical-align:middle}
 .vsrc{font-style:normal;font-size:10.5px;color:#8a8aa8;border:1px solid #3a3a5a;padding:1px 5px}.vsrc.on{color:#3dd9ff;border-color:#3dd9ff}
 .vst{margin:4px 0 6px}.vst .chip{font-size:12px;padding:6px 9px}.vsub{font-size:13px;color:#a0a0b8;margin-top:6px}
+/* 👾 몬스터 도감 */
+.sbanner.beast{border-color:#8a8fff;background:linear-gradient(90deg,#1a1640,#231a3a)}.sbanner.beast .pf{color:#8a8fff}
+.mtiers{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mtier{background:radial-gradient(#1e1912,#0a0806);border:2px solid var(--rc);padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.mtier b{font-family:'Galmuri11',sans-serif;font-size:11px;color:var(--rc);font-weight:normal}.mtier span{font-size:9.5px;color:#8a8aa8}
+.mtier.none{border-style:dashed;border-color:#3a3326}.mtier.none b{color:#4a4a5a}.mtier.on{box-shadow:0 0 12px var(--rc)}
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.mcell{position:relative;background:radial-gradient(#1e1912,#0a0806);border:2px solid var(--rc);padding:10px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.mcell b{font-family:'Press Start 2P',monospace;font-size:13px;color:var(--rc)}.mcell b small{font-size:7px}
+.mcell span{font-family:'Galmuri11',sans-serif;font-size:12px;color:#e8dcc0;word-break:keep-all;line-height:1.3}.mcell em{position:absolute;top:4px;left:6px;font-style:normal;font-size:9px;color:var(--rc)}
+.mon6{filter:drop-shadow(0 0 6px #ff4fd8)}.mon4,.mon5{filter:drop-shadow(0 0 4px #ff9638)}
+.mcard{background:radial-gradient(circle at 50% 30%,#221b10,#07060a 75%);border:3px solid var(--rc);box-shadow:0 0 18px color-mix(in srgb,var(--rc) 45%,transparent),inset 0 0 0 1px #000;padding:14px;margin-top:4px}
+.mhead{text-align:center}.mhead em{display:block;font-style:normal;font-size:11px;color:var(--rc);letter-spacing:1px}
+.mhead b{display:block;font-family:'Galmuri14','Galmuri11',sans-serif;font-size:20px;color:var(--rc);text-shadow:0 0 10px color-mix(in srgb,var(--rc) 60%,transparent);margin:4px 0 2px}
+.mhead span{font-size:12.5px;color:#a89a80}
+.mart{display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 0;min-height:90px}
+.mph{position:relative;width:86px;height:86px;border:2px solid #4a3b28;overflow:hidden;flex:none}.mph img{width:100%;height:100%;object-fit:cover}
+.mph i{position:absolute;left:0;right:0;bottom:0;font-style:normal;font-size:9px;background:rgba(0,0,0,.7);color:#c9a46a;text-align:center}
+.mstats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;border-top:1px solid #3a3326;border-bottom:1px solid #3a3326;padding:8px 0}
+.mstats div{text-align:center}.mstats span{display:block;font-size:10px;color:#8a7a60}.mstats b{font-family:'Press Start 2P',monospace;font-size:11px;color:#f3e2b8}.mstats small{font-size:7px}
+.mlog{font-size:12.5px;color:#d8ccb0;display:flex;flex-direction:column;gap:5px;margin-top:8px;line-height:1.45}
+.mlog>div{display:flex;align-items:center;gap:4px}.mlog span{flex:none;width:62px;color:#8a7a60;font-size:11px}.mlog img,.mlog canvas{flex:none}
+.mzone{display:flex;flex-direction:column;gap:4px}.mzrow{display:flex;align-items:center;gap:10px;padding:6px 4px;background:#100d08;border:1px solid #2a2418;text-align:left}
+.mzrow b{flex:1;font-family:'Galmuri11',sans-serif;font-size:13px;color:#e8dcc0;font-weight:normal}.mzrow span{font-size:12px}
+.pmon{font-family:'Galmuri11',sans-serif;font-size:12px;margin-bottom:4px}
+/* 🌫 안개 */
+#fog{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated;z-index:400;transition:opacity .25s}#fog.dim{opacity:.2!important}
+.fogNote{margin-top:6px;display:inline-block;font-size:12px;color:#c8d0ff;background:rgba(9,11,28,.85);border:1px solid #3a4280;padding:5px 10px}.fogNote b{color:#fff}
 </style>
 </head>
 <body>
@@ -795,7 +823,7 @@ const SPR = {};
 function spr(name, s){
   const k = name + '@' + s; if (SPR[k]) return SPR[k];
   const [kind, arg, opt] = name.split(':');
-  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispin:[16,12], grod:[18,18], greel:[16,13], me:[20,25], ispool:[14,11], irig:[16,16], acc: ({ hat:[18,11], eye:[18,8], boots:[16,13] })[arg] }[kind];
+  const size = { cat:[16,15], mini:[14,10], bass:[18,9], tent:[17,10], fire:[8,10], rod:[20,25], moon:[12,12], sun:[12,12], reed:[10,10], irod:[17,16], ireel:[16,11], ispin:[16,12], grod:[18,18], greel:[16,13], me:[20,25], ispool:[14,11], irig:[16,16], mon:[28,16], acc: ({ hat:[18,11], eye:[18,8], boots:[16,13] })[arg] }[kind];
   const cv = document.createElement('canvas'); cv.width = size[0] * s; cv.height = size[1] * s;
   const ctx = cv.getContext('2d');
   const p = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect(x * s, y * s, s, s); };
@@ -816,6 +844,7 @@ function spr(name, s){
   if (kind === 'greel') drawGReel(p, +arg, +opt[0], opt[1] === 's');
   if (kind === 'irig') rowsDraw(p, IRIG, { w:'#cfe7ee', G:'#8d969e', g:'#c3ccd2', s:'#e8eef2', p:'#d65d97' });
   if (kind === 'moon' || kind === 'sun') drawOrb(p, kind === 'moon');
+  if (kind === 'mon') drawMon(p, +arg, parseInt(opt, 10) || 1, String(opt).endsWith('s'));
   return SPR[k] = cv.toDataURL();
 }
 const img = (name, s, cls = '', attr = '') => `<img class="px ${cls}" src="${spr(name, s)}" alt="" ${attr}>`;
@@ -1036,6 +1065,7 @@ function startGPS(){
   if (watchId != null || !navigator.geolocation) return;
   watchId = navigator.geolocation.watchPosition(p => {
     const first = !pos; pos = { lat: p.coords.latitude, lng: p.coords.longitude };
+    fogWalk({ lat: pos.lat, lng: pos.lng, acc: p.coords.accuracy });
     if (first && view === 'start') { loadWeather(); render(); }
     if (view === 'map') placeMe();
   }, () => {}, { enableHighAccuracy: true, maximumAge: 30000, timeout: 20000 });
@@ -1186,6 +1216,7 @@ function vHome(){
   ${(() => { const nm = needMaint(); return nm ? `<button class="mbanner" data-act="gearMaintTrip" data-id="${esc(nm.t.trip_id)}">${img('cat:dende', 2)}<span><b>🔧 정비 시간!</b> ${esc(nm.t.date.slice(5).replace('-', '.'))} 출조 장비 ${nm.ids.length}개 정비했어?</span></button>` : ''; })()}
   <div class="card" id="fcCard">${vForecast()}</div>
   <div class="card quest">${vQuestCard()}</div>
+  ${beastBanner()}
   ${[11, 12, 1, 2].includes(new Date().getMonth() + 1) && seasonYears().length ? `<button class="sbanner" data-act="season"><span class="pf">SEASON</span><b>🏆 ${seasonYears()[0]} 시즌 결산</b>${img('cat:boo', 2)}</button>` : ''}
   <button class="pbtn small dark" data-act="pastTrip">+ 지난 출조 추가</button>
   ${photoCount ? `<button class="pbtn small dark" data-act="upPhotos">📷 사진 ${photoCount}장 업로드 <span class="sub">(와이파이에서)</span></button>` : ''}
@@ -1507,6 +1538,7 @@ async function saveCatch(){
   }
   if (live) { last = { ...last, setup_id: cf.setup_id, lure_id: cf.lure_id, rig: cf.rig, action: cf.action, depth: cf.depth }; save(LS.last, last); }
   hideSheet(); render();
+  if (!edit) monFirst(id);
   if (live) { celebrate(len); setTimeout(() => coachTick(), 2600); } else say(edit ? '고쳤어!' : `${len}cm 추가했어!`, 'dende');
   return id;
 }
@@ -1571,14 +1603,16 @@ const filterCount = () => ['lure','rig','season','tod'].filter(k => mf[k].length
 
 function vMap(){
   const t = mf.trip && byId('Trips', mf.trip);
-  return `<div id="mapWrap"><div id="map"></div>
+  return `<div id="mapWrap"><div id="map"></div><canvas id="fog"></canvas>
   <div class="mapTop">
     <div class="mapBar">
       <button class="mb ${filterCount() ? 'on' : ''}" data-act="mapFilter">🔎 필터${filterCount() ? ' ' + filterCount() : ''}</button>
       <button class="mb" data-act="mapBase">🗺 지도</button>
       <button class="mb" data-act="mapMe">📍</button>
+      <button class="mb ${fogOn ? 'on' : ''}" data-act="mapFog">🌫</button>
       <span class="cnt" id="mapCnt">0</span>
     </div>
+    ${fogOn ? `<div class="fogNote" id="fogNote"></div>` : ''}
     ${t ? `<div class="mapNote">${img('mini:dende', 2)}${esc(t.date)} · ${esc(spotName(t.spot_id))} 경로<button data-act="mapTripClear">✕</button></div>` : ''}
   </div>
   <div class="mapEmpty" id="mapEmpty" style="display:none"></div></div>`;
@@ -1619,6 +1653,7 @@ async function initMap(){
   M = A;
   const bb = $('[data-act=mapBase]'); if (bb) bb.textContent = M.baseLabel();
   drawMap(true); if (pos) placeMe(); startGPS();
+  if (M.onMove) M.onMove(fogDraw); fogDraw();
 }
 
 /* 지도 엔진 어댑터: 같은 함수로 네이버 / Leaflet 둘 다 그림 */
@@ -1635,14 +1670,14 @@ function naverAdapter(el = 'map', mini = false){
   const g = { catch: [], spot: [], line: [] };
   let me = null, showCatch = true;
   if (!mini) N.Event.addListener(map, 'zoom_changed', zoomVis);
-  N.Event.addListener(map, 'click', () => info.close());
+  N.Event.addListener(map, 'click', () => { info.close(); if (!mini) fogDim(false); });
   return {
     kind: 'naver',
     clear(){ info.close(); Object.values(g).forEach(arr => { arr.forEach(o => o.setMap(null)); arr.length = 0; }); },
     marker(k, lat, lng, html, size, anchor, z, popup){
       const m = new N.Marker({ position: LL(lat, lng), map: (k === 'catch' && !showCatch) ? null : map, zIndex: 100 + z,
         icon: { content: html, size: new N.Size(size[0], size[1]), anchor: new N.Point(anchor[0], anchor[1]) } });
-      N.Event.addListener(m, 'click', () => { info.setContent(`<div class="popc nPop">${popup}</div>`); info.open(map, m); });
+      N.Event.addListener(m, 'click', () => { info.setContent(`<div class="popc nPop">${popup}</div>`); info.open(map, m); if (!mini) fogDim(true); });
       g[k].push(m);
     },
     line(pts){ g.line.push(new N.Polyline({ map, path: pts.map(p => LL(p[0], p[1])), strokeColor: '#f7b731', strokeWeight: 3, strokeOpacity: .9, strokeStyle: 'shortdash' })); },
@@ -1654,6 +1689,9 @@ function naverAdapter(el = 'map', mini = false){
     },
     view(pt, z){ map.setCenter(LL(pt[0], pt[1])); map.setZoom(z); },
     center(){ const c = map.getCenter(); return [typeof c.lat === 'function' ? c.lat() : c.y, typeof c.lng === 'function' ? c.lng() : c.x]; },
+    bounds(){ const b = map.getBounds(); if (!b) return null; const sw = b.getSW ? b.getSW() : b._sw, ne = b.getNE ? b.getNE() : b._ne, f = (p, k) => typeof p[k] === 'function' ? p[k]() : p[k === 'lat' ? 'y' : 'x'];
+      return [f(sw, 'lat'), f(sw, 'lng'), f(ne, 'lat'), f(ne, 'lng')]; },
+    onMove(fn){ ['bounds_changed', 'center_changed', 'zoom_changed', 'zooming', 'drag', 'idle', 'resize'].forEach(ev => N.Event.addListener(map, ev, fn)); },
     zoom(){ return map.getZoom(); },
     catchesVisible(v){ if (v === showCatch) return; showCatch = v; g.catch.forEach(m => m.setMap(v ? map : null)); },
     me(lat, lng, html){ if (me) me.setPosition(LL(lat, lng)); else me = new N.Marker({ position: LL(lat, lng), map, zIndex: 2000, icon: { content: html, anchor: new N.Point(14, 10) } }); },
@@ -1672,7 +1710,7 @@ function leafletAdapter(el = 'map', mini = false){
   let base = load('bl_base', 'sat'); if (!bases[base]) base = 'sat'; bases[base].addTo(map);
   const g = { spot: L.layerGroup().addTo(map), line: L.layerGroup().addTo(map), catch: L.layerGroup().addTo(map) };
   let me = null;
-  if (!mini) map.on('zoomend', zoomVis);
+  if (!mini) { map.on('zoomend', zoomVis); map.on('popupopen', () => fogDim(true)); map.on('popupclose', () => fogDim(false)); }
   return {
     kind: 'leaflet',
     clear(){ Object.values(g).forEach(l => l.clearLayers()); },
@@ -1684,6 +1722,8 @@ function leafletAdapter(el = 'map', mini = false){
     fit(pts){ map.fitBounds(pts, { padding: [50, 50], maxZoom: 17 }); },
     view(pt, z){ map.setView(pt, z); },
     center(){ const c = map.getCenter(); return [c.lat, c.lng]; },
+    bounds(){ const b = map.getBounds(); return [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]; },
+    onMove(fn){ map.on('move zoom resize viewreset', fn); map.on('zoomstart', () => { const f = $('#fog'); if (f) f.style.opacity = '.35'; }); map.on('zoomend', () => { const f = $('#fog'); if (f) f.style.opacity = ''; fn(); }); },
     zoom(){ return map.getZoom(); },
     catchesVisible(v){ if (v && !map.hasLayer(g.catch)) map.addLayer(g.catch); if (!v && map.hasLayer(g.catch)) map.removeLayer(g.catch); },
     me(lat, lng, html){ if (me) me.setLatLng([lat, lng]); else me = L.marker([lat, lng], { icon: L.divIcon({ className: '', html, iconSize: [28, 20], iconAnchor: [14, 10] }), zIndexOffset: 1000 }).addTo(map); },
@@ -1698,7 +1738,8 @@ const pinHtml = (c, n) => `<div class="pin p${tier(c.length_cm)}">${n ? `<i>#${n
 const spotHtml = s => `<div class="spin"><img class="px" src="${spr('tent', 2)}"><b>${esc(s.name)}</b></div>`;
 function catchPopup(c){
   const t = tier(c.length_cm), su = byId('Setups', c.setup_id), ph = photosOf(c.catch_id);
-  return `${ph.length ? `<div class="pphoto" onclick="openViewer('${esc(c.catch_id)}')"><img src="${ph[0].src}" ${imgFallback(ph[0])} alt="">${ph.length > 1 ? `<span class="pf">+${ph.length - 1}</span>` : ''}</div>` : ''}<div class="pl t${t}">${esc(c.length_cm)}<span style="font-size:9px">cm</span></div>
+  const mo = monOf(c);
+  return `<div class="pmon" style="color:${mo.col}">👾 ${esc(mo.name)}</div>${ph.length ? `<div class="pphoto" onclick="openViewer('${esc(c.catch_id)}')"><img src="${ph[0].src}" ${imgFallback(ph[0])} alt="">${ph.length > 1 ? `<span class="pf">+${ph.length - 1}</span>` : ''}</div>` : ''}<div class="pl t${t}">${esc(c.length_cm)}<span style="font-size:9px">cm</span></div>
     <div>${esc(catchDate(c))} ${esc(c.time)} · ${esc(spotName((byId('Trips', c.trip_id) || {}).spot_id))}</div>
     <div class="pm">${esc(lureName(c.lure_id) || '루어 미정')}${c.color ? ' (' + esc(c.color) + ')' : ''} · ${esc(c.rig || '-')}${c.action ? ' · ' + esc(c.action) : ''}</div>
     ${su ? `<div class="pm">🎣 ${esc(su.name)}</div>` : ''}${c.structure || c.depth ? `<div class="pm">${esc([c.structure, c.depth].filter(Boolean).join(' · '))}</div>` : ''}
@@ -1725,6 +1766,7 @@ function drawMap(fit){
   const spots = active('Spots').filter(s => +s.lat && +s.lng);
   spots.forEach(s => M.marker('spot', +s.lat, +s.lng, spotHtml(s), [90, 44], [45, 22], 0, spotPopup(s)));
   const cnt = $('#mapCnt'); if (cnt) cnt.textContent = list.length + '수';
+  fogDraw();
   if (!list.length) {
     const any = rows('Catches').some(c => +c.lat);
     mapMsg(any ? `${img('cat:dende', 3)}조건에 맞는 조과가 없어…<br><button class="link" data-act="mapReset">필터 초기화</button>`
@@ -1741,6 +1783,7 @@ function zoomVis(){ if (M) M.catchesVisible(M.zoom() >= 10 || !!mf.trip); }
 function placeMe(){
   if (!M || !pos) return;
   M.me(pos.lat, pos.lng, `<img class="px" src="${spr('mini:dende', 2)}" style="filter:drop-shadow(0 0 4px #f7b731)">`);
+  fogDraw();
 }
 function destroyMap(){ closePicker(); if (M) { try { M.destroy(); } catch (e) {} M = null; } if (BM) { try { BM.destroy(); } catch (e) {} BM = null; } }
 
@@ -2415,7 +2458,8 @@ function vStats(){
   const zero = trips.filter(t => !cs.some(c => c.trip_id === t.trip_id)).length;
   const head = `<div class="head"><div><h1 class="t">기록판</h1><div class="sub pf" style="font-size:8px;margin-top:6px">HIGH SCORE</div></div></div>
     ${chipsRaw('statsP', statsP, [{ v:'all', label:'전체' }, { v:'year', label:'올해' }, { v:'90', label:'최근 90일' }])}
-    ${seasonYears().length ? `<button class="sbanner" data-act="season"><span class="pf">SEASON</span><b>🏆 ${seasonYears()[0]} 시즌 결산 보기</b>${img('cat:boo', 2)}</button>` : ''}`;
+    ${seasonYears().length ? `<button class="sbanner" data-act="season"><span class="pf">SEASON</span><b>🏆 ${seasonYears()[0]} 시즌 결산 보기</b>${img('cat:boo', 2)}</button>` : ''}
+    ${beastBanner()}`;
   if (!cs.length) return head + `<div class="card"><div class="empty">${img('cat:boo:sleep', 4)}${trips.length ? '이 기간엔 아직 잡은 고기가 없어…' : '아직 기록이 없어 zzZ'}<br>잡을수록 패턴이 보여!</div></div>`;
   const notes = patternNotes(trips, cs);
   const rig = groupCount(cs, c => c.rig).slice(0, 8);
@@ -3323,7 +3367,7 @@ function fitText(ctx, s, w){ s = String(s); if (ctx.measureText(s).width <= w) r
 
 /* ═════════ 하단 탭 · 렌더 ═════════ */
 function vNav(){
-  const tab = view === 'map' ? 'map' : (view === 'settings' || view === 'gear' || view === 'quest') ? 'gear' : (view === 'stats' || view === 'season') ? 'stats' : 'home';
+  const tab = view === 'map' ? 'map' : (view === 'settings' || view === 'gear' || view === 'quest') ? 'gear' : (view === 'stats' || view === 'season' || view === 'beast') ? 'stats' : 'home';
   return `<button class="${tab === 'home' ? 'on' : ''}" data-act="tabHome"><i>${trip ? '🎣' : '⛺'}</i>${trip ? '출조중' : '홈'}</button>
     <button class="${tab === 'stats' ? 'on' : ''}" data-act="tabStats"><i>📊</i>기록</button>
     <button class="${tab === 'map' ? 'on' : ''}" data-act="tabMap"><i>🗺</i>지도</button>
@@ -3334,7 +3378,7 @@ function render(){
   destroyMap();
   const app = $('#app'), top = window.scrollY;
   app.className = view === 'map' ? 'full' : (view === 'start' || view === 'detail') ? 'nonav' : '';
-  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'brief' ? vBrief() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : view === 'gear' ? vGear() : view === 'season' ? vSeason() : view === 'quest' ? vQuest() : vHome();
+  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'brief' ? vBrief() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : view === 'gear' ? vGear() : view === 'season' ? vSeason() : view === 'quest' ? vQuest() : view === 'beast' ? vBeast() : vHome();
   const nav = $('#nav'); nav.className = (view === 'start' || view === 'loading' || view === 'detail') ? 'hide' : ''; nav.innerHTML = vNav();
   if (view === 'start' || view === 'trip' || view === 'detail' || view === 'brief') window.scrollTo(0, top);
   if (view === 'map') initMap();
@@ -3413,7 +3457,8 @@ document.addEventListener('click', async e => {
     case 'bpSet': bp.items[+el.dataset.i].catch_id = el.dataset.v; rerenderSheet(); break;
     case 'bpSave': bpSave(); break;
     case 'tabStats': view = 'stats'; render(); window.scrollTo(0, 0); break;
-    case 'raw': if (el.dataset.k === 'statsP') { statsP = el.dataset.v; save('bl_statsP', statsP); render(); }
+    case 'raw': if (el.dataset.k === 'beastSort') { beastSort = el.dataset.v; render(); break; }
+      if (el.dataset.k === 'statsP') { statsP = el.dataset.v; save('bl_statsP', statsP); render(); }
       if (el.dataset.k === 'seasonY') { seasonY = el.dataset.v; render(); } break;
     case 'closeSheet': hideSheet(); break;
     case 'allLures': cf.allLures = true; rerenderSheet(); break;
@@ -3509,6 +3554,12 @@ document.addEventListener('click', async e => {
     case 'tabQuest': if (view !== 'quest') qPrev = view; hideSheet(); view = 'quest'; render(); window.scrollTo(0, 0); break;
     case 'qBack': view = qPrev && qPrev !== 'quest' ? qPrev : (trip ? 'trip' : 'home'); render(); window.scrollTo(0, 0); break;
     case 'qClaim': claimQuest(el.dataset.id); break;
+    case 'tabBeast': if (view !== 'beast') beastPrev = view; hideSheet(); view = 'beast'; render(); window.scrollTo(0, 0); break;
+    case 'beastBack': view = beastPrev && beastPrev !== 'beast' ? beastPrev : 'stats'; render(); window.scrollTo(0, 0); break;
+    case 'beastTier': beastTier = +el.dataset.v === beastTier ? -1 : +el.dataset.v; render(); break;
+    case 'beastOpen': monSel = el.dataset.id; showSheet(vMonSheet); break;
+    case 'beastEdit': { const c = byId('Catches', monSel); if (c) { hideSheet(); openCatch(c.catch_id, c.trip_id); } break; }
+    case 'mapFog': fogOn = !fogOn; save('bl_fog_on', fogOn); render(); if (fogOn) say('🌫 가 본 곳만 밝혀져! 걸어 다니면 더 밝아져', 'dende'); break;
     case 'qUse': qUse(el.dataset.id); break;
     case 'lootEquip': lootEquip(); break;
     case 'lootClose': lootClose(); break;
@@ -3543,7 +3594,12 @@ document.addEventListener('click', async e => {
       break;
   }
 });
-let qPrev = 'home';
+let qPrev = 'home', beastPrev = 'stats';
+function beastBanner(){
+  const cs = rows('Catches').filter(c => +c.length_cm); if (!cs.length) return '';
+  const got = new Set(cs.map(c => monTier(c.length_cm))).size, top = cs.reduce((a, c) => +c.length_cm > +a.length_cm ? c : a);
+  return `<button class="sbanner beast" data-act="tabBeast"><span class="pf">BESTIARY</span><b>👾 몬스터 도감 ${cs.length}마리 · 등급 ${got}/${MON.length}</b>${monImg(top, 2)}</button>`;
+}
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'vIn') { e.preventDefault(); const b = document.querySelector('[data-act="vType"]'); if (b) b.click(); } });
 document.addEventListener('input', e => {
   const ds = e.target.dataset || {};
@@ -4114,6 +4170,175 @@ function questCheck(){
     say(fresh.length === 1 ? `📜 퀘스트 완료! '${fresh[0].name}' — 퀘스트 보드에서 보상 받아!` : `📜 퀘스트 ${fresh.length}개 완료! 보상 받으러 가자!`, 'boo', 4500);
     const b = document.querySelector('.qboard'); if (b) b.outerHTML = `<button class="pbtn small dark qboard" data-act="tabQuest">📜 퀘스트 보드 <i class="qnum">${qReady().length}</i></button>`;
   }, 2800);
+}
+
+/* ═════════ 📖 배스 몬스터 도감 ═════════ */
+const MON = [
+  { min: 0,  rar:'일반', name:'꼬마 배스' },
+  { min: 25, rar:'일반', name:'배스 졸병' },
+  { min: 30, rar:'마법', name:'배스 전사' },
+  { min: 35, rar:'희귀', name:'배스 기사' },
+  { min: 40, rar:'전설', name:'런커' },
+  { min: 45, rar:'전설', name:'런커 대장' },
+  { min: 50, rar:'신화', name:'배스 군주' },
+];
+const MON_COL = ['#a8a8a8', '#d6d6d6', '#8a8fff', '#f3e35a', '#ff9638', '#ff6a2a', '#ff4fd8'];
+const monTier = len => MON.reduce((a, m, i) => (+len || 0) >= m.min ? i : a, 0);
+const MON_ROWS = [
+  '...........D.D.D.D........',
+  '..........DRDRDRDRD.......',
+  '.........DRRRRRRRRRD......',
+  'DD......DGGGGGGGGGGGDD....',
+  'DGD...DDGGLGGLGGLGGGGGDD..',
+  'DGGD.DGGGGGGGGGGGGGGGGGGD.',
+  'DGGGDGGGSSSSSSSSSSSSGGGWPD',
+  'DGGGDGGGGGGGGGGGGGGGGGGGMD',
+  'DGGD.DGBBBBBBBBBBBBBBBBMMD',
+  'DGD...DBBBBBBBBBBBBBBBBBD.',
+  'DD.....DDBBBBBBBBBBBBDD...',
+  '.........DFFD...DFFD......',
+  '..........DD.....DD.......',
+];
+// 등급마다 장식이 늘어나는 몬스터 도트 (28×16)
+function drawMon(p, ti, seed, sil){
+  const r = rng(seed || 1), hue = .85 + r() * .3;
+  const base = ti >= 4 ? '#3f6a2a' : ti === 0 ? '#7aa84a' : '#5f8f34';
+  const G = shade(base, hue), PAL = { D: ti >= 4 ? '#14240e' : '#23401a', G, L: shade(G, 1.4), S: shade(G, .55), W: ti >= 4 ? '#ff4040' : '#f4f4f4', P: ti >= 4 ? '#ffd0d0' : '#111',
+    M: '#7a2e2e', B: ti === 6 ? '#f0e0ff' : '#e3ecc0', F: ti === 6 ? '#e8b830' : shade(G, .8),
+    R: ti === 6 ? '#e8b830' : ti >= 4 ? '#ff9638' : ti === 3 ? '#f3e35a' : ti === 2 ? '#6a70d8' : shade(G, .8) };
+  const q = sil ? (x, y) => p(x, y, '#1a1d30') : p;
+  if (ti === 6 && !sil) for (let y = 2; y < 16; y++) for (let x = 0; x < 28; x++) {   // 신화 오라
+    const dx = (x - 14) / 14, dy = (y - 9) / 7; if (dx * dx + dy * dy < 1.05 && r() < .18) p(x, y, r() < .5 ? '#ff4fd855' : '#b04fff44'); }
+  MON_ROWS.forEach((row, y) => [...row].forEach((ch, x) => { if (ch !== '.') q(x + 1, y + 3, PAL[ch]); }));
+  if (sil) return;
+  const O = (x, y, c) => p(x + 1, y + 3, c);
+  if (ti === 2) { O(20, 5, '#8a8fff'); O(21, 5, '#8a8fff'); O(19, 7, '#8a8fff'); O(20, 7, '#8a8fff'); }                      // 전사: 워페인트
+  if (ti === 3 || ti === 5) { const A = '#a8b0b8', A2 = '#6a727a';                                                          // 기사: 투구
+    for (let x = 17; x <= 23; x++) O(x, 4, x === 23 ? A2 : A); for (let x = 18; x <= 24; x++) O(x, 5, x % 2 ? A : A2); O(21, 3, A); O(22, 3, '#e94560'); }
+  if (ti >= 4) { O(18, 7, '#f29a9a'); O(17, 8, '#f29a9a'); O(16, 9, '#f29a9a'); }                                              // 런커: 흉터
+  if (ti === 5) for (let x = 7; x <= 15; x += 2) { O(x, 5, '#a8b0b8'); O(x + 1, 5, '#6a727a'); }                                 // 대장: 갑옷
+  if (ti === 6) { const Gd = '#e8b830', Hi = '#fff3a0';                                                                        // 군주: 왕관
+    [19, 21, 23].forEach(x => { p(x + 1, 3, Hi); p(x + 1, 4, Gd); }); for (let x = 19; x <= 23; x++) { p(x + 1, 5, x === 21 ? '#e94560' : Gd); p(x + 1, 6, '#b8860b'); } }
+  if (ti >= 4) [[2, 1], [26, 2], [1, 14]].forEach(([x, y]) => p(x, y, ti === 6 ? '#ff4fd8' : '#ffcf6a'));
+}
+const MON_SY = ['바', '르', '크', '스', '모', '드', '라', '칼', '투', '룸', '엘', '고', '녹', '자', '베', '쿠'];
+function monOf(c){
+  const len = +c.length_cm || 0, ti = monTier(len), T = MON[ti], t = byId('Trips', c.trip_id) || {}, r = rng(strHash(c.catch_id || 'x'));
+  const h = +(String(c.time || '12').split(':')[0]), w = String(t.weather || ''), wt = +t.water_temp;
+  const pre = /뇌우|천둥/.test(w) ? '폭풍을 부르는' : /비|소나기/.test(w) ? '비를 머금은' : /눈/.test(w) ? '눈보라의' : /안개/.test(w) ? '안개 속의'
+    : wt && wt < 10 ? '얼음장 같은' : wt > 26 ? '불타는' : h < 6 ? '새벽녘의' : h < 10 ? '아침 이슬의' : h < 16 ? '한낮의' : h < 19 ? '황혼의' : '달빛 아래';
+  let name = `${pre} ${T.name}`;
+  if (ti === 6) name = '고대 군주 ' + Array.from({ length: 2 + (r() * 2 | 0) }, () => MON_SY[r() * MON_SY.length | 0]).join('');
+  const bait = lureName(c.lure_id) || c.rig || '', sp = spotName(t.spot_id);
+  const subs = bait ? [`${bait} 포식자`, `${bait}에 홀린 자`, `${bait} 사냥꾼`] : ['정체불명의 미끼에 걸린 자'];
+  const boss = sp && rows('Catches').filter(x => (byId('Trips', x.trip_id) || {}).spot_id === t.spot_id).every(x => (+x.length_cm || 0) <= len);
+  const sub = boss && len >= 30 ? `${sp}의 주인` : subs[r() * subs.length | 0];
+  const est = !+c.weight_g, wg = +c.weight_g || Math.round(Math.pow(10, -5.316 + 3.191 * Math.log10(Math.max(len, 5) * 10)));
+  return { ti, T, rar: T.rar, col: MON_COL[ti], name, sub, len, wg, est, hp: Math.round(len * 10), atk: Math.max(1, Math.round(wg / 12)), boss, seed: strHash(c.catch_id || 'x'), t, sp };
+}
+const monImg = (c, s, sil) => { const m = typeof c === 'object' ? monOf(c) : { ti: c, seed: 7 }; return `<img class="px mon${m.ti}" src="${spr(`mon:${m.ti}:${m.seed}${sil ? 's' : ''}`, s)}" alt="">`; };
+let beastSort = 'size', beastTier = -1;
+function vBeast(){
+  const cs = rows('Catches').filter(c => +c.length_cm), ms = cs.map(c => ({ c, m: monOf(c) }));
+  const have = MON.map((_, i) => ms.filter(x => x.m.ti === i).length), got = have.filter(Boolean).length;
+  const top = ms.slice().sort((a, b) => b.m.len - a.m.len)[0];
+  const bySpot = {}; ms.forEach(x => { const k = x.m.t.spot_id || '-'; if (!bySpot[k] || x.m.len > bySpot[k].m.len) bySpot[k] = x; });
+  let list = beastTier >= 0 ? ms.filter(x => x.m.ti === beastTier) : ms;
+  list = list.slice().sort(beastSort === 'size' ? (a, b) => b.m.len - a.m.len : (a, b) => (b.c.catch_id || '').localeCompare(a.c.catch_id || ''));
+  return `<div class="head"><div><h1 class="t">몬스터 도감</h1><div class="sub pf" style="font-size:8px;margin-top:6px">BESTIARY</div></div><button class="x" data-act="beastBack">✕</button></div>
+    <div class="card"><div class="stitle">COLLECTION <span>처치 ${ms.length}마리 · 등급 ${got}/${MON.length}</span></div>
+      <div class="mtiers">${MON.map((T, i) => `<button class="mtier ${beastTier === i ? 'on' : ''} ${have[i] ? '' : 'none'}" style="--rc:${MON_COL[i]}" data-act="beastTier" data-v="${i}">
+        ${monImg(i, 2, !have[i])}<b>${have[i] ? esc(T.name) : '???'}</b><span>${T.min ? T.min + 'cm+' : '~24cm'} · ${have[i]}</span></button>`).join('')}</div></div>
+    ${top ? `<div class="card"><div class="stitle">BOSS <span>최강의 적</span></div>${monCard(top.c, true)}
+      ${Object.keys(bySpot).length > 1 ? `<div class="stitle" style="margin-top:14px">구역 보스 <span>포인트별 최대</span></div>
+        <div class="mzone">${Object.values(bySpot).sort((a, b) => b.m.len - a.m.len).map(x => `<button class="mzrow" data-act="beastOpen" data-id="${esc(x.c.catch_id)}">${monImg(x.c, 2)}<b>${esc(x.m.sp || '포인트 없음')}</b><span style="color:${x.m.col}">${x.m.len}cm ${esc(x.m.T.name)}</span></button>`).join('')}</div>` : ''}</div>` : ''}
+    <div class="card"><div class="stitle">MONSTERS <span>${list.length}마리</span></div>
+      ${chipsRaw('beastSort', beastSort, [{ v:'size', label:'큰 순' }, { v:'new', label:'최근 순' }])}${beastTier >= 0 ? `<button class="link" data-act="beastTier" data-v="-1">전체 보기</button>` : ''}
+      ${list.length ? `<div class="mgrid">${list.map(({ c, m }) => `<button class="mcell" style="--rc:${m.col}" data-act="beastOpen" data-id="${esc(c.catch_id)}">
+        ${monImg(c, 3)}<b>${m.len}<small>cm</small></b><span>${esc(m.name)}</span><em>${esc(m.rar)}</em></button>`).join('')}</div>`
+        : `<div class="empty">${img('cat:boo:sleep', 4)}아직 처치한 몬스터가 없어 zzZ<br>배스를 잡으면 여기 등록돼!</div>`}</div>`;
+}
+function monCard(c, big){
+  const m = monOf(c), st = byId('Setups', c.setup_id), rod = st && byId('Tackle', st.rod_id), ph = photosOf(c.catch_id)[0];
+  const env = [m.t.weather, m.t.water_temp && `수온 ${m.t.water_temp}℃`, m.t.water_clarity].filter(Boolean).join(' · ');
+  return `<div class="mcard ${big ? 'big' : ''}" style="--rc:${m.col}">
+    <div class="mhead"><em>${esc(m.rar)}${m.boss && m.len >= 30 ? ' · 구역 보스' : ''}</em><b>${esc(m.name)}</b><span>${esc(m.sub)}</span></div>
+    <div class="mart">${monImg(c, big ? 7 : 5)}${ph ? `<div class="mph" onclick="openViewer('${esc(c.catch_id)}')"><img src="${ph.src}" ${imgFallback(ph)} alt=""><i>포획 증거</i></div>` : ''}</div>
+    <div class="mstats"><div><span>길이</span><b>${m.len}<small>cm</small></b></div><div><span>HP</span><b>${m.hp}</b></div><div><span>무게${m.est ? '(추정)' : ''}</span><b>${m.wg >= 1000 ? (m.wg / 1000).toFixed(2) + '<small>kg</small>' : m.wg + '<small>g</small>'}</b></div><div><span>ATK</span><b>${m.atk}</b></div></div>
+    <div class="mlog">
+      <div><span>출현</span>${esc(catchDate(c))} ${esc(c.time || '')} · ${esc(m.sp || '-')}</div>
+      <div><span>처치 무기</span>${rod ? iconImg(rod, 1) + ' ' : ''}${esc(st ? st.name || st.setup_id : '-')}</div>
+      <div><span>미끼</span>${esc([lureName(c.lure_id), c.rig, c.action].filter(Boolean).join(' · ') || '-')}</div>
+      ${env ? `<div><span>환경</span>${esc(env)}</div>` : ''}${c.memo ? `<div><span>메모</span>${esc(c.memo)}</div>` : ''}
+    </div></div>`;
+}
+function vMonSheet(){
+  const c = byId('Catches', monSel); if (!c) return '';
+  return `<div class="shead"><div><h1 class="t">몬스터 카드</h1><div class="sub pf" style="font-size:8px;margin-top:6px">MONSTER</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    ${monCard(c, true)}
+    <div class="saveBar"><button class="pbtn ghost" data-act="beastEdit">✏ 기록 수정</button></div>`;
+}
+let monSel = '';
+// 새 등급 첫 처치 알림 (saveCatch 뒤)
+function monFirst(id){
+  const c = byId('Catches', id); if (!c) return;
+  const ti = monTier(c.length_cm);
+  if (rows('Catches').some(x => x.catch_id !== id && monTier(x.length_cm) === ti && +x.length_cm)) return;
+  setTimeout(() => say(`📖 새 몬스터 도감 등록! ${monOf(c).name}`, 'boo', 4500), 3200);
+}
+
+/* ═════════ 🌫 전장의 안개 지도 ═════════ */
+const fogDim = on => { const f = $('#fog'); if (f) f.classList.toggle('dim', on); };
+let fogOn = load('bl_fog_on', true), fogRAF = 0, fogTrail = load('bl_fogtrail', []);
+const FOG_G = 0.0005;   // 걸어서 밝히는 칸 (~50m)
+function fogWalk(p){
+  if (!curTrip() || !p || (p.acc && p.acc > 80)) return;
+  const k = (Math.round(p.lat / FOG_G) * FOG_G).toFixed(4) + ',' + (Math.round(p.lng / FOG_G) * FOG_G).toFixed(4);
+  if (fogTrail.includes(k)) return;
+  fogTrail.push(k); if (fogTrail.length > 4000) fogTrail = fogTrail.slice(-4000); save('bl_fogtrail', fogTrail);
+  if (view === 'map') fogDraw();
+}
+function fogPoints(){
+  const pts = [], visited = new Set(rows('Trips').map(t => t.spot_id));
+  active('Spots').forEach(s => { if (+s.lat && +s.lng && visited.has(s.spot_id)) pts.push([+s.lat, +s.lng, 220]); });
+  rows('Catches').forEach(c => { if (+c.lat && +c.lng) pts.push([+c.lat, +c.lng, 80]); });
+  rows('Bites').forEach(b => { if (+b.lat && +b.lng) pts.push([+b.lat, +b.lng, 60]); });
+  fogTrail.forEach(k => { const [a, b] = k.split(',').map(Number); pts.push([a, b, 70]); });
+  return pts;
+}
+const merc = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+function fogDraw(){
+  cancelAnimationFrame(fogRAF);
+  fogRAF = requestAnimationFrame(() => {
+    const cv = $('#fog'), el = $('#map'); if (!cv || !el) return;
+    if (!fogOn || !M || !M.bounds) { cv.style.display = 'none'; return; }
+    const B = M.bounds(); if (!B) return;
+    cv.style.display = 'block';
+    const S = 4, W = el.clientWidth, H = el.clientHeight, w = Math.ceil(W / S), h = Math.ceil(H / S);
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    const [s, wst, n, e] = B, mN = merc(n), mS = merc(s);
+    const px = (la, ln) => [(ln - wst) / (e - wst) * W, (mN - merc(la)) / (mN - mS) * H];
+    const ppm = H / ((n - s) * 111200);   // 화면 1m당 픽셀 (근사)
+    const g = cv.getContext('2d');
+    g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, w, h);
+    g.fillStyle = 'rgba(9,11,28,.84)'; g.fillRect(0, 0, w, h);
+    g.globalCompositeOperation = 'destination-out';
+    const hole = (la, ln, r) => { const [x0, y0] = px(la, ln), x = x0 / S, y = y0 / S, R = Math.max(r * ppm / S, 6);
+      if (x < -R || y < -R || x > w + R || y > h + R) return;
+      const gr = g.createRadialGradient(x, y, R * .45, x, y, R); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = gr; g.beginPath(); g.arc(x, y, R, 0, 7); g.fill(); };
+    fogPoints().forEach(([a, b, r]) => hole(a, b, r));
+    if (pos) hole(pos.lat, pos.lng, 120);   // 내 랜턴
+    g.globalCompositeOperation = 'source-over';
+    const note = $('#fogNote'); if (note) note.innerHTML = fogStat();
+  });
+}
+function fogStat(){
+  const cells = new Set(), C = 0.0009;   // ~100m 칸
+  fogPoints().forEach(([la, ln, r]) => { const d = r / 111200, k = Math.ceil(d / C);
+    for (let i = -k; i <= k; i++) for (let j = -k; j <= k; j++) if (i * i + j * j <= k * k) cells.add(Math.round(la / C + i) + ',' + Math.round(ln / C + j)); });
+  const km2 = cells.size * 0.0081, spots = new Set(rows('Trips').map(t => t.spot_id).filter(Boolean)).size;
+  return `🌫 밝힌 땅 <b>${km2 < 1 ? km2.toFixed(2) : km2.toFixed(1)}㎢</b> · 포인트 ${spots}곳${fogTrail.length ? ` · 걸어서 ${fogTrail.length}칸` : ''}`;
 }
 
 /* ═════════ 별 배경 ═════════ */
