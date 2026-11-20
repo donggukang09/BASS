@@ -642,6 +642,11 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .lspark{position:absolute;left:50%;top:50%;width:6px;height:6px;background:var(--rc);box-shadow:0 0 8px var(--rc);opacity:0;animation:lspark 1s forwards}
 @keyframes lspark{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
 .vrange{width:100%;accent-color:#f7b731;margin:4px 0 2px}
+.vres{text-align:left}.vlen{text-align:center;margin-bottom:8px}.vlen b{font-size:30px}
+.vrow{display:flex;gap:10px;align-items:center;padding:5px 0;border-top:1px dashed #3a3a5a;font-size:14px}.vrow>span{width:38px;flex:none;color:#8a8aa8;font-size:12px}
+.vrow>div{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.vrow b{font-size:15px;color:#f3e2b8}.vrow canvas,.vrow img{vertical-align:middle}
+.vsrc{font-style:normal;font-size:10.5px;color:#8a8aa8;border:1px solid #3a3a5a;padding:1px 5px}.vsrc.on{color:#3dd9ff;border-color:#3dd9ff}
+.vst{margin:4px 0 6px}.vst .chip{font-size:12px;padding:6px 9px}.vsub{font-size:13px;color:#a0a0b8;margin-top:6px}
 </style>
 </head>
 <body>
@@ -3487,6 +3492,10 @@ document.addEventListener('click', async e => {
     case 'vClose': closeVoice(); break;
     case 'vOk': clearInterval(VC && VC.tick); vCommit(); break;
     case 'vEdit': clearInterval(VC && VC.tick); vEdit(); break;
+    case 'vSetup': if (VC && VC.cf) { clearInterval(VC.tick); const st = byId('Setups', el.dataset.v), f = VC.cf, p = VC.p;
+      f.setup_id = el.dataset.v; VC.src.setup = 'voice';
+      if (!p.rig && st && st.default_rig) { f.rig = st.default_rig; VC.src.rig = 'preset'; } if (!p.lure_id && st && st.rig_lure_id && byId('Lures', st.rig_lure_id)) { f.lure_id = st.rig_lure_id; VC.src.lure = 'preset'; }
+      VC.left = 0; drawVoice(); } break;
     case 'vType': { const v = ($('#vIn') || {}).value || ''; if (v.trim() && VC) { try { VC.rec && VC.rec.abort(); } catch (er) {} VC.state = 'type'; vHandle(v.trim()); } break; }
     case 'undo': { const fn = window.__undo; window.__undo = null; $('#undo').classList.remove('show'); if (fn) fn(); break; }
     case 'coTog': coTog(el.dataset.k); break;
@@ -3586,13 +3595,37 @@ const RIG_SAY = [[/지그헤드\s*와키|카이젤/, '카이젤'], [/프리/, '�
   [/와키/, '와키'], [/지그\s*헤드/, '지그헤드'], [/노\s*싱커/, '노싱커'], [/스플릿/, '스플릿샷'], [/러버/, '러버지그'],
   [/하드베이트|크랭크|미노|저크|스피너|바이브|탑워터|펜슬|포퍼|채터|버즈/, '하드베이트']];
 const ACT_SAY = [[/셰이킹|쉐이킹|흔들/, '셰이킹'], [/데드/, '데드스티킹'], [/리프트|들었다/, '리프트앤폴'], [/드래깅|끌/, '드래깅'], [/호핑|통통/, '호핑'], [/스위밍|감아/, '스위밍'], [/폴링|떨어지/, '폴링 중 바이트']];
+// 세팅 알아듣기: 세팅 이름·로드/릴 모델(오로치, 메타늄, 조디아스 BFS…)·'2번 세팅'(장비 탭 I·II·III 순서)
+const GEAR_GENERIC = new Set(['bfs', 'dc', 'ul', 'ml', 'mh', 'm', 'h', 'l', 'f1', 'f5', '베이트', '스피닝', '메인', '서브', '접대', '모델', '미정', '세팅', 'fc']);
+const KO_ORD = { 일:1, 첫:1, 한:1, 이:2, 두:2, 둘:2, 삼:3, 세:3, 셋:3, 사:4, 네:4, 넷:4, 오:5, 다섯:5, 육:6, 여섯:6, 칠:7, 일곱:7 };
+const vNorm = x => String(x || '').toLowerCase().replace(/비에프에스|비 에프 에스/g, 'bfs').replace(/디씨/g, 'dc').replace(/유엘/g, 'ul').replace(/[\s()+·,._-]/g, '');
+function setupKeys(st){
+  const keys = new Set(), add = k => { k = vNorm(k); if (k.length >= 2 && !GEAR_GENERIC.has(k)) keys.add(k); };
+  add(st.name); String(st.name || '').split(/[\s+·,]+/).forEach(add);
+  [st.rod_id, st.reel_id].forEach(id => { const t = byId('Tackle', id); if (!t) return;
+    add(t.model); add((t.brand || '') + (t.model || '')); String(t.model || '').split(/\s+/).forEach(add); if (t.brand && t.brand.length >= 2 && ['테무', '알리'].includes(t.brand)) add(t.brand); });
+  return [...keys];
+}
+function matchSetup(s, raw){
+  const list = gearSetups(); if (!list.length) return null;
+  const m = String(raw).match(/(\d|일|첫|한|이|두|둘|삼|세|셋|사|네|넷|오|다섯|육|여섯|칠|일곱)\s*번\s*(째)?\s*(세팅|셋팅|로드|장비)?/);
+  if (m && (m[2] || m[3])) { const n = /\d/.test(m[1]) ? +m[1] : KO_ORD[m[1]]; if (list[n - 1]) return { id: list[n - 1].setup_id, key: m[0] }; }
+  const ns = vNorm(s), cur = curTrip(), today = cur ? (cur.setup_ids || '').split(',') : [];
+  let best = null;
+  list.forEach(st => { let sc = 0, hit = [];
+    setupKeys(st).forEach(k => { if (ns.includes(k)) { sc += k.length; hit.push(k); } });
+    if (sc && today.includes(st.setup_id)) sc += .5;
+    if (sc && (!best || sc > best.sc)) best = { id: st.setup_id, sc, key: hit.sort((a, b) => b.length - a.length)[0] }; });
+  return best;
+}
+const VOICE_STOP = /^(덴데야?|덴데|잡았다|잡았어|잡음|잡았음|한마리|마리|센치|센티|cm|짜리|이야|야|요|로|으로|바꿈|바꿨어|바꿔|바꿀게|변경|기록|기록해줘|해줘|했어|오|와|대박|우와|헐|아싸|나이스|굿|오케이|이거|좀|진짜|완전|그리고|세팅|셋팅|번|이번|방금|지금|사이즈|길이|배스|한수|1수|입질|놓쳤다|놓침|어때|으로바꿈|로바꿈)$/;
 function parseVoice(raw){
   const t = String(raw || '').trim(), s = t.replace(/\s+/g, ''), low = s.toLowerCase(), o = { raw: t, kind: '' };
   if (!s) return o;
   // 길이: "38센치" → 단위 없는 숫자(무게·lb 제외) → 한글 숫자
   let m = t.match(/(\d+(?:\.\d+)?)\s*(?:센치|센티|쎈치|cm|㎝|씨엠)/i), len = m ? parseFloat(m[1]) : NaN;
   if (m && /^\s*(센치|센티|cm)?\s*반/.test(t.slice(m.index + m[0].length))) len += .5;
-  if (isNaN(len)) { const c = [...t.matchAll(/(\d+(?:\.\d+)?)\s*(그램|g\b|파운드|lb|호(?![가-힣])|인치|미터|m\b|분(?![가-힣])|시(?![가-힣]))?/gi)].filter(x => !x[2]).map(x => parseFloat(x[1])).filter(v => v >= 8 && v <= 80); if (c.length) len = c[0]; }
+  if (isNaN(len)) { const c = [...t.matchAll(/(\d+(?:\.\d+)?)\s*(그램|g\b|파운드|lb|호(?![가-힣])|인치|미터|m\b|분(?![가-힣])|시(?![가-힣])|번)?/gi)].filter(x => !x[2]).map(x => parseFloat(x[1])).filter(v => v >= 8 && v <= 80); if (c.length) len = c[0]; }
   if (isNaN(len)) { const k = koLen(s); if (k >= 8 && k <= 80) len = k; }
   // 리그·액션·루어
   const ro = opts('리그'), rr = RIG_SAY.find(([re]) => re.test(s));
@@ -3604,11 +3637,23 @@ function parseVoice(raw){
       .map(k => String(k || '').replace(/\s+/g, '').toLowerCase()).filter(k => k.length >= 2);
     keys.forEach(k => { if (low.includes(k) && k.length > best) { best = k.length; o.lure_id = l.lure_id; } });
   });
+  const sm = matchSetup(s, t); if (sm) { o.setup_id = sm.id; o.setupKey = sm.key; }
+  // 못 알아들은 말은 메모로 ("갈대밭 옆", "바닥 걸림 후")
+  const lureKeys = o.lure_id ? (() => { const l = byId('Lures', o.lure_id); return [l.name, (l.brand || '') + l.name].map(vNorm).filter(Boolean); })() : [];
+  const left = t.split(/\s+/).filter(w => { const n = vNorm(w), core = n.replace(/(으로|로|에서|에|이야|야|요|랑|하고|을|를|이|가|은|는|도)$/, '');
+    if (!core || VOICE_STOP.test(core) || VOICE_STOP.test(n)) return false;
+    if (/\d/.test(n) || /^(?:[일이삼사오육칠팔구]?십[일이삼사오육칠팔구]?|스물|스무|서른|마흔|쉰|예순|열)/.test(core)) return false;
+    if (RIG_SAY.some(([re]) => re.test(n)) || ACT_SAY.some(([re]) => re.test(n))) return false;
+    if (lureKeys.some(k => k.includes(core) || core.includes(k))) return false;
+    if (o.setup_id && setupKeys(byId('Setups', o.setup_id)).some(k => k.includes(core) || core.includes(k))) return false;
+    if (/^(번째|번|세팅|셋팅)$/.test(core) || /번(째)?$/.test(core)) return false;
+    return true; });
+  if (left.some(w => vNorm(w).replace(/(으로|로|에서|에|이야|야|요|을|를|이|가|은|는|도)$/, '').length >= 2)) o.memo = left.join(' ');
   if (/놓쳤|놓침|놓친|털렸|털림|빠졌|떨궜|떨궈|떨어졌|바렸|바레/.test(s)) o.kind = '놓침';
   else if (!isNaN(len)) { o.kind = 'catch'; o.len = len; }
   else if (/입질|툭|톡|건드|찝|쪼/.test(s)) o.kind = '입질';
   else if (/상황|어때|어떡|코치|기압|조언|뭐\s*던|뭘던|추천/.test(s)) o.kind = 'status';
-  else if (o.rig || o.lure_id) o.kind = 'rig';
+  else if (o.rig || o.lure_id || o.setup_id) o.kind = 'rig';
   return o;
 }
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -3642,13 +3687,30 @@ function vHandle(text){
   if (!p.kind) { VC.state = 'type'; VC.note = `"${text}" — 무슨 말인지 모르겠어. 예) 38센치 프리리그`; drawVoice(); return; }
   VC.p = p; VC.state = 'result';
   if (p.kind === 'status') { drawVoice(); coachAsk(); return; }
-  VC.left = 3; drawVoice();
+  const t = curTrip();
+  if (p.kind === 'catch' && t) { VC.cf = catchForm(t); VC.src = vApply(VC.cf, p); }
+  VC.left = 4; drawVoice(); vCountdown();
+}
+function vCountdown(){
+  clearInterval(VC.tick);
   VC.tick = setInterval(() => { if (!VC) return; VC.left--; if (VC.left <= 0) { clearInterval(VC.tick); vCommit(); } else { const b = $('#vLeft'); if (b) b.textContent = VC.left; } }, 1000);
 }
 function vSummary(p){
-  if (p.kind === 'catch') return `🐟 <b>${p.len}cm</b>${p.rig ? ' · ' + esc(p.rig) : ''}${p.lure_id ? ' · ' + esc(lureName(p.lure_id)) : ''}${p.action ? ' · ' + esc(p.action) : ''}`;
-  if (p.kind === '입질' || p.kind === '놓침') return `${p.kind === '놓침' ? '💨' : '💥'} <b>${p.kind}</b> 기록`;
-  if (p.kind === 'rig') return `🪝 지금 채비 → <b>${esc([p.rig, p.lure_id && lureName(p.lure_id)].filter(Boolean).join(' · '))}</b>`;
+  if (p.kind === 'catch' && VC && VC.cf) {
+    const f = VC.cf, src = VC.src || {}, st = byId('Setups', f.setup_id), rod = st && byId('Tackle', st.rod_id), lure = byId('Lures', f.lure_id);
+    const tag = k => src[k] === 'voice' ? '<em class="vsrc on">🎤 말한 대로</em>' : src[k] === 'preset' ? '<em class="vsrc">세팅 채비</em>' : '<em class="vsrc">직전 그대로</em>';
+    const today = (f.todaySetups || []).map(id => byId('Setups', id)).filter(Boolean);
+    return `<div class="vlen">🐟 <b>${p.len}</b>cm</div>
+      <div class="vrow"><span>세팅</span><div>${rod ? iconImg(rod, 1) : ''} <b>${esc(st ? st.name || st.setup_id : '없음')}</b>${tag('setup')}</div></div>
+      ${today.length > 1 ? `<div class="chips vst">${today.map(x => `<button class="chip ${x.setup_id === f.setup_id ? 'on' : ''}" data-act="vSetup" data-v="${esc(x.setup_id)}">${esc(x.name || x.setup_id)}</button>`).join('')}</div>` : ''}
+      <div class="vrow"><span>루어</span><div><b>${esc(lure ? lureName(f.lure_id) : '—')}</b>${lure ? tag('lure') : ''}</div></div>
+      <div class="vrow"><span>리그</span><div><b>${esc(f.rig || '—')}</b>${f.rig ? tag('rig') : ''}</div></div>
+      ${f.action ? `<div class="vrow"><span>액션</span><div><b>${esc(f.action)}</b>${tag('action')}</div></div>` : ''}
+      ${f.memo ? `<div class="vrow"><span>메모</span><div><b>${esc(f.memo)}</b><em class="vsrc on">🎤</em></div></div>` : ''}`;
+  }
+  const extra = [p.setup_id && (byId('Setups', p.setup_id) || {}).name, p.rig, p.lure_id && lureName(p.lure_id)].filter(Boolean).join(' · ');
+  if (p.kind === '입질' || p.kind === '놓침') return `${p.kind === '놓침' ? '💨' : '💥'} <b>${p.kind}</b> 기록${extra ? `<div class="vsub">${esc(extra)}</div>` : ''}`;
+  if (p.kind === 'rig') return `🪝 지금 장비 → <b>${esc(extra)}</b>`;
   return '💬 덴데 코치에게 물어보는 중';
 }
 function drawVoice(){
@@ -3658,23 +3720,34 @@ function drawVoice(){
     <div class="vhead">${img('cat:dende', 4, st === 'listen' ? 'vlisten' : '')}<div class="bubble tail">${st === 'listen' ? '듣고 있어… 말해줘!' : st === 'result' ? (VC.p.kind === 'status' ? '음… 지금 상황은 이래' : '이렇게 기록할게!') : '🎤 누르고 말해줘'}</div></div>
     ${st === 'listen' ? `<div class="vheard" id="vHeard">${esc(VC.interim || '…')}</div><div class="vwave"><i></i><i></i><i></i><i></i><i></i></div>` : ''}
     ${st === 'result' ? `<div class="vheard small">"${esc(VC.p.raw)}"</div><div class="vres">${vSummary(VC.p)}</div>
-      ${VC.p.kind === 'status' ? '' : `<div class="vcount">자동 저장 <b id="vLeft">${VC.left}</b></div>
+      ${VC.p.kind === 'status' ? '' : `${VC.left > 0 ? `<div class="vcount">자동 저장 <b id="vLeft">${VC.left}</b> · 틀린 게 있으면 눌러서 바꿔</div>` : '<div class="vcount">바꿨어! 맞으면 저장 눌러줘</div>'}
       <div class="vbtns"><button class="pbtn" data-act="vOk">✓ 지금 저장</button>${VC.p.kind === 'catch' ? '<button class="pbtn ghost" data-act="vEdit">✏ 고쳐서</button>' : ''}<button class="pbtn ghost" data-act="vAgain">↺ 다시</button></div>`}` : ''}
     ${st === 'type' ? `${VC.note ? `<div class="vnote">${esc(VC.note)}</div>` : ''}<button class="vmic" data-act="vMic">🎤</button>` : ''}
     <div class="inline vtype"><input class="t" id="vIn" placeholder="또는 여기에: 38 프리리그 / 입질 / 놓침"><button data-act="vType">확인</button></div>
-    <div class="vhint">예) <b>38센치 프리리그</b> · <b>마흔둘 다운샷 셰이킹</b> · <b>입질</b> · <b>놓쳤다</b> · <b>텍사스로 바꿈</b> · <b>지금 어때?</b></div>
+    <div class="vhint">예) <b>38센치 오로치 프리리그</b> · <b>2번 세팅 마흔둘 호그웜</b> · <b>입질</b> · <b>놓쳤다</b> · <b>레반테로 바꿈</b> · <b>지금 어때?</b></div>
     <button class="pbtn ghost small" data-act="vClose">닫기</button></div>`;
 }
 function vEdit(){
-  const p = VC.p, t = curTrip(); closeVoice(); if (!t) return;
-  cf = catchForm(t); vApply(cf, p); showSheet(vCatch);
+  const p = VC.p, pre = VC.cf, t = curTrip(); closeVoice(); if (!t) return;
+  if (pre) cf = pre; else { cf = catchForm(t); vApply(cf, p); }
+  showSheet(vCatch);
 }
 function vApply(f, p){
+  const src = { setup: 'last', lure: 'last', rig: 'last', action: 'last' };
+  if (p.setup_id && p.setup_id !== f.setup_id) {
+    const st = byId('Setups', p.setup_id);
+    if (f.todaySetups && !f.todaySetups.includes(p.setup_id)) f.todaySetups = [...f.todaySetups, p.setup_id];
+    f.setup_id = p.setup_id; src.setup = 'voice';
+    if (st && st.default_rig) { f.rig = st.default_rig; src.rig = 'preset'; }
+    if (st && st.rig_lure_id && byId('Lures', st.rig_lure_id)) { f.lure_id = st.rig_lure_id; src.lure = 'preset'; }
+  } else if (p.setup_id) src.setup = 'voice';
   if (p.len) f.length = String(p.len);
-  if (p.rig) f.rig = p.rig;
-  if (p.action) f.action = p.action;
-  if (p.lure_id) { f.lure_id = p.lure_id; const l = byId('Lures', p.lure_id); if (!p.rig && l && l.default_rig) f.rig = l.default_rig; }
-  if (p.rig && f.todaySetups) { const s = f.todaySetups.map(id => byId('Setups', id)).find(s => s && s.default_rig === f.rig), curS = byId('Setups', f.setup_id); if (s && (!curS || curS.default_rig !== f.rig)) f.setup_id = s.setup_id; }
+  if (p.rig) { f.rig = p.rig; src.rig = 'voice'; }
+  if (p.action) { f.action = p.action; src.action = 'voice'; }
+  if (p.lure_id) { f.lure_id = p.lure_id; src.lure = 'voice'; const l = byId('Lures', p.lure_id); if (!p.rig && l && l.default_rig) { f.rig = l.default_rig; src.rig = 'preset'; } }
+  if (p.rig && !p.setup_id && f.todaySetups) { const s = f.todaySetups.map(id => byId('Setups', id)).find(s => s && s.default_rig === f.rig), curS = byId('Setups', f.setup_id); if (s && (!curS || curS.default_rig !== f.rig)) { f.setup_id = s.setup_id; src.setup = 'preset'; } }
+  if (p.memo) f.memo = p.memo;
+  return src;
 }
 let undoT;
 function undoBar(label, fn){
@@ -3683,49 +3756,30 @@ function undoBar(label, fn){
 }
 async function vCommit(){
   if (!VC || !VC.p) return;
-  const p = VC.p, t = curTrip(); closeVoice(); if (!t) return;
+  const p = VC.p, pre = VC.cf, t = curTrip(); closeVoice(); if (!t) return;
+  const today = (t.setup_ids || '').split(',').filter(Boolean);
+  const setLast = () => { const prev = { ...last };
+    if (p.setup_id) { const st = byId('Setups', p.setup_id); last.setup_id = p.setup_id; if (st && st.default_rig && !p.rig) last.rig = st.default_rig; if (st && st.rig_lure_id && !p.lure_id) last.lure_id = st.rig_lure_id;
+      if (!today.includes(p.setup_id)) write('Trips', { trip_id: t.trip_id, setup_ids: [...today, p.setup_id].join(',') }); }
+    if (p.rig) last.rig = p.rig; if (p.lure_id) last.lure_id = p.lure_id;
+    if (p.rig && !p.setup_id) { const s = today.map(id => byId('Setups', id)).find(s => s && s.default_rig === p.rig); if (s) last.setup_id = s.setup_id; }
+    save(LS.last, last); return prev; };
   if (p.kind === 'catch') {
-    cf = catchForm(t); vApply(cf, p);
+    cf = pre || catchForm(t); if (!pre) vApply(cf, p);
+    if (!today.includes(cf.setup_id) && cf.setup_id) write('Trips', { trip_id: t.trip_id, setup_ids: [...today, cf.setup_id].join(',') });
     const id = await saveCatch();
     speak(`${p.len}센치! ${p.len >= 40 ? '대박이다!' : '기록했어'}`);
     if (id) undoBar(`${p.len}cm 기록`, () => { remove('Catches', id); render(); say('방금 기록 지웠어', 'dende'); });
   } else if (p.kind === '입질' || p.kind === '놓침') {
+    if (p.setup_id || p.rig || p.lure_id) setLast();
     const id = addBite(p.kind, t.trip_id, true); speak(p.kind === '입질' ? '입질 기록' : '아깝다, 놓침 기록');
     if (id) undoBar(p.kind + ' 기록', () => { remove('Bites', id); render(); });
   } else if (p.kind === 'rig') {
-    const prev = { ...last };
-    if (p.rig) last.rig = p.rig; if (p.lure_id) last.lure_id = p.lure_id;
-    const today = (t.setup_ids || '').split(',').filter(Boolean), s = p.rig && today.map(id => byId('Setups', id)).find(s => s && s.default_rig === p.rig);
-    if (s) last.setup_id = s.setup_id;
-    save(LS.last, last); render();
-    const msg = `지금 채비 ${[p.rig, p.lure_id && lureName(p.lure_id)].filter(Boolean).join(' · ')}로 기억할게!`; say(msg, 'dende'); speak(msg);
-    undoBar('채비 변경', () => { last = prev; save(LS.last, last); render(); });
+    const prev = setLast(); render();
+    const st = byId('Setups', last.setup_id);
+    const msg = `지금 장비 ${[p.setup_id && st && st.name, last.rig, last.lure_id && lureName(last.lure_id)].filter(Boolean).join(' · ')}로 기억할게!`; say(msg, 'dende'); speak(msg);
+    undoBar('장비 변경', () => { last = prev; save(LS.last, last); render(); });
   }
-}
-/* 덴데 목소리 — 폰 음성 엔진 + 높은 톤·여성 음성·효과음·말끝 '냥' */
-const VPRESET = { cute: { label:'🎀 귀요미', pitch:1.8, rate:1.12 }, hero: { label:'✨ 애니 히로인', pitch:1.5, rate:1.05 }, calm: { label:'🍵 차분한 덴데', pitch:1.15, rate:.98 } };
-let voiceCfg = { preset:'cute', pitch:1.8, rate:1.12, voice:'', nya:true, chime:true, ...load('bl_voice', {}) };
-const FEM_V = /yuna|유나|sora|sunhi|선희|heami|해미|seoyeon|서연|jimin|지민|nara|나라|google\s*한국|female|여성/i, MALE_V = /injoon|인준|minjun|민준|male|남성/i;
-const koVoices = () => (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^ko/i.test(v.lang));
-function pickVoice(){
-  const vs = koVoices(); if (!vs.length) return null;
-  return vs.find(v => v.name === voiceCfg.voice) || vs.find(v => FEM_V.test(v.name) && !MALE_V.test(v.name)) || vs.find(v => !MALE_V.test(v.name)) || vs[0];
-}
-if (window.speechSynthesis) speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', () => { if (sheetFn === vVoice) rerenderSheet(); });
-let actx;
-function chime(){
-  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const t0 = actx.currentTime;
-    [[1318.5, 0], [1760, .09], [2093, .18]].forEach(([f, d]) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f;
-      g.gain.setValueAtTime(0, t0 + d); g.gain.linearRampToValueAtTime(.07, t0 + d + .01); g.gain.exponentialRampToValueAtTime(.001, t0 + d + .16); o.connect(g).connect(actx.destination); o.start(t0 + d); o.stop(t0 + d + .18); });
-  } catch (e) {}
-}
-// 읽기 좋게: 단위·기호를 말로
-function sayable(msg){
-  let t = String(msg).replace(/hPa\/3시간/g, '헥토파스칼, 3시간 동안').replace(/hPa/g, '헥토파스칼').replace(/(\d)m\/s/g, '$1미터').replace(/(\d)\s*cm/gi, '$1센치')
-    .replace(/↘/g, '내려가는 중 ').replace(/↗/g, '올라가는 중 ').replace(/→/g, ' ').replace(/·/g, ', ').replace(/—/g, ', ');
-  t = t.replace(/[^\p{L}\p{N}\s.,!?~:%+-]/gu, '').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
-  if (voiceCfg.nya) t = t.replace(/[.!?~]*$/, '') + ' 냥!';
-  return t;
 }
 function speak(msg, force){
   if ((!coachCfg.sound && !force) || !window.speechSynthesis) return;
