@@ -574,6 +574,73 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .mrefrow{display:flex;align-items:center;gap:6px;margin-top:8px}.mrefrow label{margin:0;white-space:nowrap}.mrefrow span{color:#a0a0b8}
 .mrefrow input{width:70px;background:#0a0a14;border:2px solid #3dd9ff;color:#3dd9ff;font-size:15px;padding:4px 6px;text-align:right}
 .mrefrow .pbtn{margin:0 0 0 auto;width:auto;padding:8px 18px}
+/* 🎤 음성 기록 */
+.micbtn{width:100%;display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:12px 14px;background:linear-gradient(90deg,#0f3460,#16213e);border:2px solid #3dd9ff;color:#bff3ff;clip-path:var(--notch);text-align:left}
+.micbtn b{font-family:'Galmuri14','Galmuri11',sans-serif;font-size:17px;flex:1}.micbtn span{font-size:11px;color:#7fc8e0}
+#voice{position:fixed;inset:0;z-index:80;background:#070a18;display:none;align-items:center;justify-content:center;padding:18px}
+#voice.show{display:flex}
+.vbox{width:100%;max-width:420px;display:flex;flex-direction:column;gap:12px;text-align:center}
+.vhead{display:flex;align-items:flex-end;justify-content:center;gap:8px}.vhead .bubble{position:relative;opacity:1;white-space:normal;margin-bottom:26px;font-size:14px}
+.vlisten{animation:vbob .6s ease-in-out infinite alternate}@keyframes vbob{to{transform:translateY(-6px)}}
+.vheard{font-family:'Galmuri14','Galmuri11',sans-serif;font-size:22px;color:#fff;min-height:34px;word-break:keep-all}.vheard.small{font-size:14px;color:#a0a0b8;min-height:0}
+.vwave{display:flex;justify-content:center;gap:5px;height:30px;align-items:center}.vwave i{width:6px;height:10px;background:#3dd9ff;animation:vw .7s ease-in-out infinite alternate}
+.vwave i:nth-child(2){animation-delay:.1s}.vwave i:nth-child(3){animation-delay:.2s}.vwave i:nth-child(4){animation-delay:.3s}.vwave i:nth-child(5){animation-delay:.4s}@keyframes vw{to{height:28px}}
+.vres{background:#16213e;border:2px solid var(--gold);padding:14px;font-size:17px;color:#f3e2b8}.vres b{color:var(--gold);font-size:22px}
+.vcount{font-size:12px;color:#a0a0b8}.vcount b{font-family:'Press Start 2P',monospace;color:var(--gold);font-size:12px}
+.vbtns{display:flex;gap:8px}.vbtns .pbtn{margin:0;padding:12px 6px;font-size:14px}
+.vmic{width:96px;height:96px;margin:0 auto;border-radius:50%;border:3px solid #3dd9ff;background:radial-gradient(#1a4a7a,#0f3460);font-size:40px;box-shadow:0 0 24px rgba(61,217,255,.35)}
+.vnote{font-size:13px;color:#ffb0b0;line-height:1.5}
+.vtype{margin:0}.vhint{font-size:11.5px;color:#8a8aa8;line-height:1.7}.vhint b{color:#c8c8e0;font-weight:normal}
+#undo{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:75;display:none}
+#undo.show{display:block}#undo button{font-family:'Galmuri11',sans-serif;font-size:14px;padding:10px 18px;background:#241c12;border:2px solid var(--gold);color:var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.6)}
+/* 🐱 코치 */
+.coach{border-color:#3dd9ff}
+.cogrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.cogrid>div{background:#0f1830;border:1px solid #2a3a66;padding:8px 2px;text-align:center}
+.cogrid b{display:block;font-family:'Press Start 2P',monospace;font-size:12px;color:#bff3ff}.cogrid b small{font-size:8px;margin-left:1px}
+.cogrid span{font-size:10.5px;color:#8a8aa8}
+.cogrid .warn b{color:var(--gold)}.cogrid .hot b{color:#ff7a7a}
+.cot{font-style:normal;font-family:'Press Start 2P',monospace;font-size:8px;color:#7fc8e0;margin-right:2px}
+.colog{font-size:12.5px;line-height:1.55;color:#c8c8d8;display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}.colog em{font-style:normal;color:#7fc8e0;font-size:11px}
+.cotg{margin-top:8px}.cotg .chip{font-size:12px}
+/* 📜 퀘스트 */
+.quest,.qready{border-color:#c9a46a}
+.qready{display:flex;align-items:flex-end;gap:8px}
+.qrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed #3a3326}
+.qrow:last-of-type{border-bottom:0}
+.qi{font-size:24px;width:34px;text-align:center}
+.qm{flex:1;min-width:0}.qm b{font-family:'Galmuri14','Galmuri11',sans-serif;font-size:15px;color:#f3e2b8;margin-right:6px}.qm>span{font-size:12px;color:#a89a80}
+.qm small{display:block;font-size:11px;color:#c9a46a;margin-top:3px}
+.qbar{position:relative;height:12px;background:#120e09;border:1px solid #4a3b28;margin-top:5px}
+.qbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#8a5a1e,#f7b731)}
+.qbar em{position:absolute;right:4px;top:-1px;font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:#fff;text-shadow:0 1px 0 #000}
+.qrow.dn .qbar i{background:linear-gradient(90deg,#2f8a3a,#47d35a)}
+.qrow.cl{opacity:.5}.qok{font-size:20px;color:#47d35a;width:44px;text-align:center}
+.qclaim{font-family:'Galmuri11',sans-serif;font-size:12px;line-height:1.3;padding:8px 8px;background:#47d35a;color:#08210c;border:2px solid #b9ffb0;animation:qpulse 1s ease-in-out infinite alternate}
+@keyframes qpulse{to{box-shadow:0 0 16px #47d35a}}
+.qnum{display:inline-block;font-style:normal;min-width:18px;padding:1px 5px;border-radius:9px;background:#e94560;color:#fff;font-size:11px;margin-left:4px;animation:qpulse 1s ease-in-out infinite alternate}
+.qboard{margin-top:10px}
+.lgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.lcell{position:relative;aspect-ratio:1;background:radial-gradient(#1e1912,#0a0806);border:2px solid var(--rc,#3a3326);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px}
+.lcell span{font-size:9.5px;line-height:1.2;color:var(--rc,#6a5a40);text-align:center;word-break:keep-all}
+.lcell.lock b{font-family:'Press Start 2P',monospace;font-size:18px;color:#3a3326}.lcell.lock{border-style:dashed}
+.lcell.on{box-shadow:0 0 12px var(--rc)}
+.acell.lock{border:2px dashed #3a3326;color:#6a5a40}.acell.lock b{font-family:'Press Start 2P',monospace;font-size:20px;color:#4a3b28}
+.scroll{display:inline-block;line-height:1;filter:drop-shadow(0 0 6px var(--rc))}
+#loot{position:fixed;inset:0;z-index:85;background:radial-gradient(circle at 50% 45%,#1a1408,#05040a 70%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;overflow:hidden}
+#loot.show{display:flex}
+.lbeam{position:absolute;left:50%;top:0;bottom:30%;width:46px;transform:translateX(-50%);background:linear-gradient(transparent,color-mix(in srgb,var(--rc) 70%,transparent));filter:blur(6px);opacity:0;animation:lbeam .5s .5s forwards}
+.lglow{position:absolute;left:50%;top:48%;width:200px;height:60px;transform:translate(-50%,0);background:radial-gradient(ellipse,color-mix(in srgb,var(--rc) 60%,transparent),transparent 70%);opacity:0;animation:lbeam .4s .55s forwards}
+@keyframes lbeam{to{opacity:1}}
+.lq{font-size:13px;color:#c9a46a;z-index:1}
+.ldrop{z-index:1;animation:ldrop .7s cubic-bezier(.3,.0,.5,1.4) both}.ldrop .chest{font-size:64px}
+@keyframes ldrop{0%{transform:translateY(-60vh) rotate(-30deg);opacity:0}60%{opacity:1}80%{transform:translateY(8px) rotate(4deg)}100%{transform:none}}
+.lname{z-index:1;font-family:'Galmuri14','Galmuri11',sans-serif;font-size:24px;color:var(--rc);text-shadow:0 0 12px var(--rc);background:rgba(0,0,0,.7);padding:4px 12px;border:1px solid #333;opacity:0;animation:lbeam .3s .7s forwards}
+.lsub{z-index:1;font-size:13px;color:#cfcfcf;max-width:300px}.lsub span{color:#8a8fff}
+.lexp{z-index:1;font-size:13px;color:#f7b731;opacity:0;animation:lbeam .3s .9s forwards}
+.lbtns{z-index:1;display:flex;gap:8px;width:min(340px,86vw);margin-top:8px}.lbtns .pbtn{margin:0}
+.lspark{position:absolute;left:50%;top:50%;width:6px;height:6px;background:var(--rc);box-shadow:0 0 8px var(--rc);opacity:0;animation:lspark 1s forwards}
+@keyframes lspark{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
 </style>
 </head>
 <body>
@@ -583,6 +650,9 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 <div id="sheetWrap"><div id="sheet"></div></div>
 <div id="say"></div>
 <div id="cele"></div>
+<div id="voice"></div>
+<div id="undo"></div>
+<div id="loot"></div>
 <div id="viewer"></div>
 <div id="picker"></div>
 <script>
@@ -987,10 +1057,10 @@ async function loadWeather(){
 
 /* ═════════ 공통 조각 ═════════ */
 let sayT;
-function say(msg, who = 'boo'){
+function say(msg, who = 'boo', ms = 2400){
   const el = $('#say');
   el.innerHTML = `${img('mini:' + who, 3)}<div class="bubble">${esc(msg)}</div>`;
-  el.classList.add('show'); clearTimeout(sayT); sayT = setTimeout(() => el.classList.remove('show'), 2400);
+  el.classList.add('show'); clearTimeout(sayT); sayT = setTimeout(() => el.classList.remove('show'), ms);
 }
 const toast = m => say(m, 'boo');
 
@@ -1109,6 +1179,7 @@ function vHome(){
   <button class="pbtn start-btn" data-act="start"><b>🎣 출조 시작</b><span class="pf blink" style="font-size:8px">PRESS START</span></button>
   ${(() => { const nm = needMaint(); return nm ? `<button class="mbanner" data-act="gearMaintTrip" data-id="${esc(nm.t.trip_id)}">${img('cat:dende', 2)}<span><b>🔧 정비 시간!</b> ${esc(nm.t.date.slice(5).replace('-', '.'))} 출조 장비 ${nm.ids.length}개 정비했어?</span></button>` : ''; })()}
   <div class="card" id="fcCard">${vForecast()}</div>
+  <div class="card quest">${vQuestCard()}</div>
   ${[11, 12, 1, 2].includes(new Date().getMonth() + 1) && seasonYears().length ? `<button class="sbanner" data-act="season"><span class="pf">SEASON</span><b>🏆 ${seasonYears()[0]} 시즌 결산</b>${img('cat:boo', 2)}</button>` : ''}
   <button class="pbtn small dark" data-act="pastTrip">+ 지난 출조 추가</button>
   ${photoCount ? `<button class="pbtn small dark" data-act="upPhotos">📷 사진 ${photoCount}장 업로드 <span class="sub">(와이파이에서)</span></button>` : ''}
@@ -1329,6 +1400,8 @@ function vTrip(){
   <div class="card"><div class="stitle">TODAY'S SHOT <span>언제든 넣고 바꿀 수 있어</span></div><div class="kshots">${kslot(t.trip_id, 'scene')}${kslot(t.trip_id, 'selfie')}</div></div>
   <button class="pbtn catch-btn" data-act="catch">${img('bass', 4)}<b>잡았다!</b><span class="pf blink">TAP!</span></button>
   <div class="biterow"><button class="bbtn" data-act="bite" data-k="입질">💥 입질</button><button class="bbtn miss" data-act="bite" data-k="놓침">💨 놓침</button></div>
+  <button class="micbtn" data-act="voice">${img('cat:dende', 2)}<b>🎤 덴데야! 말로 기록</b><span>"38센치 프리리그"</span></button>
+  <div class="card coach" id="coachCard">${vCoach()}</div>
   <div class="card"><div class="stitle">CATCH LOG <span>${cs.length}수${bs.length ? ` · 입질 ${br.bi} · 놓침 ${br.mi}` : ''}</span></div>
     <div class="list">${cs.length || bs.length ? [...cs.map(c => ({ c, t: c.time || '' })), ...bs.map(b => ({ b, t: b.time || '' }))].sort((x, y) => y.t.localeCompare(x.t)).map(({ c, b }) => b ? biteRow(b, 'delBite') : `
       <div class="row" data-act="editCatch" data-id="${esc(c.catch_id)}">
@@ -1344,8 +1417,11 @@ function vTrip(){
 /* ═════════ 시트: 조과 ═════════ */
 function openCatch(id, tripId){
   const t = byId('Trips', tripId || (trip && trip.trip_id)); if (!t) return;
+  cf = catchForm(t, id); showSheet(vCatch);
+}
+function catchForm(t, id){
   const live = !!(trip && t.trip_id === trip.trip_id);
-  let today = (t.setup_ids || '').split(',').filter(Boolean);
+  let today = (t.setup_ids || '').split(',').filter(Boolean), cf;
   if (!today.length) today = active('Setups').map(s => s.setup_id);
   if (id) { const c = byId('Catches', id); cf = { ...c, length: c.length_cm || '', photo: null, more: false, allLures: false, newLure: false, edit: true }; }
   else {
@@ -1357,7 +1433,7 @@ function openCatch(id, tripId){
   }
   cf.todaySetups = today; cf.trip_id = t.trip_id; cf.live = live && !id;
   if (!cf.live && !id) cf.time = '';
-  showSheet(vCatch);
+  return cf;
 }
 function lureOptions(){
   const order = [], seen = new Set();
@@ -1425,7 +1501,8 @@ async function saveCatch(){
   }
   if (live) { last = { ...last, setup_id: cf.setup_id, lure_id: cf.lure_id, rig: cf.rig, action: cf.action, depth: cf.depth }; save(LS.last, last); }
   hideSheet(); render();
-  if (live) celebrate(len); else say(edit ? '고쳤어!' : `${len}cm 추가했어!`, 'dende');
+  if (live) { celebrate(len); setTimeout(() => coachTick(), 2600); } else say(edit ? '고쳤어!' : `${len}cm 추가했어!`, 'dende');
+  return id;
 }
 function celebrate(len){
   const el = $('#cele'), t = tier(len), sparks = Array.from({ length: 14 }, (_, i) => {
@@ -2553,7 +2630,7 @@ function drawISpool(p, fill, col){
 function vGear(){
   const list = gearSetups(), st = curGear();
   const head = `<div class="head"><div><h1 class="t">장비</h1><div class="sub pf" style="font-size:8px;margin-top:6px">INVENTORY</div></div>
-    <div class="hbtns"><button class="sync" data-act="settings">⚙ 관리</button>${syncBar()}</div></div>`;
+    <div class="hbtns"><button class="sync" data-act="tabQuest">📜 퀘스트${qReady().length ? ` <i class="qnum">${qReady().length}</i>` : ''}</button><button class="sync" data-act="settings">⚙ 관리</button>${syncBar()}</div></div>`;
   if (!st) return head + `<div class="card"><div class="empty">${img('cat:boo', 4)}아직 세팅이 없어!<br><button class="pbtn small" data-act="gearNew" style="margin-top:12px">+ 세팅 만들기</button></div></div>`;
   const rod = byId('Tackle', st.rod_id), reel = byId('Tackle', st.reel_id), line = byId('Tackle', st.line_id);
   const li = lineInfo(st), ss = setupStats(st.setup_id), sb = setBonus(st), nm = needMaint(), PL = playerLv(), me = myChar();
@@ -2794,14 +2871,14 @@ const CH_OPT = {
   skin:  { label:'피부', list:[['밝은', '#f5d0b0'], ['보통', '#e8b48a'], ['구릿빛', '#c98c5e'], ['진한', '#8d5a3b']] },
   hair:  { label:'머리', list:[['짧은 머리'], ['스포츠'], ['긴 머리'], ['파마'], ['민머리']] },
   hairC: { label:'머리 색', list:[['검정', '#1e1a18'], ['갈색', '#5a3a22'], ['회색', '#9a9a9a'], ['금발', '#d9b45a'], ['빨강', '#9c3a24']] },
-  hat:   { label:'모자', list:[['없음'], ['버킷햇'], ['캡'], ['비니'], ['밀짚모자'], ['캠프캡'], ['썬캡']] },
+  hat:   { label:'모자', list:[['없음'], ['버킷햇'], ['캡'], ['비니'], ['밀짚모자'], ['캠프캡'], ['썬캡'], ['고양이 귀 비니'], ['황금 왕관']] },
   hatC:  { label:'모자 색', list:[['카키', '#a89060'], ['검정', '#2a2a30'], ['네이비', '#2e3a5a'], ['빨강', '#b8323a'], ['올리브', '#5b6b3a'], ['흰색', '#e8e8e8'], ['베이지', '#d9ccb0']] },
-  eye:   { label:'눈', list:[['없음'], ['안경'], ['선글라스'], ['편광 선글라스']] },
+  eye:   { label:'눈', list:[['없음'], ['안경'], ['선글라스'], ['편광 선글라스'], ['황금 편광']] },
   beard: { label:'수염', list:[['없음'], ['콧수염'], ['턱수염'], ['덥수룩'], ['수염 자국']] },
   vest:  { label:'조끼', list:[['올리브', '#5b6b3a'], ['카키', '#a89060'], ['네이비', '#2e3a5a'], ['오렌지', '#d9732e'], ['빨강', '#a83232'], ['검정', '#26262c'], ['회색 후드티', '#c4c4c8']] },
   shirt: { label:'셔츠', list:[['흰색', '#e6e6e6'], ['회색', '#8a8f98'], ['파랑', '#3d6fb0'], ['검정', '#2a2a30'], ['체크', '#b84a3a']] },
   pants: { label:'바지', list:[['네이비', '#2b3550'], ['카키', '#8a7a55'], ['검정', '#1e1e24'], ['청바지', '#3f5f8f']] },
-  boots: { label:'신발', list:[['갈색 부츠', '#5a3a22'], ['검정 부츠', '#1a1a1e'], ['초록 장화', '#2f6a3a'], ['노란 장화', '#d9b43a'], ['발목 장화', '#2b3a2b'], ['무릎 장화', '#3a4a3a'], ['크록스', '#7fd36b'], ['운동화', '#f0f0f0'], ['등산화', '#7a5a3a']] },
+  boots: { label:'신발', list:[['갈색 부츠', '#5a3a22'], ['검정 부츠', '#1a1a1e'], ['초록 장화', '#2f6a3a'], ['노란 장화', '#d9b43a'], ['발목 장화', '#2b3a2b'], ['무릎 장화', '#3a4a3a'], ['크록스', '#7fd36b'], ['운동화', '#f0f0f0'], ['등산화', '#7a5a3a'], ['황금 장화', '#e0b030'], ['고양이 슬리퍼', '#8a8f98']] },
 };
 const CH_KEYS = Object.keys(CH_OPT);
 const CH_DEF = { skin:1, hair:0, hairC:0, hat:1, hatC:0, eye:0, beard:0, vest:0, shirt:0, pants:0, boots:0, name:'' };
@@ -2834,6 +2911,7 @@ function drawMe(p, key){
   if (shoe === 'crocs') { set(7, 22, shade(B, .6)); set(12, 22, shade(B, .6)); row(23, 6, 8, '#e8e8e8'); row(23, 11, 13, '#e8e8e8'); }
   if (shoe === 'sneaker') { set(7, 22, '#e94560'); set(12, 22, '#e94560'); row(23, 6, 8, '#a0a0aa'); row(23, 11, 13, '#a0a0aa'); }
   if (shoe === 'hike') { set(7, 21, '#e8c56a'); set(12, 21, '#e8c56a'); row(23, 6, 8, '#1a1a1a'); row(23, 11, 13, '#1a1a1a'); }
+  if (c.boots === 9) { set(7, 20, '#fff3a0'); set(11, 20, '#fff3a0'); set(8, 22, '#e94560'); set(12, 22, '#e94560'); }
   // 머리 (큰 얼굴)
   row(3, 6, 13, S); row(4, 5, 14, S); for (let y = 5; y <= 11; y++) row(y, 4, 15, S); row(12, 5, 14, S); row(13, 6, 13, S);
   set(4, 11, S2); set(15, 11, S2); row(13, 7, 12, S2);
@@ -2857,7 +2935,7 @@ function drawMe(p, key){
   const fr = c.eye === 1 ? '#3a3a44' : '#141418';
   if (c.eye === 1) { [[5, 7], [11, 7]].forEach(([x0, y0]) => { for (let x = x0; x <= x0 + 3; x++) { set(x, y0, fr); set(x, y0 + 3, fr); } set(x0, y0 + 1, fr); set(x0, y0 + 2, fr); set(x0 + 3, y0 + 1, fr); set(x0 + 3, y0 + 2, fr); }); set(9, 8, fr); set(10, 8, fr); }
   if (c.eye >= 2) {   // 선글라스·고글: 4×3 렌즈
-    const L = c.eye === 2 ? ['#262632', '#141418', '#5a5a78'] : ['#2a8fd9', '#1a5fb0', '#9ff0ff'];
+    const L = c.eye === 2 ? ['#262632', '#141418', '#5a5a78'] : c.eye === 4 ? ['#e8a920', '#b8780e', '#fff3a0'] : ['#2a8fd9', '#1a5fb0', '#9ff0ff'];
     [5, 11].forEach(x0 => { for (let y = 7; y <= 9; y++) for (let x = x0; x <= x0 + 3; x++) set(x, y, y === 9 ? L[1] : L[0]); set(x0 + 1, 7, L[2]); });
     set(9, 7, '#141418'); set(10, 7, '#141418'); set(4, 7, '#141418'); set(15, 7, '#141418');
   }
@@ -2868,6 +2946,11 @@ function drawMe(p, key){
   if (c.hat === 4) { const ST = '#e3c46e', ST2 = '#c9a850'; row(1, 7, 12, ST); row(2, 6, 13, x => x % 2 ? ST : ST2); row(3, 5, 14, x => x % 2 ? ST2 : ST); row(4, 5, 14, C); row(5, 1, 18, ST2); row(6, 2, 17, x => x < 4 || x > 15 ? ST2 : g[6][x]); }
   if (c.hat === 5) { row(1, 6, 13, C); for (let y = 2; y <= 4; y++) row(y, 5, 14, x => x === 7 || x === 12 ? shade(C, .88) : C); set(9, 1, shade(C, .8)); set(10, 1, shade(C, .8)); row(5, 4, 15, C2); row(6, 5, 14, x => x === 5 || x === 14 ? g[6][x] : shade(C, .55)); [4, 15].forEach(x => set(x, 6, H)); }
   if (c.hat === 6) { row(4, 4, 15, C); row(5, 5, 14, C2); set(6, 4, shade(C, 1.25)); }
+  if (c.hat === 7) { const G = '#8a8f98', D = '#5a5f68', K = '#f29a9a';   // 고양이 귀 비니 (덴데 무늬)
+    set(5, 0, G); row(1, 5, 6, G); set(6, 1, K); set(14, 0, G); row(1, 13, 14, G); set(13, 1, K);
+    row(2, 5, 14, x => x === 8 || x === 11 ? D : G); row(3, 4, 15, x => x === 8 || x === 11 ? D : G); row(4, 4, 15, G); row(5, 4, 15, x => x % 2 ? shade(G, 1.2) : D); }
+  if (c.hat === 8) { const Gd = '#e8b830', G2 = '#b8860b', Hi = '#fff3a0';   // 황금 왕관
+    [5, 8, 11, 14].forEach(x => { set(x, 1, Hi); set(x, 2, Gd); }); row(3, 5, 14, Gd); row(4, 5, 14, x => x === 9 || x === 10 ? '#e94560' : x === 6 || x === 13 ? '#3dd9ff' : Gd); row(5, 5, 14, G2); }
   // 외곽선
   const OL = '#1a1420';
   for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) {
@@ -2879,11 +2962,11 @@ function drawMe(p, key){
 
 /* ═════════ 악세사리 (모자·선글라스·신발) — 캐릭터에 장착 ═════════ */
 const ACC = {
-  hat:   { tag:'HEAD', label:'모자', meta:[['일반', '맨머리의 자유'], ['마법', '햇빛 차단 +10'], ['일반', '멋 +5'], ['마법', '겨울 보온 +15'], ['희귀', '여름 감성 +20'], ['희귀', '캠핑 감성 +15'], ['마법', '시원함 +10 · 정수리 주의']] },
-  eye:   { tag:'EYES', label:'선글라스', meta:[['일반', '맨눈으로 승부'], ['일반', '시력 보정'], ['마법', '눈부심 -20'], ['전설', '물속이 보인다! 사이트 피싱 +30']] },
-  boots: { tag:'FEET', label:'신발', meta:[['일반', '튼튼한 기본기'], ['일반', '어디든 무난'], ['마법', '진흙 OK'], ['마법', '눈에 확 띔'], ['마법', '발목까지 방수'], ['희귀', '무릎까지 웨이딩 가능'], ['세트', '통풍 최고 · 미끄럼 주의'], ['일반', '이동 속도 +10'], ['희귀', '바위 지형 +20']] },
+  hat:   { tag:'HEAD', label:'모자', meta:[['일반', '맨머리의 자유'], ['마법', '햇빛 차단 +10'], ['일반', '멋 +5'], ['마법', '겨울 보온 +15'], ['희귀', '여름 감성 +20'], ['희귀', '캠핑 감성 +15'], ['마법', '시원함 +10 · 정수리 주의'], ['세트', '덴데·부우와 텔레파시 +25'], ['전설', '물가의 왕! 위압감 +50']] },
+  eye:   { tag:'EYES', label:'선글라스', meta:[['일반', '맨눈으로 승부'], ['일반', '시력 보정'], ['마법', '눈부심 -20'], ['전설', '물속이 보인다! 사이트 피싱 +30'], ['전설', '물속 런커가 반짝여 보인다 +40']] },
+  boots: { tag:'FEET', label:'신발', meta:[['일반', '튼튼한 기본기'], ['일반', '어디든 무난'], ['마법', '진흙 OK'], ['마법', '눈에 확 띔'], ['마법', '발목까지 방수'], ['희귀', '무릎까지 웨이딩 가능'], ['세트', '통풍 최고 · 미끄럼 주의'], ['일반', '이동 속도 +10'], ['희귀', '바위 지형 +20'], ['전설', '어떤 진흙도 두렵지 않다 +40'], ['희귀', '발소리 0 · 배스가 눈치 못 챔 +20']] },
 };
-const SHOE_STYLE = ['boot', 'boot', 'knee', 'knee', 'ankle', 'knee', 'crocs', 'sneaker', 'hike'];
+const SHOE_STYLE = ['boot', 'boot', 'knee', 'knee', 'ankle', 'knee', 'crocs', 'sneaker', 'hike', 'knee', 'crocs'];
 function gridSprite(p, W, H, paint){
   const g = Array.from({ length: H }, () => Array(W).fill(null)), set = (x, y, c) => { if (x >= 0 && x < W && y >= 0 && y < H) g[y][x] = c; };
   const row = (y, a, b, c) => { for (let x = a; x <= b; x++) set(x, y, typeof c === 'function' ? c(x) : c); };
@@ -2901,10 +2984,14 @@ function drawAcc(p, type, i, col){
     if (i === 4) { const S = '#e3c46e', S2 = '#c9a850'; row(2, 6, 11, S); row(3, 5, 12, x => x % 2 ? S : S2); row(4, 5, 12, C); row(5, 1, 16, S2); row(6, 0, 17, S); row(7, 1, 16, S2); }
     if (i === 5) { for (let y = 2; y <= 5; y++) row(y, 5, 12, x => x === 7 || x === 10 ? shade(C, .88) : C); row(6, 3, 14, D); row(7, 4, 13, shade(C, .55)); }
     if (i === 6) { row(4, 4, 13, C); row(5, 4, 13, C); set(6, 4, L); row(6, 6, 15, D); row(7, 8, 16, D); }
+    if (i === 7) { const G = '#8a8f98', Dk = '#5a5f68', K = '#f29a9a'; set(4, 0, G); row(1, 4, 5, G); row(2, 4, 6, G); set(5, 2, K); set(13, 0, G); row(1, 12, 13, G); row(2, 11, 13, G); set(12, 2, K);
+      row(3, 4, 13, x => x === 7 || x === 10 ? Dk : G); for (let y = 4; y <= 6; y++) row(y, 3, 14, x => x === 7 || x === 10 ? Dk : G); row(7, 3, 14, x => x % 2 ? shade(G, 1.2) : Dk); row(8, 3, 14, x => x % 2 ? shade(G, 1.2) : Dk); }
+    if (i === 8) { const Gd = '#e8b830', G2 = '#b8860b', Hi = '#fff3a0'; [3, 6, 9, 12, 15].forEach(x => { set(x, 1, Hi); set(x, 2, Gd); set(x, 3, Gd); });
+      row(4, 3, 15, Gd); row(5, 3, 15, x => x === 9 ? '#e94560' : x === 5 || x === 13 ? '#3dd9ff' : Gd); row(6, 3, 15, Gd); row(7, 3, 15, G2); }
   });
   if (type === 'eye') gridSprite(p, 18, 8, (set, row) => {
     const F = i === 1 ? '#4a4a56' : '#141418';
-    const lens = i === 0 ? null : i === 1 ? ['#d8eef4', '#bfe0ea', '#ffffff'] : i === 2 ? ['#262632', '#141418', '#6a6a88'] : ['#2a8fd9', '#1a5fb0', '#9ff0ff'];
+    const lens = i === 0 ? null : i === 1 ? ['#d8eef4', '#bfe0ea', '#ffffff'] : i === 2 ? ['#262632', '#141418', '#6a6a88'] : i === 4 ? ['#e8a920', '#b8780e', '#fff3a0'] : ['#2a8fd9', '#1a5fb0', '#9ff0ff'];
     if (i === 0) { row(3, 3, 14, '#3a3a44'); set(4, 2, '#5a5a66'); set(13, 4, '#5a5a66'); return; }
     [[1, 7], [10, 16]].forEach(([a, b]) => { row(1, a, b, F); row(5, a, b, F); for (let y = 2; y <= 4; y++) { set(a, y, F); set(b, y, F); row(y, a + 1, b - 1, y === 4 ? lens[1] : lens[0]); } set(a + 1, 2, lens[2]); set(a + 2, 2, lens[2]); });
     row(2, 8, 9, F); set(0, 1, F); set(17, 1, F);
@@ -2918,6 +3005,7 @@ function drawAcc(p, type, i, col){
     if (st === 'sneaker') { for (let y = 6; y <= 10; y++) row(y, 3, y < 8 ? 8 : 13, B); row(6, 3, 7, B); [5, 6, 7].forEach(x => set(x, 7, '#888')); row(9, 5, 11, '#e94560'); row(11, 2, 14, '#c8c8d0'); row(12, 2, 14, '#9a9aa6'); return; }
     for (let y = 9; y <= 10; y++) row(y, 3, 13, B); row(8, 8, 11, B); set(12, 9, L);
     row(11, 2, 14, st === 'hike' ? '#2a2a2a' : D); if (st === 'hike') { row(12, 2, 14, '#1a1a1a'); [5, 6, 7].forEach((x, k) => set(x, 5 + k, '#e8c56a')); }
+    if (i === 9) { [[4, 2], [4, 3], [5, 6], [10, 9], [11, 9]].forEach(([x, y]) => set(x, y, '#fff3a0')); row(8, 3, 7, '#b8860b'); set(6, 4, '#e94560'); }
   });
 }
 function accName(k, i){ return ((CH_OPT[k].list[i] || CH_OPT[k].list[0])[0]); }
@@ -2938,7 +3026,8 @@ function vAcc(){
     <div class="chprev"><div class="chstage">${meImg(6, chq)}</div>
       <div class="tipbox big" style="margin:4px 0 0;--rc:${RARITY[A.meta[cur][0]]};width:100%"><div class="tn" style="color:${RARITY[A.meta[cur][0]]}">${esc(accName(k, cur))}</div>
         <div class="tt">${esc(A.meta[cur][0])} 악세사리 · ${A.label}</div><div class="tblue">${esc(A.meta[cur][1])}</div></div></div>
-    <div class="agrid">${CH_OPT[k].list.map((o, i) => `<button class="acell ${cur === i ? 'on' : ''}" style="--rc:${RARITY[A.meta[i][0]]}" data-act="accEquip" data-v="${i}">
+    <div class="agrid">${CH_OPT[k].list.map((o, i) => accLocked(k, i) ? `<button class="acell lock" data-act="tabQuest"><b>?</b><span>퀘스트 보상</span></button>`
+      : `<button class="acell ${cur === i ? 'on' : ''}" style="--rc:${RARITY[A.meta[i][0]]}" data-act="accEquip" data-v="${i}">
       ${accImg(k, i, 3, chq)}<span>${esc(o[0])}</span>${cur === i ? '<i class="eq">E</i>' : ''}</button>`).join('')}</div>
     ${k === 'hat' && cur ? `<label class="f">모자 색</label><div class="chips">${CH_OPT.hatC.list.map(([nm, cc], i) => `<button class="chip ${+chq.hatC === i ? 'on' : ''}" data-act="accColor" data-v="${i}"><i class="dot" style="background:${cc}"></i>${esc(nm)}</button>`).join('')}</div>` : ''}`;
 }
@@ -2952,9 +3041,10 @@ function accSave(msg){
 const TITLES = [[1, '초보 앵글러'], [3, '연못의 견습생'], [5, '배스 사냥꾼'], [8, '저수지 탐험가'], [12, '프리리그 장인'], [16, '40업 헌터'], [20, '런커 마스터'], [30, '전설의 배서']];
 function playerLv(){
   const trips = rows('Trips').length, cs = rows('Catches'), big = cs.filter(c => +c.length_cm >= 40).length, mt = rows('Maint').length;
-  const exp = trips * 10 + cs.length * 5 + big * 20 + mt * 3;
+  const exp = trips * 10 + cs.length * 5 + big * 20 + mt * 3 + (+qs().exp || 0);
   const lv = Math.floor(Math.sqrt(exp / 10)) + 1, cur = (lv - 1) ** 2 * 10, next = lv ** 2 * 10;
-  const title = TITLES.filter(([l]) => lv >= l).pop()[1];
+  const q = qs(), tl = q.title && LOOT[q.title] ? LOOT[q.title].name : '';
+  const title = tl || TITLES.filter(([l]) => lv >= l).pop()[1];
   return { lv, exp, pct: Math.round((exp - cur) / (next - cur) * 100), next: next - exp, title };
 }
 function meImg(sc, c){ return img(`me:${charKey(c || myChar())}`, sc); }
@@ -2969,7 +3059,7 @@ function vChar(){
     <div class="chname">${esc(chq.name || '이름 없는 앵글러')}<small>LV.${L.lv} · ${esc(L.title)}</small></div>
     <div class="chips" style="justify-content:center"><button class="chip add" data-act="charPhoto">📷 사진 속 내 모습</button><button class="chip add" data-act="charRandom">🎲 랜덤</button></div></div>
   <label class="f">닉네임</label><input class="t" value="${esc(chq.name)}" maxlength="12" placeholder="예: 동구" data-in="chq.name">
-  ${CH_KEYS.map(k => `<label class="f">${CH_OPT[k].label}</label><div class="chips">${CH_OPT[k].list.map(([nm, cc], i) =>
+  ${CH_KEYS.map(k => `<label class="f">${CH_OPT[k].label}</label><div class="chips">${CH_OPT[k].list.map(([nm, cc], i) => accLocked(k, i) ? '' :
     `<button class="chip ${+chq[k] === i ? 'on' : ''}" data-act="charSet" data-k="${k}" data-v="${i}">${cc ? `<i class="dot" style="background:${cc}"></i>` : ''}${esc(nm)}</button>`).join('')}</div>`).join('')}
   <div class="saveBar"><button class="pbtn" data-act="charSave">이 모습으로 결정!</button></div>`;
 }
@@ -3109,7 +3199,8 @@ function addBite(kind, tripId, live){
     rig: live ? (last.rig || (st && st.default_rig) || '') : '', lure_id: live ? (last.lure_id || (st && st.rig_lure_id) || '') : '', lat:'', lng:'' };
   if (live && pos) { row.lat = pos.lat.toFixed(6); row.lng = pos.lng.toFixed(6); }
   write('Bites', row); render();
-  if (live) say(kind === '입질' ? '왔다…! 다음엔 걸자' : '으아아 아깝다!!', kind === '입질' ? 'dende' : 'boo');
+  if (live) { say(kind === '입질' ? '왔다…! 다음엔 걸자' : '으아아 아깝다!!', kind === '입질' ? 'dende' : 'boo'); setTimeout(() => coachTick(), 2600); }
+  return row.bite_id;
 }
 function biteRate(cs, bs){
   const mi = bs.filter(b => b.kind === '놓침').length, bi = bs.filter(b => b.kind === '입질').length, n = cs.length;
@@ -3226,7 +3317,7 @@ function fitText(ctx, s, w){ s = String(s); if (ctx.measureText(s).width <= w) r
 
 /* ═════════ 하단 탭 · 렌더 ═════════ */
 function vNav(){
-  const tab = view === 'map' ? 'map' : (view === 'settings' || view === 'gear') ? 'gear' : (view === 'stats' || view === 'season') ? 'stats' : 'home';
+  const tab = view === 'map' ? 'map' : (view === 'settings' || view === 'gear' || view === 'quest') ? 'gear' : (view === 'stats' || view === 'season') ? 'stats' : 'home';
   return `<button class="${tab === 'home' ? 'on' : ''}" data-act="tabHome"><i>${trip ? '🎣' : '⛺'}</i>${trip ? '출조중' : '홈'}</button>
     <button class="${tab === 'stats' ? 'on' : ''}" data-act="tabStats"><i>📊</i>기록</button>
     <button class="${tab === 'map' ? 'on' : ''}" data-act="tabMap"><i>🗺</i>지도</button>
@@ -3237,11 +3328,13 @@ function render(){
   destroyMap();
   const app = $('#app'), top = window.scrollY;
   app.className = view === 'map' ? 'full' : (view === 'start' || view === 'detail') ? 'nonav' : '';
-  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'brief' ? vBrief() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : view === 'gear' ? vGear() : view === 'season' ? vSeason() : vHome();
+  app.innerHTML = view === 'loading' ? vLoading() : view === 'settings' ? vSettings() : view === 'start' ? vStart() : view === 'trip' ? vTrip() : view === 'map' ? vMap() : view === 'brief' ? vBrief() : view === 'detail' ? vDetail() : view === 'stats' ? vStats() : view === 'gear' ? vGear() : view === 'season' ? vSeason() : view === 'quest' ? vQuest() : vHome();
   const nav = $('#nav'); nav.className = (view === 'start' || view === 'loading' || view === 'detail') ? 'hide' : ''; nav.innerHTML = vNav();
   if (view === 'start' || view === 'trip' || view === 'detail' || view === 'brief') window.scrollTo(0, top);
   if (view === 'map') initMap();
   if (view === 'brief') initBriefMap();
+  if (view !== 'loading') questCheck();
+  if (view === 'trip' && curTrip() && !render._co) { render._co = 1; setTimeout(() => { render._co = 0; coachTick(); }, 1500); }
 }
 
 /* ═════════ 시트 공통 ═════════ */
@@ -3354,7 +3447,7 @@ document.addEventListener('click', async e => {
     case 'itemSave': itemSave(); break;
     case 'openChar': openChar(); break;
     case 'charSet': chq[el.dataset.k] = +el.dataset.v; rerenderSheet(); break;
-    case 'charRandom': CH_KEYS.forEach(k => chq[k] = Math.floor(Math.random() * CH_OPT[k].list.length)); rerenderSheet(); break;
+    case 'charRandom': CH_KEYS.forEach(k => { const ok = CH_OPT[k].list.map((_, i) => i).filter(i => !accLocked(k, i)); chq[k] = ok[Math.floor(Math.random() * ok.length)]; }); rerenderSheet(); break;
     case 'charSave': charSave(); break;
     case 'measPhoto': if (cf && cf.photo) openMeasure(cf.photo); break;
     case 'measClose': measClose(); break;
@@ -3388,6 +3481,22 @@ document.addEventListener('click', async e => {
     case 'loSave': loSave(); break;
     case 'loDrop': if (confirmTap('loDrop')) { write('Setups', { setup_id: gq.id, active:'N' }); gearSel = ''; hideSheet(); render(); say('세팅을 해체했어', 'dende'); } break;
     case 'bite': addBite(el.dataset.k, trip && trip.trip_id, true); break;
+    case 'voice': openVoice(); break;
+    case 'vMic': case 'vAgain': clearInterval(VC && VC.tick); vListen(); break;
+    case 'vClose': closeVoice(); break;
+    case 'vOk': clearInterval(VC && VC.tick); vCommit(); break;
+    case 'vEdit': clearInterval(VC && VC.tick); vEdit(); break;
+    case 'vType': { const v = ($('#vIn') || {}).value || ''; if (v.trim() && VC) { try { VC.rec && VC.rec.abort(); } catch (er) {} VC.state = 'type'; vHandle(v.trim()); } break; }
+    case 'undo': { const fn = window.__undo; window.__undo = null; $('#undo').classList.remove('show'); if (fn) fn(); break; }
+    case 'coTog': coTog(el.dataset.k); break;
+    case 'coAsk': coachAsk(); break;
+    case 'coLog': coLogOpen = !coLogOpen; coRefresh(); break;
+    case 'tabQuest': if (view !== 'quest') qPrev = view; hideSheet(); view = 'quest'; render(); window.scrollTo(0, 0); break;
+    case 'qBack': view = qPrev && qPrev !== 'quest' ? qPrev : (trip ? 'trip' : 'home'); render(); window.scrollTo(0, 0); break;
+    case 'qClaim': claimQuest(el.dataset.id); break;
+    case 'qUse': qUse(el.dataset.id); break;
+    case 'lootEquip': lootEquip(); break;
+    case 'lootClose': lootClose(); break;
     case 'biteT': addBite(el.dataset.k, tdId, false); break;
     case 'delBite': if (confirmTap('delBite' + el.dataset.id)) { remove('Bites', el.dataset.id); render(); } break;
     case 'season': view = 'season'; render(); window.scrollTo(0, 0); break;
@@ -3419,6 +3528,8 @@ document.addEventListener('click', async e => {
       break;
   }
 });
+let qPrev = 'home';
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'vIn') { e.preventDefault(); const b = document.querySelector('[data-act="vType"]'); if (b) b.click(); } });
 document.addEventListener('input', e => {
   const ds = e.target.dataset || {};
   if (ds.mt && gq && gq.it) { const x = gq.it[ds.mt], v = +e.target.value; x.pct = v; const lb = document.querySelector(`[data-mtv="${ds.mt}"]`); if (lb) { lb.textContent = v + '%'; lb.style.color = pctCol(v); }
@@ -3447,6 +3558,456 @@ window.addEventListener('offline', updateSync);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) flush(); });
 setInterval(flush, 30000);
 setInterval(() => { const el = $('#elapsed'); if (el) el.textContent = elapsed(curTrip()); }, 30000);
+
+/* ═════════ 🎤 음성 기록 — "38센치 프리리그!" ═════════ */
+const KN_SINO = { 일:1, 이:2, 삼:3, 사:4, 오:5, 육:6, 륙:6, 칠:7, 팔:8, 구:9 };
+const KN_TEN = [['스물', 20], ['스무', 20], ['서른', 30], ['마흔', 40], ['쉰', 50], ['예순', 60], ['열', 10]];
+const KN_ONE = [['하나', 1], ['한', 1], ['둘', 2], ['두', 2], ['셋', 3], ['세', 3], ['넷', 4], ['네', 4], ['다섯', 5], ['여섯', 6], ['일곱', 7], ['여덟', 8], ['아홉', 9]];
+// 한글로 받아적힌 숫자 → 숫자 ("삼십팔" 38, "마흔둘" 42, "서른여덟점오" 38.5)
+function koLen(s){
+  let m = s.match(/([일이삼사오육칠팔구]?)십([일이삼사오육칠팔구]?)/), v = NaN, rest = '';
+  if (m) { v = (m[1] ? KN_SINO[m[1]] : 1) * 10 + (m[2] ? KN_SINO[m[2]] : 0); rest = s.slice(m.index + m[0].length); }
+  else for (const [w, t] of KN_TEN) { const i = s.indexOf(w); if (i < 0) continue;
+    let r = s.slice(i + w.length), u = 0; for (const [uw, uv] of KN_ONE) if (r.startsWith(uw)) { u = uv; r = r.slice(uw.length); break; }
+    v = t + u; rest = r; break; }
+  if (isNaN(v)) return NaN;
+  if (/^(센치|센티|cm)?(점오|점5|반)/.test(rest)) v += .5;
+  return v;
+}
+const RIG_SAY = [[/지그헤드\s*와키|카이젤/, '카이젤'], [/프리/, '프리리그'], [/다운/, '다운샷'], [/텍사스|텍사/, '텍사스'], [/캐롤/, '캐롤라이나'], [/네꼬|네코/, '네꼬'],
+  [/와키/, '와키'], [/지그\s*헤드/, '지그헤드'], [/노\s*싱커/, '노싱커'], [/스플릿/, '스플릿샷'], [/러버/, '러버지그'],
+  [/하드베이트|크랭크|미노|저크|스피너|바이브|탑워터|펜슬|포퍼|채터|버즈/, '하드베이트']];
+const ACT_SAY = [[/셰이킹|쉐이킹|흔들/, '셰이킹'], [/데드/, '데드스티킹'], [/리프트|들었다/, '리프트앤폴'], [/드래깅|끌/, '드래깅'], [/호핑|통통/, '호핑'], [/스위밍|감아/, '스위밍'], [/폴링|떨어지/, '폴링 중 바이트']];
+function parseVoice(raw){
+  const t = String(raw || '').trim(), s = t.replace(/\s+/g, ''), low = s.toLowerCase(), o = { raw: t, kind: '' };
+  if (!s) return o;
+  // 길이: "38센치" → 단위 없는 숫자(무게·lb 제외) → 한글 숫자
+  let m = t.match(/(\d+(?:\.\d+)?)\s*(?:센치|센티|쎈치|cm|㎝|씨엠)/i), len = m ? parseFloat(m[1]) : NaN;
+  if (m && /^\s*(센치|센티|cm)?\s*반/.test(t.slice(m.index + m[0].length))) len += .5;
+  if (isNaN(len)) { const c = [...t.matchAll(/(\d+(?:\.\d+)?)\s*(그램|g\b|파운드|lb|호(?![가-힣])|인치|미터|m\b|분(?![가-힣])|시(?![가-힣]))?/gi)].filter(x => !x[2]).map(x => parseFloat(x[1])).filter(v => v >= 8 && v <= 80); if (c.length) len = c[0]; }
+  if (isNaN(len)) { const k = koLen(s); if (k >= 8 && k <= 80) len = k; }
+  // 리그·액션·루어
+  const ro = opts('리그'), rr = RIG_SAY.find(([re]) => re.test(s));
+  if (rr) o.rig = ro.find(x => x === rr[1]) || ro.find(x => x.startsWith(rr[1].slice(0, 2))) || rr[1];
+  const ar = ACT_SAY.find(([re]) => re.test(s)); if (ar) o.action = opts('액션').find(x => x.startsWith(ar[1].slice(0, 2))) || ar[1];
+  let best = 0;
+  active('Lures').forEach(l => {
+    const keys = [l.name, [l.brand, l.name].filter(Boolean).join(''), String(l.name || '').replace(/[\d.]+\s*(인치|in|g|cm)?/gi, '')]
+      .map(k => String(k || '').replace(/\s+/g, '').toLowerCase()).filter(k => k.length >= 2);
+    keys.forEach(k => { if (low.includes(k) && k.length > best) { best = k.length; o.lure_id = l.lure_id; } });
+  });
+  if (/놓쳤|놓침|놓친|털렸|털림|빠졌|떨궜|떨궈|떨어졌|바렸|바레/.test(s)) o.kind = '놓침';
+  else if (!isNaN(len)) { o.kind = 'catch'; o.len = len; }
+  else if (/입질|툭|톡|건드|찝|쪼/.test(s)) o.kind = '입질';
+  else if (/상황|어때|어떡|코치|기압|조언|뭐\s*던|뭘던|추천/.test(s)) o.kind = 'status';
+  else if (o.rig || o.lure_id) o.kind = 'rig';
+  return o;
+}
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let VC = null;   // { state: 'listen'|'type'|'result', interim, note, p, left, rec }
+function openVoice(){
+  if (!curTrip()) return;
+  VC = { state: 'type', interim: '', note: '', p: null };
+  let ov = $('#voice'); ov.classList.add('show'); vListen();
+}
+function closeVoice(){ if (!VC) return; clearInterval(VC.tick); try { VC.rec && VC.rec.abort(); } catch (e) {} VC = null; const ov = $('#voice'); ov.classList.remove('show'); ov.innerHTML = ''; }
+function vListen(){
+  if (!VC) return;
+  clearInterval(VC.tick); VC.p = null; VC.interim = '';
+  if (!SR) { VC.state = 'type'; VC.note = '이 브라우저는 바로 듣기가 안 돼. 아래 칸 누르고 키보드 🎤로 말해줘!'; drawVoice(); setTimeout(() => { const i = $('#vIn'); if (i) i.focus(); }, 60); return; }
+  const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.maxAlternatives = 3; r.continuous = false;
+  r.onresult = e => {
+    if (!VC) return;
+    const res = e.results[e.results.length - 1];
+    if (!res.isFinal) { VC.interim = res[0].transcript; const el = $('#vHeard'); if (el) el.textContent = VC.interim; return; }
+    const alts = [...res].map(a => a.transcript);
+    vHandle(alts.find(a => parseVoice(a).kind) || alts[0]);
+  };
+  r.onerror = e => { if (!VC) return; VC.state = 'type'; VC.note = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? '마이크 권한이 꺼져 있어… 아래 칸에 키보드 🎤로 말해도 돼' : e.error === 'no-speech' ? '아무 말도 안 들렸어. 🎤 다시 눌러줘' : `못 들었어 (${e.error}). 아래 칸에 써도 돼`; drawVoice(); };
+  r.onend = () => { if (VC && VC.state === 'listen') { VC.state = 'type'; VC.note = VC.note || '🎤 다시 눌러서 말해줘'; drawVoice(); } };
+  VC.rec = r; VC.state = 'listen'; VC.note = ''; drawVoice();
+  try { r.start(); } catch (e) { VC.state = 'type'; VC.note = '마이크를 못 켰어. 아래 칸에 써줘'; drawVoice(); }
+}
+function vHandle(text){
+  if (!VC) return;
+  const p = parseVoice(text);
+  if (!p.kind) { VC.state = 'type'; VC.note = `"${text}" — 무슨 말인지 모르겠어. 예) 38센치 프리리그`; drawVoice(); return; }
+  VC.p = p; VC.state = 'result';
+  if (p.kind === 'status') { drawVoice(); coachAsk(); return; }
+  VC.left = 3; drawVoice();
+  VC.tick = setInterval(() => { if (!VC) return; VC.left--; if (VC.left <= 0) { clearInterval(VC.tick); vCommit(); } else { const b = $('#vLeft'); if (b) b.textContent = VC.left; } }, 1000);
+}
+function vSummary(p){
+  if (p.kind === 'catch') return `🐟 <b>${p.len}cm</b>${p.rig ? ' · ' + esc(p.rig) : ''}${p.lure_id ? ' · ' + esc(lureName(p.lure_id)) : ''}${p.action ? ' · ' + esc(p.action) : ''}`;
+  if (p.kind === '입질' || p.kind === '놓침') return `${p.kind === '놓침' ? '💨' : '💥'} <b>${p.kind}</b> 기록`;
+  if (p.kind === 'rig') return `🪝 지금 채비 → <b>${esc([p.rig, p.lure_id && lureName(p.lure_id)].filter(Boolean).join(' · '))}</b>`;
+  return '💬 덴데 코치에게 물어보는 중';
+}
+function drawVoice(){
+  const ov = $('#voice'); if (!ov || !VC) return;
+  const st = VC.state;
+  ov.innerHTML = `<div class="vbox">
+    <div class="vhead">${img('cat:dende', 4, st === 'listen' ? 'vlisten' : '')}<div class="bubble tail">${st === 'listen' ? '듣고 있어… 말해줘!' : st === 'result' ? (VC.p.kind === 'status' ? '음… 지금 상황은 이래' : '이렇게 기록할게!') : '🎤 누르고 말해줘'}</div></div>
+    ${st === 'listen' ? `<div class="vheard" id="vHeard">${esc(VC.interim || '…')}</div><div class="vwave"><i></i><i></i><i></i><i></i><i></i></div>` : ''}
+    ${st === 'result' ? `<div class="vheard small">"${esc(VC.p.raw)}"</div><div class="vres">${vSummary(VC.p)}</div>
+      ${VC.p.kind === 'status' ? '' : `<div class="vcount">자동 저장 <b id="vLeft">${VC.left}</b></div>
+      <div class="vbtns"><button class="pbtn" data-act="vOk">✓ 지금 저장</button>${VC.p.kind === 'catch' ? '<button class="pbtn ghost" data-act="vEdit">✏ 고쳐서</button>' : ''}<button class="pbtn ghost" data-act="vAgain">↺ 다시</button></div>`}` : ''}
+    ${st === 'type' ? `${VC.note ? `<div class="vnote">${esc(VC.note)}</div>` : ''}<button class="vmic" data-act="vMic">🎤</button>` : ''}
+    <div class="inline vtype"><input class="t" id="vIn" placeholder="또는 여기에: 38 프리리그 / 입질 / 놓침"><button data-act="vType">확인</button></div>
+    <div class="vhint">예) <b>38센치 프리리그</b> · <b>마흔둘 다운샷 셰이킹</b> · <b>입질</b> · <b>놓쳤다</b> · <b>텍사스로 바꿈</b> · <b>지금 어때?</b></div>
+    <button class="pbtn ghost small" data-act="vClose">닫기</button></div>`;
+}
+function vEdit(){
+  const p = VC.p, t = curTrip(); closeVoice(); if (!t) return;
+  cf = catchForm(t); vApply(cf, p); showSheet(vCatch);
+}
+function vApply(f, p){
+  if (p.len) f.length = String(p.len);
+  if (p.rig) f.rig = p.rig;
+  if (p.action) f.action = p.action;
+  if (p.lure_id) { f.lure_id = p.lure_id; const l = byId('Lures', p.lure_id); if (!p.rig && l && l.default_rig) f.rig = l.default_rig; }
+  if (p.rig && f.todaySetups) { const s = f.todaySetups.map(id => byId('Setups', id)).find(s => s && s.default_rig === f.rig), curS = byId('Setups', f.setup_id); if (s && (!curS || curS.default_rig !== f.rig)) f.setup_id = s.setup_id; }
+}
+let undoT;
+function undoBar(label, fn){
+  let el = $('#undo'); el.innerHTML = `<button data-act="undo">↶ ${esc(label)} 취소</button>`; el.classList.add('show'); window.__undo = fn;
+  clearTimeout(undoT); undoT = setTimeout(() => { el.classList.remove('show'); window.__undo = null; }, 6000);
+}
+async function vCommit(){
+  if (!VC || !VC.p) return;
+  const p = VC.p, t = curTrip(); closeVoice(); if (!t) return;
+  if (p.kind === 'catch') {
+    cf = catchForm(t); vApply(cf, p);
+    const id = await saveCatch();
+    speak(`${p.len}센치! ${p.len >= 40 ? '대박이다!' : '기록했어'}`);
+    if (id) undoBar(`${p.len}cm 기록`, () => { remove('Catches', id); render(); say('방금 기록 지웠어', 'dende'); });
+  } else if (p.kind === '입질' || p.kind === '놓침') {
+    const id = addBite(p.kind, t.trip_id, true); speak(p.kind === '입질' ? '입질 기록' : '아깝다, 놓침 기록');
+    if (id) undoBar(p.kind + ' 기록', () => { remove('Bites', id); render(); });
+  } else if (p.kind === 'rig') {
+    const prev = { ...last };
+    if (p.rig) last.rig = p.rig; if (p.lure_id) last.lure_id = p.lure_id;
+    const today = (t.setup_ids || '').split(',').filter(Boolean), s = p.rig && today.map(id => byId('Setups', id)).find(s => s && s.default_rig === p.rig);
+    if (s) last.setup_id = s.setup_id;
+    save(LS.last, last); render();
+    const msg = `지금 채비 ${[p.rig, p.lure_id && lureName(p.lure_id)].filter(Boolean).join(' · ')}로 기억할게!`; say(msg, 'dende'); speak(msg);
+    undoBar('채비 변경', () => { last = prev; save(LS.last, last); render(); });
+  }
+}
+function speak(msg){
+  if (!coachCfg.sound || !window.speechSynthesis) return;
+  try { const u = new SpeechSynthesisUtterance(String(msg).replace(/[^\p{L}\p{N}\s.,!?~·:%-]/gu, '')); u.lang = 'ko-KR'; u.rate = 1.08; u.pitch = 1.25; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+}
+
+/* ═════════ 🐱 덴데 코치 — 출조 중 실시간 코칭 + 기압·바람·비 알림 ═════════ */
+let coachCfg = { on: true, sound: false, push: false, ...load('bl_coach', {}) };
+let CO = load('bl_coachT', null), coWxBusy = false, coLogOpen = false;
+function coState(){ const t = curTrip(); if (!t) return null; if (!CO || CO.trip_id !== t.trip_id) CO = { trip_id: t.trip_id, lastNudge: 0, fired: {}, log: [], wx: null }; return CO; }
+const coSave = () => save('bl_coachT', CO);
+function tripStartMs(t){ const d = new Date((t.date || ymd()) + 'T00:00:00'), [h, m] = (t.start || '00:00').split(':').map(Number); d.setHours(h || 0, m || 0, 0, 0); return d.getTime(); }
+function hmMs(t, s){ if (!s) return 0; const b = tripStartMs(t), d = new Date(b), [h, m] = s.split(':').map(Number); d.setHours(h, m, 0, 0); let v = d.getTime(); if (v < b - 3600e3) v += 864e5; return v; }
+function lastActionMs(t){ return Math.max(tripStartMs(t), ...tripCatches(t.trip_id).map(c => hmMs(t, c.time)), ...tripBites(t.trip_id).map(b => hmMs(t, b.time))); }
+function coSuggest(t){
+  const src = tripSrc(), r = recommend(src), my = myPattern(r, t.trip_id), cur = last.rig || '', today = (t.setup_ids || '').split(',').filter(Boolean);
+  const cands = [], tc = tripCatches(t.trip_id).filter(c => c.rig);
+  if (tc.length) { const top = Object.entries(tc.reduce((m, c) => (m[c.rig] = (m[c.rig] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1])[0]; cands.push({ rig: top[0], why: `오늘은 ${top[0]}로 ${top[1]}수 나왔어` }); }
+  if (my && my.rig && my.rig[1] >= 2) cands.push({ rig: my.rig[0], why: `비슷한 수온에서 넌 ${my.rig[0]}로 ${my.rig[1]}수 잡았어` });
+  r.rigs.forEach(x => cands.push({ rig: x, why: `${(r.why[0] || '').split(' — ')[0]} 조건엔 ${x} 추천` }));
+  const c = cands.find(x => x.rig !== cur) || cands[0] || { rig: '다운샷', why: '' };
+  return { ...c, cur, setup: setupFor(c.rig, today), depth: r.depth, act: r.acts.find(a => a !== last.action) || r.acts[0] };
+}
+function coWxAt(C, ms){
+  const h = C && C.wx && C.wx.h; if (!h || !h.length) return null;
+  let i = h.findIndex(x => x.t > ms); if (i <= 0) return i === 0 ? h[0] : null;
+  const a = h[i - 1], b = h[i], f = (ms - a.t) / (b.t - a.t);
+  return { p: a.p + (b.p - a.p) * f, w: a.w + (b.w - a.w) * f, pp: Math.max(a.pp || 0, f > .5 ? b.pp || 0 : 0), pr: a.pr, code: a.code };
+}
+function coWx(C){
+  const now = Date.now(), n = coWxAt(C, now), p3 = coWxAt(C, now - 3 * 3600e3), f3 = coWxAt(C, now + 3 * 3600e3), f1 = coWxAt(C, now + 3600e3), f2 = coWxAt(C, now + 2 * 3600e3);
+  if (!n) return null;
+  const sun = (C.wx.sun || []).find(x => ymd(new Date(x.rise)) === ymd()) || null;
+  return { now: n, trend: p3 ? n.p - p3.p : null, ahead: f3 ? f3.p - n.p : null, f1, f2, sun };
+}
+async function coFetchWx(t){
+  const C = coState(), sp = byId('Spots', t.spot_id), at = sp && +sp.lat && +sp.lng ? { lat: +sp.lat, lng: +sp.lng } : pos;
+  if (!at || coWxBusy || !navigator.onLine) return;
+  coWxBusy = true;
+  try {
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${at.lat}&longitude=${at.lng}&hourly=surface_pressure,wind_speed_10m,precipitation_probability,precipitation,weather_code&daily=sunrise,sunset&past_days=1&forecast_days=2&wind_speed_unit=ms&timezone=Asia%2FSeoul`;
+    const j = await (await fetch(u)).json(), H = j.hourly;
+    C.wx = { fetched: Date.now(), h: H.time.map((tm, i) => ({ t: new Date(tm).getTime(), p: H.surface_pressure[i], w: H.wind_speed_10m[i], pp: H.precipitation_probability[i], pr: H.precipitation[i], code: H.weather_code[i] })),
+      sun: j.daily.time.map((d, i) => ({ rise: new Date(j.daily.sunrise[i]).getTime(), set: new Date(j.daily.sunset[i]).getTime() })) };
+    coSave(); coachTick(true);
+  } catch (e) {} finally { coWxBusy = false; }
+}
+function coachSay(ico, msg){
+  const C = coState(); if (!C) return;
+  C.log.unshift({ t: hm(), ico, msg }); C.log = C.log.slice(0, 20); coSave();
+  say(`${ico} ${msg}`, 'dende', 6500);
+  try { navigator.vibrate && navigator.vibrate([180, 90, 180]); } catch (e) {}
+  speak(msg);
+  if (document.hidden && coachCfg.push && 'Notification' in window && Notification.permission === 'granted')
+    navigator.serviceWorker && navigator.serviceWorker.getRegistration().then(reg => reg ? reg.showNotification('🐱 덴데 코치', { body: msg, icon: 'icon-192.png', tag: 'coach', renotify: true }) : new Notification('🐱 덴데 코치', { body: msg })).catch(() => {});
+  coRefresh();
+}
+function coRefresh(){ const el = $('#coachCard'); if (el) el.innerHTML = vCoach(); }
+function coachTick(wxOnly){
+  const t = curTrip(); if (!t || !coachCfg.on) return;
+  const C = coState(), now = Date.now();
+  if (!wxOnly && navigator.onLine && (!C.wx || now - C.wx.fetched > 20 * 60e3)) coFetchWx(t);
+  let once = false;   // 한 번(1분)에 하나씩만 — 위에 있을수록 우선
+  const fire = (key, gap, ico, msg) => { if (once || (C.fired[key] && now - C.fired[key] < gap)) return false; once = true; C.fired[key] = now; coSave(); coachSay(ico, msg); return true; };
+  // 1) 날씨: 기압·비·바람·뇌우·골든타임
+  const W = coWx(C);
+  if (W) {
+    if ([W.f1, W.f2].some(x => x && x.code >= 95)) fire('storm', 2 * 3600e3, '⚡', '뇌우 예보! 카본 로드는 피뢰침이야. 천둥 들리면 바로 철수!');
+    if (W.trend != null && W.trend <= -1.5) fire('pdrop', 2 * 3600e3, '📉', `기압이 떨어지는 중이야 (${W.trend.toFixed(1)}hPa/3시간)! 배스 활성 오를 타이밍 — 리액션 채비로 넓게 탐색해봐`);
+    else if (W.trend != null && W.trend >= 2) fire('prise', 3 * 3600e3, '📈', `기압이 오르는 중 (+${W.trend.toFixed(1)}hPa/3시간). 입이 짧아질 수 있어 — 피네스로 천천히`);
+    if (W.ahead != null && W.ahead <= -2 && !(W.trend <= -1.5)) fire('psoon', 3 * 3600e3, '⏳', `1~3시간 안에 기압이 ${Math.abs(W.ahead).toFixed(1)}hPa 떨어질 예보야. 곧 피딩 찬스!`);
+    if (W.f1 && W.f1.pp >= 60 && !(W.now.pr > 0)) fire('rain', 3 * 3600e3, '🌧', `1시간 안에 비 소식 (${Math.round(W.f1.pp)}%). 비 오기 직전이 찬스! 우비도 챙겨`);
+    const wMax = Math.max(W.f1 ? W.f1.w : 0, W.f2 ? W.f2.w : 0);
+    if (wMax >= 7 && W.now.w < 6) fire('wind', 3 * 3600e3, '💨', `바람이 세진대 (최대 ${Math.round(wMax)}m/s). 바람 맞는 쪽 연안을 노리고 싱커는 무겁게`);
+    if (W.sun) {
+      if (now >= W.sun.set - 60 * 60e3 && now < W.sun.set) fire('gset' + ymd(), 12 * 3600e3, '🌅', `해질녘 골든타임 시작! (일몰 ${hm(new Date(W.sun.set))}) 표층·하드베이트 찬스`);
+      if (now >= W.sun.rise && now < W.sun.rise + 60 * 60e3) fire('grise' + ymd(), 12 * 3600e3, '🌄', `해 뜨는 골든타임! (일출 ${hm(new Date(W.sun.rise))}) 연안 얕은 곳부터 빠르게`);
+    }
+  }
+  if (wxOnly) return coRefresh();
+  // 2) 연타: 20분에 2수 이상
+  const cs = tripCatches(t.trip_id), hot = cs.filter(c => now - hmMs(t, c.time) < 20 * 60e3);
+  if (hot.length >= 2) fire('hot', 40 * 60e3, '🔥', `20분에 ${hot.length}수! 무리가 들어왔어. 같은 코스·같은 채비로 계속 쳐!`);
+  // 3) 놓침 연속
+  const miss = tripBites(t.trip_id).filter(b => b.kind === '놓침' && now - hmMs(t, b.time) < 40 * 60e3).length;
+  if (miss >= 2) fire('miss', 40 * 60e3, '🎣', `최근 놓침 ${miss}번! 바늘 끝 확인하고, 훅셋은 한 박자 늦게·라인 팽팽히. 드랙도 체크!`);
+  // 4) 무입질 코칭 (30분마다)
+  const q = Math.floor((now - lastActionMs(t)) / 60000);
+  if (!once && q >= 30 && now - C.lastNudge >= 30 * 60e3) {
+    const s = coSuggest(t), gold = W && W.sun && W.sun.set > now ? Math.round((W.sun.set - 60 * 60e3 - now) / 60000) : null;
+    let msg;
+    if (q < 60) msg = `${q}분째 조용해… ${s.why}. ${s.setup ? s.setup + '로 ' : ''}${s.rig} 던져볼래?${s.cur && s.cur !== s.rig ? ` (지금 ${s.cur})` : ''}`;
+    else if (q < 90) msg = `${q}분 무입질. 자리를 30m만 옮기거나 수심을 ${s.depth || '바꿔서'} 쪽으로! 액션은 ${s.act || '바꿔서'}`;
+    else msg = `${q}분째… 물 한 잔 마시고 리셋!${gold != null && gold > 0 && gold < 240 ? ` 해질녘 골든타임까지 ${gold}분 남았어` : ' 다음 피딩 타임은 꼭 온다'}`;
+    C.lastNudge = now; coSave(); coachSay('🐱', msg);
+  }
+  coRefresh();
+}
+function coachAsk(){
+  const t = curTrip(); if (!t) return;
+  const C = coState(), s = coSuggest(t), W = coWx(C), q = Math.floor((Date.now() - lastActionMs(t)) / 60000);
+  const bits = [`조용한 지 ${q}분`];
+  if (W) { if (W.trend != null) bits.push(`기압 ${W.trend <= -1 ? '하강 ↘' : W.trend >= 1 ? '상승 ↗' : '보합 →'} ${W.trend > 0 ? '+' : ''}${W.trend.toFixed(1)}`); bits.push(`바람 ${Math.round(W.now.w)}m/s`); }
+  const msg = `${bits.join(' · ')}. ${s.why ? s.why + '. ' : ''}추천: ${s.setup ? s.setup + ' ' : ''}${s.rig} · ${s.depth || ''} · ${s.act || ''}`;
+  const C2 = coState(); C2.log.unshift({ t: hm(), ico: '💬', msg }); C2.log = C2.log.slice(0, 20); coSave();
+  say('💬 ' + msg, 'dende', 7000); speak(msg); coRefresh();
+  if (!C.wx || Date.now() - C.wx.fetched > 20 * 60e3) coFetchWx(t);
+}
+function vCoach(){
+  const t = curTrip(), C = coState(); if (!t || !C) return '';
+  const q = Math.floor((Date.now() - lastActionMs(t)) / 60000), W = coWx(C), now = Date.now();
+  const tr = W && W.trend != null ? W.trend : null, top = C.log[0];
+  let gl = '-', gn = '골든타임';
+  if (W && W.sun) { if (now < W.sun.rise + 3600e3 && now > W.sun.rise - 3 * 3600e3) { gl = hm(new Date(W.sun.rise)); gn = '일출'; } else if (now < W.sun.set) { gl = hm(new Date(W.sun.set - 3600e3)); gn = '해질녘 시작'; } }
+  return `<div class="stitle">DENDE COACH <span>${coachCfg.on ? '코칭 중 · 30분 조용하면 말 걸게' : '꺼짐'}</span></div>
+    <div class="cogrid"><div class="${q >= 30 ? 'warn' : ''}"><b>${q}<small>분</small></b><span>조용한 시간</span></div>
+      <div class="${tr != null && tr <= -1.5 ? 'hot' : ''}"><b>${tr == null ? '-' : (tr <= -0.5 ? '↘' : tr >= 0.5 ? '↗' : '→') + Math.abs(tr).toFixed(1)}</b><span>기압 3시간</span></div>
+      <div><b>${W ? Math.round(W.now.w) + '<small>m/s</small>' : '-'}</b><span>바람</span></div>
+      <div><b>${gl}</b><span>${gn}</span></div></div>
+    ${top ? `<div class="recoHead">${img('cat:dende', 2)}<div class="bubble tail"><em class="cot">${esc(top.t)}</em> ${esc(top.ico)} ${esc(top.msg)}</div></div>`
+      : `<div class="small-note">${navigator.onLine ? '날씨 흐름 보는 중… 입질 없으면 덴데가 먼저 말 걸어줄게' : '오프라인 — 기압 알림은 신호 잡히면 다시 볼게'}</div>`}
+    ${C.log.length > 1 ? `<button class="link" data-act="coLog">${coLogOpen ? '▴ 접기' : `▾ 코칭 기록 ${C.log.length}개`}</button>${coLogOpen ? `<div class="colog">${C.log.slice(1, 10).map(l => `<div><em>${esc(l.t)}</em> ${esc(l.ico)} ${esc(l.msg)}</div>`).join('')}</div>` : ''}` : ''}
+    <div class="chips cotg"><button class="chip ${coachCfg.on ? 'on' : ''}" data-act="coTog" data-k="on">🔔 코칭</button><button class="chip ${coachCfg.sound ? 'on' : ''}" data-act="coTog" data-k="sound">🔊 덴데 목소리</button>
+      <button class="chip ${coachCfg.push ? 'on' : ''}" data-act="coTog" data-k="push">📲 화면 꺼져도</button><button class="chip add" data-act="coAsk">💬 지금 어때?</button></div>`;
+}
+async function coTog(k){
+  coachCfg[k] = !coachCfg[k];
+  if (k === 'push' && coachCfg.push) {
+    if (!('Notification' in window)) { coachCfg.push = false; say('이 폰에선 알림을 못 써… (아이폰은 홈 화면 앱에서만 돼)', 'dende'); }
+    else if (Notification.permission !== 'granted') { const r = await Notification.requestPermission().catch(() => 'denied'); if (r !== 'granted') { coachCfg.push = false; say('알림 권한이 꺼져 있어', 'dende'); } }
+  }
+  if (k === 'sound' && coachCfg.sound) setTimeout(() => speak('덴데 목소리 켰어!'), 50);
+  save('bl_coach', coachCfg); coRefresh();
+  if (k === 'on' && coachCfg.on) coachTick();
+}
+setInterval(() => { if (curTrip()) { coachTick(); } }, 60000);
+
+/* ═════════ 📜 퀘스트 보드 + 드롭 ═════════ */
+const LOOT = {
+  'hat:7':      { k:'hat', i:7, name:'고양이 귀 비니', rar:'세트' },
+  'hat:8':      { k:'hat', i:8, name:'황금 왕관', rar:'전설' },
+  'eye:4':      { k:'eye', i:4, name:'황금 편광', rar:'전설' },
+  'boots:9':    { k:'boots', i:9, name:'황금 장화', rar:'전설' },
+  'boots:10':   { k:'boots', i:10, name:'고양이 슬리퍼', rar:'희귀' },
+  'title:dawn': { name:'새벽의 지배자', rar:'희귀', fx:'해 뜨기 전에 물가에 선 자' },
+  'title:bite': { name:'입질 감별사', rar:'마법', fx:'툭과 톡을 구분하는 손끝' },
+  'title:maint':{ name:'정비의 달인', rar:'마법', fx:'장비는 배신하지 않는다' },
+  'title:spot': { name:'포인트 개척자', rar:'희귀', fx:'지도에 없는 길을 걷는 자' },
+  'title:rig':  { name:'리그 마스터', rar:'희귀', fx:'채비 박스가 곧 무기고' },
+  'title:wind': { name:'바람의 앵글러', rar:'마법', fx:'역풍에도 캐스팅' },
+  'title:dende':{ name:'덴데의 집사', rar:'세트', fx:'츄르는 항상 주머니에' },
+  'title:boo':  { name:'부우의 영웅', rar:'세트', fx:'아빠 최고!!' },
+  'title:lunker':{ name:'런커 사냥꾼', rar:'전설', fx:'40업이 길을 비킨다' },
+  'title:king': { name:'물가의 왕', rar:'전설', fx:'100마리의 전설' },
+};
+const accLocked = (k, i) => { const id = k + ':' + i; return !!LOOT[id] && !qs().loot.includes(id); };
+function qs(){
+  const o = rows('Options').find(x => x.option_id === 'QUEST'); let v = load('bl_quest', null);
+  try { if (o && o.value) v = JSON.parse(o.value); } catch (e) {}
+  return { claimed: {}, loot: [], exp: 0, title: '', ...(v || {}) };
+}
+function qsSave(S){ save('bl_quest', S); write('Options', { option_id:'QUEST', group:'퀘스트', value: JSON.stringify(S), order:'0', active:'Y' }); }
+function weekStart(d = new Date()){ const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }
+function qPeriods(){
+  const ws = weekStart(), we = new Date(ws); we.setDate(we.getDate() + 6); const m = ymd().slice(0, 7);
+  return { W: { key: 'W' + ymd(ws), a: ymd(ws), b: ymd(we), label: `${ymd(ws).slice(5).replace('-', '.')} ~ ${ymd(we).slice(5).replace('-', '.')}` },
+           M: { key: 'M' + m, a: m + '-01', b: m + '-31', label: `${+m.slice(5)}월` } };
+}
+function qData(a, b){
+  const trips = rows('Trips').filter(t => (t.date || '') >= a && (t.date || '') <= b), ids = new Set(trips.map(t => t.trip_id));
+  return { trips, cs: rows('Catches').filter(c => ids.has(c.trip_id)), bs: rows('Bites').filter(x => ids.has(x.trip_id)),
+    mt: rows('Maint').filter(x => (x.date || '') >= a && (x.date || '') <= b), ph: rows('Photos').filter(p => ids.has(p.trip_id)) };
+}
+const firstVisit = t => !rows('Trips').some(x => x.spot_id === t.spot_id && (x.trip_id || '') < (t.trip_id || ''));
+const QW = [
+  { id:'cnt', ico:'🐟', name:() => '손맛 보기', desc:() => '이번 주 3수', n:3, prog:D => D.cs.length },
+  { id:'rig', ico:'🪝', name:x => `${x.rig} 수련`, desc:x => `${x.rig}로 1수`, n:1, prog:(D, x) => D.cs.filter(c => c.rig === x.rig).length, loot:'title:rig' },
+  { id:'size', ico:'📏', name:x => `${x.size}cm의 벽`, desc:x => `${x.size}cm 이상 1수`, n:1, prog:(D, x) => D.cs.filter(c => +c.length_cm >= x.size).length },
+  { id:'dawn', ico:'🌅', name:() => '새벽 출근', desc:() => '오전 7시 전에 1수', n:1, prog:D => D.cs.filter(c => c.time && c.time < '07:00').length, loot:'title:dawn' },
+  { id:'bite', ico:'💥', name:() => '입질 기록관', desc:() => '입질·놓침 5번 기록', n:5, prog:D => D.bs.length, loot:'title:bite' },
+  { id:'maint', ico:'🔧', name:() => '장비 정비', desc:() => '정비 기록 1번', n:1, prog:D => D.mt.length, loot:'title:maint' },
+  { id:'shot', ico:'📸', name:() => '오늘의 샷', desc:() => '풍경 또는 셀카 1장', n:1, prog:D => D.ph.filter(p => p.is_cover === 'scene' || p.is_cover === 'selfie').length, loot:'title:boo' },
+  { id:'lure3', ico:'🎨', name:() => '루어 컬렉터', desc:() => '다른 루어 3종으로 조과', n:3, prog:D => new Set(D.cs.map(c => c.lure_id).filter(Boolean)).size },
+];
+const QM = [
+  { id:'trips', ico:'🚗', name:() => '개근상', desc:() => '출조 4회', n:4, prog:D => D.trips.length },
+  { id:'spot', ico:'🗺', name:() => '포인트 개척', desc:() => '처음 가는 포인트에서 출조', n:1, prog:D => D.trips.filter(firstVisit).length, loot:'title:spot' },
+  { id:'rig3', ico:'🪝', name:() => '멀티 리거', desc:() => '리그 3종으로 조과', n:3, prog:D => new Set(D.cs.map(c => c.rig).filter(Boolean)).size, loot:'title:rig' },
+  { id:'big', ico:'🐋', name:() => '40업 사냥', desc:() => '40cm 이상 1수', n:1, prog:D => D.cs.filter(c => +c.length_cm >= 40).length },
+  { id:'land', ico:'🎯', name:() => '명중률', desc:() => '랜딩률 70%↑ (조과+놓침 5번 이상)', n:1, prog:D => { const mi = D.bs.filter(b => b.kind === '놓침').length, n = D.cs.length; return n + mi >= 5 && n / (n + mi) >= .7 ? 1 : 0; } },
+];
+const QA = [
+  { id:'c1', ico:'🐟', name:'첫 수', desc:'첫 조과', n:1, exp:50, prog:D => D.cs.length },
+  { id:'c10', ico:'🐟', name:'손맛 10수', desc:'누적 10수', n:10, exp:100, prog:D => D.cs.length, loot:'title:dende' },
+  { id:'c50', ico:'🐟', name:'50수 돌파', desc:'누적 50수', n:50, exp:200, prog:D => D.cs.length, loot:'boots:10' },
+  { id:'c100', ico:'👑', name:'100수의 전설', desc:'누적 100수', n:100, exp:300, prog:D => D.cs.length, loot:'title:king' },
+  { id:'b40', ico:'🐋', name:'첫 40업', desc:'40cm 이상', n:1, exp:150, prog:D => D.cs.filter(c => +c.length_cm >= 40).length, loot:'title:lunker' },
+  { id:'b50', ico:'🦈', name:'첫 50업', desc:'50cm 이상', n:1, exp:300, prog:D => D.cs.filter(c => +c.length_cm >= 50).length, loot:'hat:8' },
+  { id:'sp3', ico:'🗺', name:'방랑자', desc:'포인트 3곳에서 출조', n:3, exp:100, prog:D => new Set(D.trips.map(t => t.spot_id).filter(Boolean)).size, loot:'hat:7' },
+  { id:'rig5', ico:'🪝', name:'채비 백과', desc:'리그 5종으로 조과', n:5, exp:150, prog:D => new Set(D.cs.map(c => c.rig).filter(Boolean)).size, loot:'eye:4' },
+  { id:'t10', ico:'🚗', name:'출조 10회', desc:'누적 출조 10회', n:10, exp:100, prog:D => D.trips.length },
+  { id:'t30', ico:'🥾', name:'출조 30회', desc:'누적 출조 30회', n:30, exp:250, prog:D => D.trips.length, loot:'boots:9' },
+  { id:'m10', ico:'🔧', name:'장비 장인', desc:'정비 기록 10번', n:10, exp:100, prog:D => D.mt.length, loot:'title:maint' },
+];
+function questList(){
+  const P = qPeriods(), S = qs(), out = [];
+  const mk = (tier, T, ctx, qid, D, exp) => { const p = Math.min(T.n, T.prog(D, ctx) || 0);
+    return { qid, tier, ico: T.ico, name: typeof T.name === 'function' ? T.name(ctx) : T.name, desc: typeof T.desc === 'function' ? T.desc(ctx) : T.desc, n: T.n, p, done: p >= T.n, claimed: !!S.claimed[qid], exp, loot: T.loot }; };
+  // 주간 3개: 손맛 + 시드로 2개 (리그는 덜 써본 것, 사이즈는 내 기록 기준)
+  const r = rng(strHash(P.W.key)), Dw = qData(P.W.a, P.W.b), use = usage('rig');
+  const rigs = opts('리그').filter(x => x !== '하드베이트').sort((a, b) => (use[a] || 0) - (use[b] || 0)).slice(0, 4);
+  const lens = rows('Catches').map(c => +c.length_cm).filter(Boolean).sort((a, b) => a - b);
+  const ctx = { rig: rigs[Math.floor(r() * rigs.length)] || '다운샷', size: Math.min(45, Math.max(30, Math.round((lens.length ? lens[Math.floor(lens.length * .6)] : 30) / 5) * 5)) };
+  const pool = QW.slice(1).map(q => ({ q, k: r() })).sort((a, b) => a.k - b.k).slice(0, 2).map(x => x.q);
+  [QW[0], ...pool].forEach(T => out.push(mk('W', T, ctx, `${P.W.key}:${T.id}${T.id === 'rig' ? ':' + ctx.rig : T.id === 'size' ? ':' + ctx.size : ''}`, Dw, 40)));
+  const r2 = rng(strHash(P.M.key)), Dm = qData(P.M.a, P.M.b);
+  QM.map(q => ({ q, k: r2() })).sort((a, b) => a.k - b.k).slice(0, 2).forEach(({ q: T }) => out.push(mk('M', T, {}, `${P.M.key}:${T.id}`, Dm, 100)));
+  const Da = qData('0000', '9999'); Da.mt = rows('Maint');
+  QA.forEach(T => out.push(mk('A', T, {}, 'A:' + T.id, Da, T.exp)));
+  return out;
+}
+const qReady = () => questList().filter(q => q.done && !q.claimed);
+function rollLoot(q, S){
+  const own = new Set(S.loot), r = rng(strHash(q.qid + ':loot'));
+  if (q.loot && !own.has(q.loot) && (q.tier !== 'W' || r() < .8)) return q.loot;
+  if (q.tier === 'W' && r() > .45) return '';   // 주간은 45% 확률로 드롭
+  const W = { '일반':5, '마법':4, '희귀':3, '세트':2, '전설':1 }, left = Object.keys(LOOT).filter(k => !own.has(k) && (q.tier !== 'W' || LOOT[k].rar !== '전설'));
+  const tot = left.reduce((s, k) => s + W[LOOT[k].rar], 0); let x = r() * tot;
+  for (const k of left) { x -= W[LOOT[k].rar]; if (x <= 0) return k; }
+  return left[0] || '';
+}
+function claimQuest(qid){
+  const q = questList().find(x => x.qid === qid); if (!q || !q.done || q.claimed) return;
+  const S = qs(), drop = rollLoot(q, S), bonus = drop ? 0 : (q.tier === 'W' ? 20 : 50);
+  S.claimed[qid] = ymd(); S.exp = (+S.exp || 0) + q.exp + bonus; if (drop) S.loot = [...S.loot, drop];
+  qsSave(S); showLoot(q, drop, q.exp + bonus);
+}
+function lootIcon(id, sc){
+  const L = LOOT[id]; if (!L) return '';
+  if (L.k) return accImg(L.k, L.i, sc, myChar());
+  return `<span class="scroll" style="--rc:${RARITY[L.rar]};font-size:${sc * 9}px">📜</span>`;
+}
+let lootCur = '';
+function showLoot(q, drop, exp){
+  lootCur = drop; const L = LOOT[drop], col = L ? RARITY[L.rar] : '#f7b731', ov = $('#loot');
+  const fx = L ? (L.k ? ACC[L.k].meta[L.i][1] : L.fx) : '';
+  ov.style.setProperty('--rc', col);
+  ov.innerHTML = `<div class="lbeam"></div><div class="lglow"></div>
+    <div class="lq">${esc(q.ico)} 퀘스트 완료 — ${esc(q.name)}</div>
+    <div class="ldrop">${L ? lootIcon(drop, 6) : `<span class="chest">🎁</span>`}</div>
+    ${L ? `<div class="lname">${esc(L.name)}</div><div class="lsub">${esc(L.rar)} ${L.k ? '악세사리' : '칭호'}${fx ? ` · <span>${esc(fx)}</span>` : ''}</div>` : `<div class="lname" style="color:#f7b731">보물 상자</div><div class="lsub">이번엔 아이템 없음… 보너스 경험치!</div>`}
+    <div class="lexp pf">+${exp} EXP</div>
+    <div class="lbtns">${L ? `<button class="pbtn" data-act="lootEquip">${L.k ? '바로 장착' : '칭호 달기'}</button>` : ''}<button class="pbtn ghost" data-act="lootClose">줍기</button></div>`;
+  ov.classList.add('show');
+  for (let i = 0; i < 18; i++) { const s = document.createElement('i'); s.className = 'lspark'; const a = Math.random() * Math.PI * 2, d = 60 + Math.random() * 110; s.style.cssText = `--sx:${Math.cos(a) * d}px;--sy:${Math.sin(a) * d - 40}px;animation-delay:${.55 + Math.random() * .3}s`; ov.appendChild(s); }
+  try { navigator.vibrate && navigator.vibrate([60, 40, 160]); } catch (e) {}
+}
+function lootEquip(){
+  const L = LOOT[lootCur]; if (!L) return lootClose();
+  if (L.k) { const c = { ...myChar(), [L.k]: L.i }; save('bl_char', c); write('Options', { option_id:'CHAR', group:'캐릭터', value: JSON.stringify(c), order:'0', active:'Y' }); say(`${L.name} 장착! 멋있어!!`, 'boo'); }
+  else { const S = qs(); S.title = lootCur; qsSave(S); say(`이제부터 '${L.name}'!`, 'boo'); }
+  lootClose();
+}
+function lootClose(){ const ov = $('#loot'); ov.classList.remove('show'); ov.innerHTML = ''; lootCur = ''; render(); }
+function qRow(q){
+  const pct = Math.round(q.p / q.n * 100), L = q.loot && LOOT[q.loot];
+  return `<div class="qrow ${q.claimed ? 'cl' : q.done ? 'dn' : ''}"><div class="qi">${esc(q.ico)}</div>
+    <div class="qm"><b>${esc(q.name)}</b><span>${esc(q.desc)}</span><div class="qbar"><i style="width:${pct}%"></i><em>${q.p}/${q.n}</em></div>
+      <small>+${q.exp} EXP${L ? ` · 🎁 <span style="color:${RARITY[L.rar]}">${esc(L.name)}</span>` : q.tier === 'A' ? '' : ' · 🎁 랜덤 드롭'}</small></div>
+    ${q.claimed ? '<div class="qok">✓</div>' : q.done ? `<button class="qclaim" data-act="qClaim" data-id="${esc(q.qid)}">보상<br>받기!</button>` : ''}</div>`;
+}
+function vQuestCard(){
+  const qs_ = questList(), w = qs_.filter(q => q.tier === 'W'), ready = qs_.filter(q => q.done && !q.claimed).length, P = qPeriods();
+  return `<div class="stitle">QUEST <span>이번 주 ${P.W.label}</span></div>
+    ${w.map(qRow).join('')}
+    <button class="pbtn small dark qboard" data-act="tabQuest">📜 퀘스트 보드${ready ? ` <i class="qnum">${ready}</i>` : ''}</button>`;
+}
+function vQuest(){
+  const all = questList(), P = qPeriods(), S = qs(), PL = playerLv(), me = myChar(), ready = all.filter(q => q.done && !q.claimed).length;
+  const sec = (title, sub, list) => `<div class="card"><div class="stitle">${title} <span>${sub}</span></div>${list.map(qRow).join('')}</div>`;
+  const ach = all.filter(q => q.tier === 'A').sort((a, b) => (b.done && !b.claimed) - (a.done && !a.claimed) || a.claimed - b.claimed || b.p / b.n - a.p / a.n);
+  return `<div class="head"><div><h1 class="t">퀘스트 보드</h1><div class="sub pf" style="font-size:8px;margin-top:6px">QUEST BOARD</div></div><button class="x" data-act="qBack">✕</button></div>
+    <button class="pbar" data-act="openChar">${meImg(2)}<div><b>${esc(me.name || '이름 없는 앵글러')}</b><small>LV.${PL.lv} · ${esc(PL.title)}</small>
+      <div class="expbar"><i style="width:${PL.pct}%"></i></div><small class="pf" style="font-size:7px">EXP ${PL.exp} · 퀘스트 보너스 ${+S.exp || 0}</small></div></button>
+    ${ready ? `<div class="card qready">${img('cat:boo', 3)}<div class="bubble tail" style="position:relative;opacity:1;white-space:normal;margin-bottom:18px">보상 받을 퀘스트가 ${ready}개 있어! 빨리 눌러봐!!</div></div>` : ''}
+    ${sec('WEEKLY', P.W.label + ' · 월요일마다 새로', all.filter(q => q.tier === 'W'))}
+    ${sec('MONTHLY', P.M.label, all.filter(q => q.tier === 'M'))}
+    ${sec('ACHIEVEMENT', '한 번만 · 큰 보상', ach)}
+    <div class="card"><div class="stitle">COLLECTION <span>${S.loot.length}/${Object.keys(LOOT).length} · 탭해서 장착</span></div>
+      <div class="lgrid">${Object.entries(LOOT).map(([id, L]) => { const own = S.loot.includes(id), on = L.k ? +me[L.k] === L.i : S.title === id;
+        return own ? `<button class="lcell ${on ? 'on' : ''}" style="--rc:${RARITY[L.rar]}" data-act="qUse" data-id="${esc(id)}">${lootIcon(id, 3)}<span>${esc(L.name)}</span>${on ? '<i class="eq">E</i>' : ''}</button>`
+          : `<div class="lcell lock"><b>?</b><span>${esc(L.rar)}</span></div>`; }).join('')}</div>
+      ${S.title ? '<button class="link" data-act="qUse" data-id="">칭호 떼기 (레벨 칭호로)</button>' : ''}</div>`;
+}
+function qUse(id){
+  const S = qs();
+  if (!id) { S.title = ''; qsSave(S); render(); return say('레벨 칭호로 돌아왔어', 'boo'); }
+  const L = LOOT[id]; if (!L || !S.loot.includes(id)) return;
+  if (L.k) { const c = { ...myChar() }; c[L.k] = +c[L.k] === L.i ? 0 : L.i; save('bl_char', c); write('Options', { option_id:'CHAR', group:'캐릭터', value: JSON.stringify(c), order:'0', active:'Y' }); say(+c[L.k] === L.i ? `${L.name} 장착!` : `${L.name} 벗었어`, 'boo'); }
+  else { S.title = S.title === id ? '' : id; qsSave(S); say(S.title ? `칭호: ${L.name}` : '칭호 뗐어', 'boo'); }
+  render();
+}
+// 새로 깬 퀘스트 알림 (렌더 후 한 번씩)
+let qCheckT;
+function questCheck(){
+  clearTimeout(qCheckT);
+  qCheckT = setTimeout(() => {
+    if (view === 'loading' || !rows('Trips')) return;
+    const seen = new Set(load('bl_qnote', [])), fresh = qReady().filter(q => !seen.has(q.qid));
+    if (!fresh.length) return;
+    fresh.forEach(q => seen.add(q.qid)); save('bl_qnote', [...seen].slice(-300));
+    say(fresh.length === 1 ? `📜 퀘스트 완료! '${fresh[0].name}' — 퀘스트 보드에서 보상 받아!` : `📜 퀘스트 ${fresh.length}개 완료! 보상 받으러 가자!`, 'boo', 4500);
+    const b = document.querySelector('.qboard'); if (b) b.outerHTML = `<button class="pbtn small dark qboard" data-act="tabQuest">📜 퀘스트 보드 <i class="qnum">${qReady().length}</i></button>`;
+  }, 2800);
+}
 
 /* ═════════ 별 배경 ═════════ */
 (function(){
