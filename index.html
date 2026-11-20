@@ -641,6 +641,7 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .lbtns{z-index:1;display:flex;gap:8px;width:min(340px,86vw);margin-top:8px}.lbtns .pbtn{margin:0}
 .lspark{position:absolute;left:50%;top:50%;width:6px;height:6px;background:var(--rc);box-shadow:0 0 8px var(--rc);opacity:0;animation:lspark 1s forwards}
 @keyframes lspark{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
+.vrange{width:100%;accent-color:#f7b731;margin:4px 0 2px}
 </style>
 </head>
 <body>
@@ -3490,6 +3491,11 @@ document.addEventListener('click', async e => {
     case 'undo': { const fn = window.__undo; window.__undo = null; $('#undo').classList.remove('show'); if (fn) fn(); break; }
     case 'coTog': coTog(el.dataset.k); break;
     case 'coAsk': coachAsk(); break;
+    case 'vcOpen': showSheet(vVoice); break;
+    case 'vcPreset': { const P = VPRESET[el.dataset.k]; voiceCfg.preset = el.dataset.k; voiceCfg.pitch = P.pitch; voiceCfg.rate = P.rate; vcSave(); rerenderSheet(); speak('안녕! 나 덴데야. 오늘도 런커 잡자!', true); break; }
+    case 'vcTog': voiceCfg[el.dataset.k] = !voiceCfg[el.dataset.k]; vcSave(); rerenderSheet(); break;
+    case 'vcVoice': voiceCfg.voice = el.dataset.v; vcSave(); rerenderSheet(); speak('이 목소리 어때? 귀여워?', true); break;
+    case 'vcTest': speak('38센치! 대박이다! 기압이 떨어지고 있어, 지금이 찬스야!', true); break;
     case 'coLog': coLogOpen = !coLogOpen; coRefresh(); break;
     case 'tabQuest': if (view !== 'quest') qPrev = view; hideSheet(); view = 'quest'; render(); window.scrollTo(0, 0); break;
     case 'qBack': view = qPrev && qPrev !== 'quest' ? qPrev : (trip ? 'trip' : 'home'); render(); window.scrollTo(0, 0); break;
@@ -3535,11 +3541,13 @@ document.addEventListener('input', e => {
   if (ds.mt && gq && gq.it) { const x = gq.it[ds.mt], v = +e.target.value; x.pct = v; const lb = document.querySelector(`[data-mtv="${ds.mt}"]`); if (lb) { lb.textContent = v + '%'; lb.style.color = pctCol(v); }
     const im = document.querySelector(`[data-mtimg="${ds.mt}"]`), st = byId('Setups', ds.mt); if (im) im.src = spr(`ispool:${Math.round(v / 100 * 7)}:${iconCol(byId('Tackle', st.line_id)).slice(1)}`, 3); return; }
   if (ds.mtm && gq && gq.it) { gq.it[ds.mtm].memo = e.target.value; return; }
+  if (ds.vc) { voiceCfg[ds.vc] = +e.target.value; voiceCfg.preset = ''; vcSave(); const lb = $(ds.vc === 'pitch' ? '#vcPv' : '#vcRv'); if (lb) lb.textContent = (+e.target.value).toFixed(2); return; }
   const p = ds.in; if (!p) return;
   const [f, k] = p.split('.'); forms()[f][k] = e.target.value;
   if (p === 'sf.water_temp') { const rc = $('#recoCard'); if (rc) rc.innerHTML = vReco(startSrc()); }
 });
 document.addEventListener('change', async e => {
+  if (e.target.dataset && e.target.dataset.vc) return speak('이 정도 어때? 귀여워?', true);
   if (e.target.dataset && e.target.dataset.kind && e.target.files[0]) { const f = e.target.files[0], d = e.target.dataset; e.target.value = ''; return setKindPhoto(d.trip, d.kind, f); }
   if (e.target.id === 'bulkIn' && e.target.files.length) { const fs = [...e.target.files]; e.target.value = ''; return onBulk(fs); }
   if (!['photoIn', 'measIn'].includes(e.target.id) || !e.target.files[0]) return;
@@ -3694,10 +3702,55 @@ async function vCommit(){
     undoBar('채비 변경', () => { last = prev; save(LS.last, last); render(); });
   }
 }
-function speak(msg){
-  if (!coachCfg.sound || !window.speechSynthesis) return;
-  try { const u = new SpeechSynthesisUtterance(String(msg).replace(/[^\p{L}\p{N}\s.,!?~·:%-]/gu, '')); u.lang = 'ko-KR'; u.rate = 1.08; u.pitch = 1.25; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+/* 덴데 목소리 — 폰 음성 엔진 + 높은 톤·여성 음성·효과음·말끝 '냥' */
+const VPRESET = { cute: { label:'🎀 귀요미', pitch:1.8, rate:1.12 }, hero: { label:'✨ 애니 히로인', pitch:1.5, rate:1.05 }, calm: { label:'🍵 차분한 덴데', pitch:1.15, rate:.98 } };
+let voiceCfg = { preset:'cute', pitch:1.8, rate:1.12, voice:'', nya:true, chime:true, ...load('bl_voice', {}) };
+const FEM_V = /yuna|유나|sora|sunhi|선희|heami|해미|seoyeon|서연|jimin|지민|nara|나라|google\s*한국|female|여성/i, MALE_V = /injoon|인준|minjun|민준|male|남성/i;
+const koVoices = () => (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^ko/i.test(v.lang));
+function pickVoice(){
+  const vs = koVoices(); if (!vs.length) return null;
+  return vs.find(v => v.name === voiceCfg.voice) || vs.find(v => FEM_V.test(v.name) && !MALE_V.test(v.name)) || vs.find(v => !MALE_V.test(v.name)) || vs[0];
 }
+if (window.speechSynthesis) speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', () => { if (sheetFn === vVoice) rerenderSheet(); });
+let actx;
+function chime(){
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const t0 = actx.currentTime;
+    [[1318.5, 0], [1760, .09], [2093, .18]].forEach(([f, d]) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0 + d); g.gain.linearRampToValueAtTime(.07, t0 + d + .01); g.gain.exponentialRampToValueAtTime(.001, t0 + d + .16); o.connect(g).connect(actx.destination); o.start(t0 + d); o.stop(t0 + d + .18); });
+  } catch (e) {}
+}
+// 읽기 좋게: 단위·기호를 말로
+function sayable(msg){
+  let t = String(msg).replace(/hPa\/3시간/g, '헥토파스칼, 3시간 동안').replace(/hPa/g, '헥토파스칼').replace(/(\d)m\/s/g, '$1미터').replace(/(\d)\s*cm/gi, '$1센치')
+    .replace(/↘/g, '내려가는 중 ').replace(/↗/g, '올라가는 중 ').replace(/→/g, ' ').replace(/·/g, ', ').replace(/—/g, ', ');
+  t = t.replace(/[^\p{L}\p{N}\s.,!?~:%+-]/gu, '').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+  if (voiceCfg.nya) t = t.replace(/[.!?~]*$/, '') + ' 냥!';
+  return t;
+}
+function speak(msg, force){
+  if ((!coachCfg.sound && !force) || !window.speechSynthesis) return;
+  try {
+    const u = new SpeechSynthesisUtterance(sayable(msg)), v = pickVoice();
+    u.lang = 'ko-KR'; if (v) u.voice = v; u.pitch = Math.min(2, voiceCfg.pitch); u.rate = voiceCfg.rate; u.volume = 1;
+    speechSynthesis.cancel();
+    if (voiceCfg.chime) { chime(); setTimeout(() => speechSynthesis.speak(u), 330); } else speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function vVoice(){
+  const vs = koVoices(), cur = pickVoice();
+  return `<div class="shead"><div><h1 class="t">덴데 목소리</h1><div class="sub pf" style="font-size:8px;margin-top:6px">VOICE</div></div><button class="x" data-act="closeSheet">✕</button></div>
+    <div class="recoHead">${img('cat:dende', 3)}<div class="bubble tail">안녕! 나 덴데야~ 오늘도 런커 잡자!</div></div>
+    <label class="f">느낌</label><div class="chips">${Object.entries(VPRESET).map(([k, P]) => `<button class="chip ${voiceCfg.preset === k ? 'on' : ''}" data-act="vcPreset" data-k="${k}">${P.label}</button>`).join('')}</div>
+    <label class="f">톤 높이 <b id="vcPv">${voiceCfg.pitch.toFixed(2)}</b></label><input type="range" class="vrange" min="0.8" max="2" step="0.05" value="${voiceCfg.pitch}" data-vc="pitch">
+    <label class="f">말 빠르기 <b id="vcRv">${voiceCfg.rate.toFixed(2)}</b></label><input type="range" class="vrange" min="0.8" max="1.4" step="0.02" value="${voiceCfg.rate}" data-vc="rate">
+    <label class="f">말투</label><div class="chips"><button class="chip ${voiceCfg.nya ? 'on' : ''}" data-act="vcTog" data-k="nya">🐾 말끝에 '냥!'</button><button class="chip ${voiceCfg.chime ? 'on' : ''}" data-act="vcTog" data-k="chime">🔔 띠링 효과음</button></div>
+    <label class="f">목소리 (폰에 있는 한국어 음성)</label>
+    ${vs.length ? `<div class="chips">${vs.map(v => `<button class="chip ${cur && cur.name === v.name ? 'on' : ''}" data-act="vcVoice" data-v="${esc(v.name)}">${FEM_V.test(v.name) && !MALE_V.test(v.name) ? '👧 ' : ''}${esc(v.name.replace(/\s*\(.*\)$/, ''))}</button>`).join('')}</div>`
+      : '<div class="small-note">이 폰에서 한국어 음성을 아직 못 찾았어. 들어보기를 한 번 누르면 나타날 수도 있어</div>'}
+    <div class="small-note" style="margin-top:8px">폰마다 들어 있는 음성이 달라. 여자 목소리(👧)에 톤을 높이면 제일 귀여워! 아이폰은 설정의 '손쉬운 사용' 음성 메뉴에서 한국어 '유나(향상됨)'을 내려받으면 더 자연스러워져</div>
+    <div class="saveBar"><button class="pbtn" data-act="vcTest">▶ 들어보기</button></div>`;
+}
+function vcSave(){ save('bl_voice', voiceCfg); }
 
 /* ═════════ 🐱 덴데 코치 — 출조 중 실시간 코칭 + 기압·바람·비 알림 ═════════ */
 let coachCfg = { on: true, sound: false, push: false, ...load('bl_coach', {}) };
@@ -3815,7 +3868,7 @@ function vCoach(){
     ${top ? `<div class="recoHead">${img('cat:dende', 2)}<div class="bubble tail"><em class="cot">${esc(top.t)}</em> ${esc(top.ico)} ${esc(top.msg)}</div></div>`
       : `<div class="small-note">${navigator.onLine ? '날씨 흐름 보는 중… 입질 없으면 덴데가 먼저 말 걸어줄게' : '오프라인 — 기압 알림은 신호 잡히면 다시 볼게'}</div>`}
     ${C.log.length > 1 ? `<button class="link" data-act="coLog">${coLogOpen ? '▴ 접기' : `▾ 코칭 기록 ${C.log.length}개`}</button>${coLogOpen ? `<div class="colog">${C.log.slice(1, 10).map(l => `<div><em>${esc(l.t)}</em> ${esc(l.ico)} ${esc(l.msg)}</div>`).join('')}</div>` : ''}` : ''}
-    <div class="chips cotg"><button class="chip ${coachCfg.on ? 'on' : ''}" data-act="coTog" data-k="on">🔔 코칭</button><button class="chip ${coachCfg.sound ? 'on' : ''}" data-act="coTog" data-k="sound">🔊 덴데 목소리</button>
+    <div class="chips cotg"><button class="chip ${coachCfg.on ? 'on' : ''}" data-act="coTog" data-k="on">🔔 코칭</button><button class="chip ${coachCfg.sound ? 'on' : ''}" data-act="coTog" data-k="sound">🔊 덴데 목소리</button>${coachCfg.sound ? '<button class="chip add" data-act="vcOpen">🎀 목소리</button>' : ''}
       <button class="chip ${coachCfg.push ? 'on' : ''}" data-act="coTog" data-k="push">📲 화면 꺼져도</button><button class="chip add" data-act="coAsk">💬 지금 어때?</button></div>`;
 }
 async function coTog(k){
@@ -3824,7 +3877,7 @@ async function coTog(k){
     if (!('Notification' in window)) { coachCfg.push = false; say('이 폰에선 알림을 못 써… (아이폰은 홈 화면 앱에서만 돼)', 'dende'); }
     else if (Notification.permission !== 'granted') { const r = await Notification.requestPermission().catch(() => 'denied'); if (r !== 'granted') { coachCfg.push = false; say('알림 권한이 꺼져 있어', 'dende'); } }
   }
-  if (k === 'sound' && coachCfg.sound) setTimeout(() => speak('덴데 목소리 켰어!'), 50);
+  if (k === 'sound' && coachCfg.sound) setTimeout(() => speak('덴데 목소리 켰어! 잘 부탁해'), 50);
   save('bl_coach', coachCfg); coRefresh();
   if (k === 'on' && coachCfg.on) coachTick();
 }
