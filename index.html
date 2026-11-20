@@ -675,6 +675,7 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 /* 🌫 안개 */
 #fog{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;image-rendering:pixelated;z-index:400;transition:opacity .25s}#fog.dim{opacity:.2!important}
 .fogNote{margin-top:6px;display:inline-block;font-size:12px;color:#c8d0ff;background:rgba(9,11,28,.85);border:1px solid #3a4280;padding:5px 10px}.fogNote b{color:#fff}
+.chip.cobtn{background:#123a5a;color:#bff3ff;box-shadow:inset 0 0 0 2px #3dd9ff}.chip.cobtn.pink{background:#4a1a3c;color:#ffc4ea;box-shadow:inset 0 0 0 2px #ff7ac8}
 </style>
 </head>
 <body>
@@ -3837,6 +3838,31 @@ async function vCommit(){
     undoBar('장비 변경', () => { last = prev; save(LS.last, last); render(); });
   }
 }
+/* 덴데 목소리 — 폰 음성 엔진 + 높은 톤·여성 음성·효과음·말끝 '냥' */
+const VPRESET = { cute: { label:'🎀 귀요미', pitch:1.8, rate:1.12 }, hero: { label:'✨ 애니 히로인', pitch:1.5, rate:1.05 }, calm: { label:'🍵 차분한 덴데', pitch:1.15, rate:.98 } };
+let voiceCfg = { preset:'cute', pitch:1.8, rate:1.12, voice:'', nya:true, chime:true, ...load('bl_voice', {}) };
+const FEM_V = /yuna|유나|sora|sunhi|선희|heami|해미|seoyeon|서연|jimin|지민|nara|나라|google\s*한국|female|여성/i, MALE_V = /injoon|인준|minjun|민준|male|남성/i;
+const koVoices = () => (window.speechSynthesis ? speechSynthesis.getVoices() : []).filter(v => /^ko/i.test(v.lang));
+function pickVoice(){
+  const vs = koVoices(); if (!vs.length) return null;
+  return vs.find(v => v.name === voiceCfg.voice) || vs.find(v => FEM_V.test(v.name) && !MALE_V.test(v.name)) || vs.find(v => !MALE_V.test(v.name)) || vs[0];
+}
+if (window.speechSynthesis) speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', () => { if (sheetFn === vVoice) rerenderSheet(); });
+let actx;
+function chime(){
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const t0 = actx.currentTime;
+    [[1318.5, 0], [1760, .09], [2093, .18]].forEach(([f, d]) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(0, t0 + d); g.gain.linearRampToValueAtTime(.07, t0 + d + .01); g.gain.exponentialRampToValueAtTime(.001, t0 + d + .16); o.connect(g).connect(actx.destination); o.start(t0 + d); o.stop(t0 + d + .18); });
+  } catch (e) {}
+}
+// 읽기 좋게: 단위·기호를 말로
+function sayable(msg){
+  let t = String(msg).replace(/hPa\/3시간/g, '헥토파스칼, 3시간 동안').replace(/hPa/g, '헥토파스칼').replace(/(\d)m\/s/g, '$1미터').replace(/(\d)\s*cm/gi, '$1센치')
+    .replace(/↘/g, '내려가는 중 ').replace(/↗/g, '올라가는 중 ').replace(/→/g, ' ').replace(/·/g, ', ').replace(/—/g, ', ');
+  t = t.replace(/[^\p{L}\p{N}\s.,!?~:%+-]/gu, '').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+  if (voiceCfg.nya) t = t.replace(/[.!?~]*$/, '') + ' 냥!';
+  return t;
+}
 function speak(msg, force){
   if ((!coachCfg.sound && !force) || !window.speechSynthesis) return;
   try {
@@ -3978,8 +4004,8 @@ function vCoach(){
     ${top ? `<div class="recoHead">${img('cat:dende', 2)}<div class="bubble tail"><em class="cot">${esc(top.t)}</em> ${esc(top.ico)} ${esc(top.msg)}</div></div>`
       : `<div class="small-note">${navigator.onLine ? '날씨 흐름 보는 중… 입질 없으면 덴데가 먼저 말 걸어줄게' : '오프라인 — 기압 알림은 신호 잡히면 다시 볼게'}</div>`}
     ${C.log.length > 1 ? `<button class="link" data-act="coLog">${coLogOpen ? '▴ 접기' : `▾ 코칭 기록 ${C.log.length}개`}</button>${coLogOpen ? `<div class="colog">${C.log.slice(1, 10).map(l => `<div><em>${esc(l.t)}</em> ${esc(l.ico)} ${esc(l.msg)}</div>`).join('')}</div>` : ''}` : ''}
-    <div class="chips cotg"><button class="chip ${coachCfg.on ? 'on' : ''}" data-act="coTog" data-k="on">🔔 코칭</button><button class="chip ${coachCfg.sound ? 'on' : ''}" data-act="coTog" data-k="sound">🔊 덴데 목소리</button>${coachCfg.sound ? '<button class="chip add" data-act="vcOpen">🎀 목소리</button>' : ''}
-      <button class="chip ${coachCfg.push ? 'on' : ''}" data-act="coTog" data-k="push">📲 화면 꺼져도</button><button class="chip add" data-act="coAsk">💬 지금 어때?</button></div>`;
+    <div class="chips cotg"><button class="chip ${coachCfg.on ? 'on' : ''}" data-act="coTog" data-k="on">🔔 코칭</button><button class="chip ${coachCfg.sound ? 'on' : ''}" data-act="coTog" data-k="sound">🔊 덴데 목소리</button>${coachCfg.sound ? '<button class="chip cobtn pink" data-act="vcOpen">🎀 목소리 설정</button>' : ''}
+      <button class="chip ${coachCfg.push ? 'on' : ''}" data-act="coTog" data-k="push">📲 화면 꺼져도</button><button class="chip cobtn" data-act="coAsk">💬 지금 어때?</button></div>`;
 }
 async function coTog(k){
   coachCfg[k] = !coachCfg[k];
