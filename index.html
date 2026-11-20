@@ -566,6 +566,14 @@ footer{text-align:center;padding:26px 0 8px;font-family:'Press Start 2P',monospa
 .mbtn.ghost{background:transparent;border-color:#4a4a6a;color:#c8c8d8}
 #measure .btnrow{display:grid;grid-template-columns:.8fr 1fr 1.3fr;gap:8px}#measure .btnrow .pbtn{margin:0;font-size:14px;padding:12px 6px}
 #mAutoBtn:disabled{opacity:.5}
+.mrefbtn{font-family:'Galmuri11',sans-serif;font-size:13px;color:#3dd9ff;background:#16213e;border:2px solid #3dd9ff;padding:6px 10px}
+.mrefbtn b{font-family:'Press Start 2P',monospace;font-size:11px;margin:0 2px}
+.mrefed{background:#16213e;border:2px solid #2a3a66;padding:10px;margin-bottom:10px}
+.mrefed label{display:block;font-size:12px;color:#a0a0b8;margin-bottom:4px}
+.mrefed textarea{width:100%;box-sizing:border-box;min-height:76px;line-height:1.45;background:#0a0a14;border:1px solid #3a4a7a;color:#e8e8f0;font-size:13px;padding:6px;resize:none}
+.mrefrow{display:flex;align-items:center;gap:6px;margin-top:8px}.mrefrow label{margin:0;white-space:nowrap}.mrefrow span{color:#a0a0b8}
+.mrefrow input{width:70px;background:#0a0a14;border:2px solid #3dd9ff;color:#3dd9ff;font-size:15px;padding:4px 6px;text-align:right}
+.mrefrow .pbtn{margin:0 0 0 auto;width:auto;padding:8px 18px}
 </style>
 </head>
 <body>
@@ -1370,7 +1378,7 @@ function vCatch(){
   <div class="pad">${['1','2','3','4','5','6','7','8','9','.','0','⌫'].map(k => `<button data-key="${k}">${k}</button>`).join('')}</div>
   <div class="measrow"><label class="mbtn">📏 사진으로 재기<input type="file" accept="image/*" capture="environment" id="measIn" hidden></label>
     ${cf.photo ? '<button class="mbtn ghost" data-act="measPhoto">이 사진으로 재기</button>' : ''}</div>
-  <div class="small-note" style="margin-top:6px">10cm 물체를 배스 몸에 바짝 붙여서 같이 찍으면 🤖 자동으로 재줘</div>
+  <div class="small-note" style="margin-top:6px">기준 자(${refObj().cm}cm)를 배스 몸에 바짝 붙여서 같이 찍으면 🤖 자동으로 재줘</div>
   ${cf.live ? '' : `<label class="f">잡은 시간</label><input class="t" type="time" value="${esc(cf.time || '')}" data-in="cf.time">
   <label class="f">잡은 자리</label><div class="locrow"><span>${+cf.lat ? `📍 ${(+cf.lat).toFixed(5)}, ${(+cf.lng).toFixed(5)}` : '아직 없음 · 사진에 GPS가 있으면 자동'}</span><button class="chip add" data-act="pickLoc">${+cf.lat ? '다시 찍기' : '📍 지도에서 찍기'}</button></div>`}
   <label class="f">세팅</label>${loadoutPicker('cf', 'setup_id', setupIds.map(id => byId('Setups', id)).filter(Boolean), false, true)}
@@ -2972,23 +2980,35 @@ function charSave(){
   hideSheet(); render(); say(`${c.name || '앵글러'}, 반가워! 같이 런커 잡자!`, 'boo');
 }
 
-/* ═════════ 사진으로 길이 재기 — 10cm 기준 물체와 비율 계산 ═════════ */
+/* ═════════ 사진으로 길이 재기 — 기준 물체(내 자)와 비율 계산 ═════════ */
+// 내 기준 물체: 설명 + 끝에서 끝까지 실제 길이 (AI에게도 전달). 기본값 = 사용자의 노란 아크릴 자 키링 8.5cm
+const REF_DEF = { desc:'노란색 투명 아크릴 자 키링 — 주황색 눈금(0~7cm)과 크림색 강아지 캐릭터 그림. 금속 고리·체인은 빼고 아크릴 판 끝에서 끝까지', cm: 8.5 };
+function refObj(){
+  const o = rows('Options').find(x => x.option_id === 'REFOBJ');
+  try { return { ...REF_DEF, ...load('bl_refobj', {}), ...(o ? JSON.parse(o.value) : {}) }; } catch (e) { return { ...REF_DEF }; }
+}
+function saveRefObj(r){
+  save('bl_refobj', r);
+  write('Options', { option_id:'REFOBJ', group:'측정', value: JSON.stringify(r), order:'0', active:'Y' });
+}
 let MS = null;   // { img, pts:[{x,y}] (이미지 좌표), drag, scale, ox, oy }
 function openMeasure(src, auto = true){
   const im = new Image();
   im.onload = () => {
-    MS = { img: im, src, pts: [], drag: -1, ref: load('bl_refcm', 10), msg: '' };
+    const R = refObj();
+    MS = { img: im, src, pts: [], drag: -1, ref: R.cm, desc: R.desc, msg: '' };
     let ov = $('#measure');
     if (!ov) { ov = document.createElement('div'); ov.id = 'measure'; document.body.appendChild(ov); }
     ov.innerHTML = `<div class="mtop"><b id="mStep"></b><button class="x" data-act="measClose">✕</button></div>
       <div class="mwrap"><canvas id="mCv"></canvas><canvas id="mLoupe" width="132" height="132"></canvas></div>
-      <div class="mbot"><div class="mres"><span id="mOut">— cm</span><label>기준 <input id="mRef" type="number" inputmode="decimal" step="0.5" value="${MS.ref}">cm</label></div>
+      <div class="mbot"><div class="mres"><span id="mOut">— cm</span><button class="mrefbtn" data-act="measRefEdit">📏 기준 <b id="mRefV">${MS.ref}</b>cm ✏</button></div>
+        <div class="mrefed" id="mRefEd" hidden><label>내 기준 물체 (AI가 이걸 보고 찾아)</label><textarea id="mRefDesc" rows="3">${esc(MS.desc)}</textarea>
+          <div class="mrefrow"><label>끝에서 끝까지</label><input id="mRef" type="number" inputmode="decimal" step="0.1" value="${MS.ref}"><span>cm</span><button class="pbtn small" data-act="measRefSave">저장</button></div></div>
         <div class="btnrow"><button class="pbtn dark" data-act="measAuto" id="mAutoBtn">🤖 자동</button><button class="pbtn ghost" data-act="measUndo">↶ 한 점 지우기</button><button class="pbtn" data-act="measOk" id="mOk" disabled>이 길이로 기록</button></div></div>`;
     ov.classList.add('show');
     const cv = $('#mCv');
     cv.addEventListener('pointerdown', measDown); cv.addEventListener('pointermove', measMove);
     cv.addEventListener('pointerup', measUp); cv.addEventListener('pointercancel', measUp);
-    $('#mRef').addEventListener('input', e => { MS.ref = parseFloat(e.target.value) || 0; save('bl_refcm', MS.ref); measDraw(); });
     measFit(); measDraw();
     if (auto) measAuto();
   };
@@ -3023,8 +3043,8 @@ function measDraw(){
   p.forEach((pt, i) => { const c = i < 2 ? '#3dd9ff' : '#f7b731';
     ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(pt.x * k, pt.y * k, 9 * MS.dpr, 0, 7); ctx.fill();
     ctx.fillStyle = c; ctx.beginPath(); ctx.arc(pt.x * k, pt.y * k, 6 * MS.dpr, 0, 7); ctx.fill(); });
-  const steps = ['① 10cm 기준 물체의 한쪽 끝을 눌러줘', '② 기준 물체의 반대쪽 끝!', '③ 배스 입 끝을 눌러줘', '④ 꼬리 끝까지! (꼬리 접어서 가장 긴 곳)', '점을 끌어서 미세 조정할 수 있어'];
-  $('#mStep').textContent = MS.busy ? '🤖 덴데가 사진 보면서 재는 중…' : MS.msg && p.length === 4 ? MS.msg : steps[Math.min(p.length, 4)];
+  const steps = ['① 기준 자의 한쪽 끝을 눌러줘 (고리 말고 판 끝)', '② 기준 물체의 반대쪽 끝!', '③ 배스 입 끝을 눌러줘', '④ 꼬리 끝까지! (꼬리 접어서 가장 긴 곳)', '점을 끌어서 미세 조정할 수 있어'];
+  $('#mStep').textContent = MS.busy ? '🤖 덴데가 사진 보면서 재는 중…' : MS.msg && p.length === 4 ? MS.msg : MS.err && p.length < 4 ? `${MS.err} → ${steps[p.length]}` : steps[Math.min(p.length, 4)];
   const short = p.length >= 2 && measDist(p[0], p[1]) * MS.scale < 40;
   $('#mOut').innerHTML = L ? `<b>${L}</b> cm` : short ? '<small>기준이 너무 작게 찍혔어 — 더 가까이서 찍어줘</small>' : '— cm';
   $('#mOk').disabled = !L;
@@ -3032,23 +3052,26 @@ function measDraw(){
 async function measAuto(){
   if (!MS || MS.busy) return;
   if (!navigator.onLine) { MS.msg = ''; measDraw(); return say('인터넷이 없어서 자동은 안 돼 — 직접 4번 눌러줘', 'dende'); }
-  MS.busy = true; MS.msg = ''; const btn = $('#mAutoBtn'); if (btn) btn.disabled = true; measDraw();
+  MS.busy = true; MS.msg = ''; MS.err = ''; const btn = $('#mAutoBtn'); if (btn) btn.disabled = true; measDraw();
   const cur = MS;
   try {
-    const r = await apiPost({ action:'measure', mime:'image/jpeg', data: cur.src.split(',')[1], ref: cur.ref });
+    const r = await apiPost({ action:'measure', mime:'image/jpeg', data: cur.src.split(',')[1], ref: cur.ref, refDesc: cur.desc });
     if (MS !== cur) return;
-    if (!r.ok) throw new Error(r.error || '자동 측정 실패');
+    if (!r.ok) {
+      const e = r.error || (r.results && r.results[0] && r.results[0].error) || '자동 측정 실패';
+      throw new Error(/알 수 없는 action/.test(e) ? 'Apps Script 외부 접속 권한 승인 또는 새 버전 배포가 필요해' : e);
+    }
     const P = r.points || {}, conv = v => Array.isArray(v) && v.length === 2 && v.every(n => isFinite(n)) ? { x: v[0] / 1000 * cur.img.width, y: v[1] / 1000 * cur.img.height } : null;
     const pts = [conv(P.ref_a), conv(P.ref_b), conv(P.nose), conv(P.tail)];
     if (pts.some(x => !x)) {
       cur.pts = pts[0] && pts[1] ? pts.slice(0, 2) : [];
-      cur.msg = ''; say(pts[0] && pts[1] ? '기준은 찾았는데 배스 끝을 못 찾았어 — 입 끝, 꼬리 끝을 눌러줘' : '자동으로는 못 찾았어 — 직접 눌러줘' + (P.note ? ` (${P.note})` : ''), 'dende');
+      cur.msg = ''; cur.err = pts[0] && pts[1] ? '⚠ 배스 끝을 못 찾았어' : '⚠ 자동으로 못 찾았어' + (P.note ? ` (${P.note})` : ''); say(pts[0] && pts[1] ? '기준은 찾았는데 배스 끝을 못 찾았어 — 입 끝, 꼬리 끝을 눌러줘' : '자동으로는 못 찾았어 — 직접 눌러줘' + (P.note ? ` (${P.note})` : ''), 'dende');
     } else {
       cur.pts = pts; const conf = +P.confidence;
       cur.msg = `🤖 자동으로 쟀어${conf ? ` (확신 ${Math.round(conf * 100)}%)` : ''} — 틀린 점은 끌어서 고쳐`;
       say(`${measLen()}cm 나왔어!${P.note ? ' ' + P.note : ''}`, 'dende');
     }
-  } catch (err) { if (MS === cur) say('자동 측정 실패: ' + err.message + ' — 직접 눌러줘', 'dende'); }
+  } catch (err) { if (MS === cur) { cur.err = '⚠ ' + err.message; say('자동 측정 실패: ' + err.message + ' — 직접 눌러줘', 'dende'); } }
   finally { if (MS === cur) { cur.busy = false; const b = $('#mAutoBtn'); if (b) b.disabled = false; measDraw(); } }
 }
 function measPt(e){ const r = e.target.getBoundingClientRect(); return { x: (e.clientX - r.left) / MS.scale, y: (e.clientY - r.top) / MS.scale }; }
@@ -3337,6 +3360,13 @@ document.addEventListener('click', async e => {
     case 'measClose': measClose(); break;
     case 'measUndo': if (MS) { MS.pts.pop(); MS.msg = ''; measDraw(); } break;
     case 'measAuto': measAuto(); break;
+    case 'measRefEdit': { const ed = $('#mRefEd'); if (ed) ed.hidden = !ed.hidden; break; }
+    case 'measRefSave': {
+      const cm = parseFloat($('#mRef').value), desc = $('#mRefDesc').value.trim();
+      if (!(cm > 0)) return say('길이를 숫자로 넣어줘', 'dende');
+      saveRefObj({ desc, cm }); if (MS) { MS.ref = cm; MS.desc = desc; $('#mRefV').textContent = cm; $('#mRefEd').hidden = true; measDraw(); }
+      say(`기준 ${cm}cm로 기억할게!`, 'dende'); break;
+    }
     case 'measOk': { const L = MS && measLen(); if (!L) break; cf.length = String(L); measClose(); rerenderSheet(); say(`${L}cm! ${lenLine(L)}`, 'dende'); break; }
     case 'accSlot': openAcc(el.dataset.k); break;
     case 'accEquip': { const i = +el.dataset.v; chq[accK] = i; const [rar, fx] = ACC[accK].meta[i]; accSave(`${accName(accK, i)} 장착! ${fx}`); break; }
